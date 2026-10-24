@@ -30,7 +30,9 @@ def main(labels, game, target):
     d = ImageDraw.Draw(img)
     for _, style, points in lines:
         xy = [tuple(float(v) for v in p.split(",")) for p in points.split()]
-        if style == "solid":
+        if style == "waters":
+            d.line(xy, fill=(40, 90, 150), width=1)
+        elif style == "solid":
             d.line(xy, fill=(70, 60, 80), width=2, joint="curve")
         else:
             for a, b in zip(xy[::2], xy[1::2]):

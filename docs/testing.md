@@ -4,6 +4,18 @@ Log: `E:\Games\steamapps\common\Sea Power\BepInEx\LogOutput.log`. Config:
 `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` – turn on `Verbose log` for this test (every label pick and
 border level change is logged).
 
+## 0.3.0 – Territorial waters (first build)
+
+1. **Trollfjorden (1985), map zoomed in on the Norwegian coast** (about 6° view or closer). Log: `Sea mask read in …
+   ms.` once, then with verbose log `Territorial waters 12 nm, tile …` for the tiles around the view. A dashed blue
+   line appears off the coast within a second or so, outside the outermost islands.
+2. **Measure:** with the map's ruler (or its scale bar), coast to line ≈ 12 nm all along, also round islands.
+3. **Zoom out** until the line would crowd the coast: it goes; zoom in again: back, finer. Line width stays the same.
+4. **Pan along the coast:** new tiles come in without stutter; no gaps where tiles meet (every 10°).
+5. **The Baltic and the Black Sea** have lines (seas the 3′ grid may cut off); the Caspian has none.
+6. Config `Territorial waters = 3`, `6`, `0` – applied at once; Borders layer off – the line goes too.
+7. Night theme: light blue.
+
 ## 0.2.0 – Borders (first build)
 
 Load missions from the **main menu** only, once it has settled (see the 0.1.0 result below).

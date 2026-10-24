@@ -6,13 +6,14 @@ namespace SeaPowerBorders.Map;
 
 /// <summary>
 /// Where the mod's panels go in a map control: right above its graticule (below the scale, the drag surface and the
-/// units), the border lines below the place labels - whichever is laid in first.
+/// units), territorial waters below the border lines below the place labels - whichever is laid in first.
 /// </summary>
 internal static class MapSlots
 {
+    public const string Waters = "sewerlabs.waters";
     public const string Borders = "sewerlabs.borders";
     public const string Cities = "sewerlabs.cities";
-    private static readonly string[] Order = { Borders, Cities };
+    private static readonly string[] Order = { Waters, Borders, Cities };
 
     public static void Insert(MapBase map, MapPanel panel, string slot)
     {

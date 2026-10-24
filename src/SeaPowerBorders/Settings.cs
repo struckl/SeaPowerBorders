@@ -30,6 +30,7 @@ internal static class Settings
     public static ConfigEntry<bool> DisputedLines;
     public static ConfigEntry<float> LineWidth;
     public static ConfigEntry<float> LineOpacity;
+    public static ConfigEntry<int> TerritorialWaters;
 
     /// <summary>Bumped on every config change, so the labels and lines are made again.</summary>
     public static int Version { get; private set; }
@@ -73,6 +74,11 @@ internal static class Settings
             new ConfigDescription("Width of the border lines on screen.", new AcceptableValueRange<float>(0.5f, 3f)));
         LineOpacity = file.Bind("3. Borders", "Opacity", 0.85f,
             new ConfigDescription("How strongly the border lines show.", new AcceptableValueRange<float>(0.2f, 1f)));
+        TerritorialWaters = file.Bind("3. Borders", "Territorial waters", 12,
+            new ConfigDescription("A dashed line this many nautical miles off the coast as the game's map draws it, once " +
+                                  "zoomed in (0 = none). Most states claimed 12 nm in the Cold War; the US and the UK " +
+                                  "3 nm until 1987–88, Greece and Turkey 6 nm in the Aegean.",
+                                  new AcceptableValueList<int>(0, 3, 6, 12)));
 
         // Turning a layer on and off is not a reason to make the labels and lines again.
         file.SettingChanged += (_, e) =>

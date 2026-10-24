@@ -1,8 +1,8 @@
 # Sea Power Borders
 
-> **Status: in development.** Cities and naval bases (0.1.0, tested in the game with a 1985 and a 1991 mission) and
-> national borders (0.2.0, tested in the game with the same two missions) are in; territorial waters and country names come
-> next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
+> **Status: in development.** Cities and naval bases (0.1.0) and national borders (0.2.0), both tested in the game
+> with a 1985 and a 1991 mission, and territorial waters (0.3.0, checked offline, not yet in the game) are in;
+> country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
 national borders, cities and naval bases **of the mission's date** on the tactical map. The stock map shows
@@ -20,6 +20,9 @@ A **Borders** entry in the map's Layers menu (or **Shift+F7**):
 - Borders solid; disputed borders, lines of control (Korea, Kashmir, the Golan, Cyprus) and lease limits
   (Guantánamo, Baikonur) dashed.
 - The same width on screen at every zoom, the detail following the zoom; light lines on the night theme.
+- **Territorial waters:** a dashed blue line 12 nm off the coast (3 or 6 nm in the config, or none), once zoomed in
+  far enough that it stands clear of the coast – around islands too, merging where coasts are less than twice the
+  distance apart.
 
 Where the lines come from:
 
@@ -33,14 +36,24 @@ Where the lines come from:
    Natural Earth's state lines (the old Länder against the new ones; today's Yemeni governorates on either side),
    the Berlin Wall and the Vietnam DMZ hand-drawn in `tools/borders-data/extra.csv` (approximate), West Berlin's outer
    boundary from Natural Earth's state line around Berlin.
+4. **Territorial waters from the game's own coast**, worked out in the game, not shipped: the 3′ world grid behind
+   the zoomed-out map (`terrain/data/lowres.raw`) is read once on a worker thread and flooded from points in the
+   oceans and their seas, so lakes and dry land below sea level (the Caspian, the Dead Sea) get no line. For each
+   10° tile in view, the distance to the nearest land on a grid four times finer (land where the map draws it) by an
+   exact Euclidean distance transform with the east–west spacing of each row's latitude, then marching squares at
+   the distance (`Borders/SeaMask.cs`, `Borders/SeaLimits.cs`; about 30 ms a tile). Measured from the coast as the
+   game has it, not from the straight baselines states draw across bays and fjords, and the same breadth for every
+   state.
 
 How: one Noesis `Path` per tile and line style in a `MapControl.MapPanel` laid into the map below the place labels.
 The map places each by its tile's bounding box on every pan and zoom (and wraps it past ±180°); the geometry is in
 degrees from the tile's corner with a scale transform set from the map's `ViewportChanged`, so the stroke keeps its
 width (`Map/BorderLines.cs`).
 
+Territorial waters in a second panel below the borders, the same way, one path per tile as the tiles come in.
+
 Config `BepInEx/config/dev.sewerlabs.seapowerborders.cfg`, section "3. Borders": toggle key, era (`MissionDate` /
-`Today`), disputed lines, line width, opacity.
+`Today`), disputed lines, line width, opacity, territorial waters (0 / 3 / 6 / 12 nm).
 
 ## Cities and bases
 
@@ -105,7 +118,7 @@ python -I tools/borders-data/build.py tools/borders-data/input tools/borders-dat
 ```
 
 Offline check of the places and borders of a date against your game files, and a picture of the labels and lines a
-view would show (`--era Today` for today's borders):
+view would show (`--era Today` for today's borders, `--waters 12` for territorial waters):
 
 ```bash
 dotnet run --project tools/places-check -c Release -- --date 1985-06-26 --find Leningrad
@@ -119,7 +132,8 @@ src/SeaPowerBorders/
   AtlasHost.cs        per-frame driver: Layers entries, toggle keys, the mission's places and borders, every map's layers
   LayerEntry.cs       an entry in the map's Layers menu ("Borders", "Cities and bases")
   Patches.cs          mission start/end hooks, the late map hook
-  Borders/            the border lines (BorderData) and which ones a date has (BorderEras)
+  Borders/            the border lines (BorderData), which ones a date has (BorderEras), territorial waters
+                      (SeaMask, SeaLimits, SeaLimitCache)
   Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas)
   Map/                lines in the map (BorderLines), labels (CityLabels), which ones show (LabelPicker), symbols
                       (Icons), the order of our panels (MapSlots)
@@ -129,7 +143,7 @@ src/SeaPowerBorders/
 tools/borders-data/   Natural Earth -> borders.bin, with the hand-drawn lines (extra.csv)
 tools/cities-data/    Natural Earth -> world.csv
 tools/places-check/   offline check, label and border picture
-docs/plan.md          build plan; territorial waters and country names still to build
+docs/plan.md          build plan; country names still to build
 docs/testing.md       in-game test checklist and results
 workshop/screenshots/ in-game screenshots for the Workshop page
 ```

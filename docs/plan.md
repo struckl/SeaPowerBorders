@@ -1,7 +1,11 @@
 # Build plan
 
-> **Built:** cities and bases (0.1.0) and the land borders of the mission's date (0.2.0, steps 1–4 of the order of
-> work below) - see the README. **Still to build:** territorial waters (step 5) and country names (step 6).
+> **Built:** cities and bases (0.1.0), the land borders of the mission's date (0.2.0, steps 1–4 of the order of
+> work below) and territorial waters (0.3.0, step 5) - see the README. **Still to build:** country names (step 6).
+> Territorial waters differ from the plan below: from the 3′ world grid everywhere (read from the file on a worker
+> thread, sea flooded from the oceans) rather than the 30″ DEM, which the game only has loaded around the mission
+> and only lends out on the main thread; per 10° tile as the map shows it, not once for the mission area; 0 / 3 / 6
+> / 12 nm. A finer coast from the loaded DEM chunks around the mission could follow if the line looks off there.
 > Built differently from this plan: the lines are not a mesh in the Unity map scene but Noesis paths in a
 > `MapControl.MapPanel` (like the city labels), one per 10° tile and style, placed by the map through their bounding
 > box and scaled by a geometry transform, so they keep their width without a rebuild on every zoom; the era rules

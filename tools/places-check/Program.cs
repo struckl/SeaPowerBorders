@@ -32,6 +32,7 @@ internal static class Program
         string game = @"E:\Games\steamapps\common\Sea Power", find = null, view = null, output = "labels.tsv";
         BorderEra era = BorderEra.MissionDate;
         int width = 1920, height = 1080;
+        double waters = 0;
         for (int i = 0; i + 1 < args.Length; i += 2)
         {
             if (args[i] == "--date") date = DateTime.ParseExact(args[i + 1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -40,6 +41,7 @@ internal static class Program
             else if (args[i] == "--view") view = args[i + 1];
             else if (args[i] == "--out") output = args[i + 1];
             else if (args[i] == "--era") era = (BorderEra)Enum.Parse(typeof(BorderEra), args[i + 1], true);
+            else if (args[i] == "--waters") waters = double.Parse(args[i + 1], CultureInfo.InvariantCulture);
             else if (args[i] == "--size")
             {
                 string[] s = args[i + 1].Split('x');
@@ -74,13 +76,21 @@ internal static class Program
         Console.WriteLine($"Borders: {drawn.Count} of {borders.Lines.Count} lines for {date:yyyy-MM-dd} ({era}); not drawn: " +
                           string.Join(", ", borders.Lines.Where(l => !drawn.Contains(l) && l.Class != BorderClass.Added).Select(l => l.Name).Distinct()));
         Console.WriteLine("Added: " + string.Join(", ", borders.Lines.Where(l => drawn.Contains(l) && l.Class == BorderClass.Added).Select(l => l.Name).Distinct()));
+        SeaMask sea = null;
+        if (waters > 0)
+        {
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            sea = SeaMask.Load(Path.Combine(game, "Sea Power_Data", "StreamingAssets", "original", "terrain", "data", "lowres.raw"));
+            Console.WriteLine($"Sea mask: {timer.ElapsedMilliseconds} ms" + (sea.LandSeeds.Count > 0 ? "; seeds on land: " + string.Join(", ", sea.LandSeeds) : ""));
+        }
         if (view != null)
-            Draw(places, borders, drawn, view, width, height, output);
+            Draw(places, borders, drawn, sea, waters, view, width, height, output);
         return 0;
     }
 
     // The map is lon/lat, equirectangular: x by longitude, y by latitude, the same degrees per pixel both ways.
-    private static void Draw(List<Place> places, BorderData borders, HashSet<BorderLine> drawn, string view, int width, int height, string output)
+    private static void Draw(List<Place> places, BorderData borders, HashSet<BorderLine> drawn, SeaMask sea, double waters,
+                             string view, int width, int height, string output)
     {
         string[] v = view.Split(',');
         double lat = double.Parse(v[0], CultureInfo.InvariantCulture), lon = double.Parse(v[1], CultureInfo.InvariantCulture);
@@ -93,7 +103,36 @@ internal static class Program
             p => ((float)((p.Lon - west) / dpp), (float)((north - p.Lat) / dpp)));
         using var w = new StreamWriter(output);
         w.WriteLine($"#view	{west.ToString(CultureInfo.InvariantCulture)}	{north.ToString(CultureInfo.InvariantCulture)}	{dpp.ToString(CultureInfo.InvariantCulture)}	{width}	{height}");
-        // Border lines first (drawn below the labels): one row per piece, "#line", dashed or solid, then x,y pairs.
+        // Territorial waters first, then border lines (all below the labels): one row per piece, "#line", the style,
+        // then x,y pairs.
+        if (sea != null)
+        {
+            int wl = SeaLimits.LevelFor(1.0 / dpp), pieces = 0, points = 0;
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            int tx0 = (int)Math.Floor((west + 180) / BorderData.Tile), tx1 = (int)Math.Floor((west + dpp * width + 180) / BorderData.Tile);
+            int ty0 = Math.Max(0, (int)Math.Floor((north - span + 90) / BorderData.Tile)), ty1 = Math.Min(17, (int)Math.Floor((north + 90) / BorderData.Tile));
+            int tiles = 0;
+            for (int tx = tx0; tx <= tx1; tx++)
+            {
+                for (int ty = ty0; ty <= ty1; ty++)
+                {
+                    int wrapped = ((tx % 36) + 36) % 36;
+                    SeaLimitTile tile = SeaLimits.Tile(sea, wrapped, ty, waters);
+                    tiles++;
+                    points += tile.Points;
+                    double shift = (tx - wrapped) * BorderData.Tile;
+                    foreach (float[] line in tile.Levels[wl])
+                    {
+                        var xy = new List<string>();
+                        for (int k = 0; k < line.Length; k += 2)
+                            xy.Add(((line[k] + shift - west) / dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((north - line[k + 1]) / dpp).ToString("0.0", CultureInfo.InvariantCulture));
+                        w.WriteLine("#line	waters	" + string.Join(" ", xy));
+                        pieces++;
+                    }
+                }
+            }
+            Console.WriteLine($"Waters {waters} nm: {tiles} tiles in {timer.ElapsedMilliseconds} ms, {points} points at full detail, {pieces} lines at level {wl}");
+        }
         int level = borders.LevelFor(1.0 / dpp), lineCount = 0;
         foreach (BorderPiece piece in borders.Pieces)
         {

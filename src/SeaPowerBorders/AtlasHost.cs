@@ -52,6 +52,7 @@ internal sealed class AtlasHost : MonoBehaviour
     private List<EraRule> eras;
     private BorderData borderData;
     private BorderEras borderEras;
+    private SeaLimitCache seaLimits;
     private bool bordersMissing;
 
     private List<Place> places;
@@ -126,11 +127,15 @@ internal sealed class AtlasHost : MonoBehaviour
                 }
             }
         }
+        // Territorial waters come from the game's world grid, read on a worker thread when a map first asks.
+        seaLimits ??= new SeaLimitCache(Path.Combine(Application.streamingAssetsPath, "original", "terrain", "data", "lowres.raw"),
+                                         () => Settings.VerboseLog.Value);
+        seaLimits.DrainLog();
         bool dark = Singleton<ThemeTracker>.InstanceExists() && Singleton<ThemeTracker>.Instance.CurrentTheme == ThemeMode.Dark;
         bool bordersOn = bordersLayer.Visible, citiesOn = citiesLayer.Visible;
         foreach (MapDecor map in maps)
         {
-            map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark);
+            map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark, seaLimits);
             map.Labels?.Update(citiesOn, places, placesVersion, dark, Time.unscaledTime);
         }
     }

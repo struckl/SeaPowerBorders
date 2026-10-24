@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 – Unreleased
+
+- **Territorial waters** in the Borders layer: a dashed blue line 12 nm off the coast the game's map draws (3 or 6 nm
+  or none in the config), around islands too, once zoomed in. Worked out in the game from its 3′ world grid – sea
+  flooded from the oceans, so the Caspian and the Dead Sea get none – with an exact distance transform per 10° tile
+  on a worker thread. Checked offline, not yet in the game.
+
 ## 0.2.0 – Unreleased
 
 - **Borders** layer in the map's Layers menu (Shift+F7): land borders as they were on the mission's date – the Soviet
