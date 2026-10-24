@@ -3,13 +3,23 @@ using System.Collections.Generic;
 
 namespace SeaPowerBorders.Borders;
 
+/// <summary>A stretch of the line inside one <see cref="SeaLimits.CellDegrees"/> cell: its cell and the points.</summary>
+internal sealed class SeaLimitPiece
+{
+    /// <summary>Cell numbers from 180°W and 90°S.</summary>
+    public int Cx, Cy;
+
+    /// <summary>Longitude, latitude, longitude, latitude, ...</summary>
+    public float[] Points;
+}
+
 /// <summary>The line a set distance off the coast in one 10° tile, at a few levels of detail.</summary>
 internal sealed class SeaLimitTile
 {
     public int TileX, TileY;
 
-    /// <summary>Per level of <see cref="SeaLimits.Tolerances"/>: polylines as longitude, latitude pairs.</summary>
-    public List<float[]>[] Levels;
+    /// <summary>Per level of <see cref="SeaLimits.Tolerances"/>: the line cut into cells.</summary>
+    public List<SeaLimitPiece>[] Levels;
 
     public int Points;
 }
@@ -29,8 +39,12 @@ internal static class SeaLimits
     private const int Sub = 4;
     private const double Step = SeaMask.Cell / Sub;                      // 0.0125°: 0.75 nm north–south
 
-    /// <summary>How far a tile's line may reach past the tile's edges (its grid is half a step off them), degrees.</summary>
-    public const double Pad = Step;
+    /// <summary>
+    /// The line is cut into cells this size, each drawn as its own small path: a path as big as a 10° tile (several
+    /// thousand pixels zoomed in) went missing from the map at some positions, small ones don't have to be rendered
+    /// as one huge piece.
+    /// </summary>
+    public const double CellDegrees = 2.5;
     private const int PerTile = (int)(BorderData.Tile / Step + 0.5);    // 800
     private const double Far = 1e12;                                     // "no land" in nm²
 
@@ -52,9 +66,9 @@ internal static class SeaLimits
 
     public static SeaLimitTile Tile(SeaMask mask, int tileX, int tileY, double nm)
     {
-        var result = new SeaLimitTile { TileX = tileX, TileY = tileY, Levels = new List<float[]>[Tolerances.Length] };
+        var result = new SeaLimitTile { TileX = tileX, TileY = tileY, Levels = new List<SeaLimitPiece>[Tolerances.Length] };
         for (int l = 0; l < Tolerances.Length; l++)
-            result.Levels[l] = new List<float[]>();
+            result.Levels[l] = new List<SeaLimitPiece>();
         if (!Covered(tileY) || nm <= 0)
             return result;
 
@@ -125,18 +139,78 @@ internal static class SeaLimits
                 List<(double lon, double lat)> simple = Simplify(line, Tolerances[l]);
                 if (simple.Count < 2)
                     continue;
-                var pts = new float[simple.Count * 2];
-                for (int k = 0; k < simple.Count; k++)
-                {
-                    pts[2 * k] = (float)simple[k].lon;
-                    pts[2 * k + 1] = (float)simple[k].lat;
-                }
-                result.Levels[l].Add(pts);
+                result.Levels[l].AddRange(CutAtCells(simple));
                 if (l == 0)
                     result.Points += simple.Count;
             }
         }
         return result;
+    }
+
+    // Cuts a polyline into pieces that each lie in one cell: every segment is split where it crosses a cell edge,
+    // and a new piece starts whenever the cell of the next stretch (by its middle) is another one. Neighbouring
+    // pieces share the point where they meet, also when a vertex lies right on an edge.
+    private static IEnumerable<SeaLimitPiece> CutAtCells(List<(double lon, double lat)> points)
+    {
+        var current = new List<(double lon, double lat)>();
+        int cx = 0, cy = 0;
+        var ts = new List<double>();
+        for (int i = 1; i < points.Count; i++)
+        {
+            (double x0, double y0) = points[i - 1];
+            (double x1, double y1) = points[i];
+            ts.Clear();
+            ts.Add(0.0);
+            Crossings(x0 + 180.0, x1 + 180.0, ts);
+            Crossings(y0 + 90.0, y1 + 90.0, ts);
+            ts.Add(1.0);
+            ts.Sort();
+            for (int k = 1; k < ts.Count; k++)
+            {
+                (double lon, double lat) a = (x0 + (x1 - x0) * ts[k - 1], y0 + (y1 - y0) * ts[k - 1]);
+                (double lon, double lat) b = (x0 + (x1 - x0) * ts[k], y0 + (y1 - y0) * ts[k]);
+                int sx = (int)Math.Floor(((a.lon + b.lon) / 2.0 + 180.0) / CellDegrees);
+                int sy = (int)Math.Floor(((a.lat + b.lat) / 2.0 + 90.0) / CellDegrees);
+                if (current.Count > 0 && (sx != cx || sy != cy))
+                {
+                    yield return Piece(current, cx, cy);
+                    current.Clear();
+                }
+                if (current.Count == 0)
+                {
+                    cx = sx;
+                    cy = sy;
+                    current.Add(a);
+                }
+                current.Add(b);
+            }
+        }
+        if (current.Count >= 2)
+            yield return Piece(current, cx, cy);
+    }
+
+    private static void Crossings(double a, double b, List<double> ts)
+    {
+        if (a == b)
+            return;
+        int from = (int)Math.Floor(Math.Min(a, b) / CellDegrees) + 1, to = (int)Math.Floor(Math.Max(a, b) / CellDegrees);
+        for (int k = from; k <= to; k++)
+        {
+            double t = (k * CellDegrees - a) / (b - a);
+            if (t > 0.0 && t < 1.0)
+                ts.Add(t);
+        }
+    }
+
+    private static SeaLimitPiece Piece(List<(double lon, double lat)> points, int cx, int cy)
+    {
+        var pts = new float[points.Count * 2];
+        for (int k = 0; k < points.Count; k++)
+        {
+            pts[2 * k] = (float)points[k].lon;
+            pts[2 * k + 1] = (float)points[k].lat;
+        }
+        return new SeaLimitPiece { Cx = cx, Cy = cy, Points = pts };
     }
 
     private static double Sea(SeaMask mask, int cx, int cy) => mask.IsSea(cx, cy) ? 1.0 : 0.0;

@@ -13,9 +13,9 @@ namespace SeaPowerBorders.Map;
 /// to the zoom by a transform on the geometry rather than on the path, so the stroke keeps its width on screen.
 /// <para>The scale follows the map's <c>ViewportChanged</c> event (before the map lays out its children, so lines
 /// never lag a frame behind); the level of detail follows the zoom.</para>
-/// <para>Territorial waters live in a second panel below the borders, the same way, one path per tile as the
-/// tiles come in from <see cref="SeaLimitCache"/> - only for the tiles around the view and once zoomed in far
-/// enough that the line stands clear of the coast.</para>
+/// <para>The coastal distance line lives in a second panel below the borders, the same way, one small path per
+/// <see cref="SeaLimits.CellDegrees"/> cell as the tiles come in from <see cref="SeaLimitCache"/> - only around the
+/// view and once zoomed in far enough that the line stands clear of the coast.</para>
 /// </summary>
 internal sealed class BorderLines
 {
@@ -27,13 +27,14 @@ internal sealed class BorderLines
     private readonly List<ScaleTransform> scales = new List<ScaleTransform>();
     private readonly EventHandler<ViewportChangedEventArgs> onViewport;
     private readonly MapPanel waterPanel;
-    private readonly Dictionary<(int x, int y), ScaleTransform> waterTiles = new Dictionary<(int x, int y), ScaleTransform>();
+    private readonly Dictionary<(int x, int y), List<ScaleTransform>> waterTiles = new Dictionary<(int x, int y), List<ScaleTransform>>();
 
     private int linesVersion = -1, settingsVersion = -1, level = -1, waterLevel = -1, waterNm = -1;
     private bool dark;
     private float scale = float.NaN;
     private SolidColorBrush brush, waterBrush;
     private bool loggedFailure;
+    private int nextDiagnostics;
 
     /// <summary>Lays a border panel into the map, or returns null if the map isn't the panel we expect.</summary>
     public static BorderLines TryAttach(MapBase map)
@@ -107,12 +108,15 @@ internal sealed class BorderLines
                 settingsVersion = Settings.Version;
                 // Dashed lines in the same colour: a lighter tint got lost on the terrain (the Korean line by day).
                 brush = new SolidColorBrush(dark ? Color.FromArgb(255, 205, 200, 215) : Color.FromArgb(255, 58, 50, 72));
-                waterBrush = new SolidColorBrush(dark ? Color.FromArgb(255, 140, 180, 215) : Color.FromArgb(255, 45, 90, 140));
+                // The coastal line gets its opacity in its brush, not as a panel opacity: that would have Noesis draw
+                // all its paths into an offscreen picture first.
+                byte alpha = (byte)Math.Round(255.0 * Settings.LineOpacity.Value);
+                waterBrush = new SolidColorBrush(dark ? Color.FromArgb(alpha, 140, 180, 215) : Color.FromArgb(alpha, 45, 90, 140));
                 panel.Opacity = Settings.LineOpacity.Value;
-                waterPanel.Opacity = Settings.LineOpacity.Value;
                 level = -1;
                 ClearWaters();
             }
+            ApplyScale();
             double pixelsPerDegree = Map.ViewTransform.Scale * MetresPerDegree;
             if (pixelsPerDegree <= 0)
                 return;
@@ -193,7 +197,7 @@ internal sealed class BorderLines
     // The tiles around the view that have come in: one dashed path each, at the zoom's level of detail.
     private void UpdateWaters(SeaLimitCache waters, double pixelsPerDegree)
     {
-        int nm = Settings.TerritorialWaters.Value;
+        int nm = Settings.CoastalLine.Value;
         if (waters == null || waters.Failed || nm <= 0 || nm / 60.0 * pixelsPerDegree < MinWaterOffset)
         {
             ClearWaters();
@@ -227,49 +231,100 @@ internal sealed class BorderLines
                     continue;
                 SeaLimitTile tile = waters.Get(x, y, nm);
                 if (tile != null)
-                    waterTiles[(x, y)] = AddWaterPath(tile, wanted);
+                    waterTiles[(x, y)] = AddWaterPaths(tile, wanted);
             }
+        }
+        if (Settings.VerboseLog.Value && Environment.TickCount - nextDiagnostics >= 0)
+        {
+            nextDiagnostics = Environment.TickCount + 4000;
+            LogWaterDiagnostics(view);
         }
     }
 
-    // Null when the tile has no line at this level (it is still remembered as done).
-    private ScaleTransform AddWaterPath(SeaLimitTile tile, int detail)
+    // What the map did with the cell paths nearest the view's centre: size, whether Noesis counts them visible, and
+    // where their top-left corner is on the map control (to find out why a line goes missing at some positions).
+    private void LogWaterDiagnostics(BoundingBox view)
     {
-        List<float[]> lines = tile.Levels[detail];
-        if (lines.Count == 0)
+        try
+        {
+            double cx = (view.West + view.East) / 2.0, cy = (view.South + view.North) / 2.0;
+            var near = new List<(double d, Path path)>();
+            foreach (UIElement child in waterPanel.Children)
+            {
+                if (child is not Path path)
+                    continue;
+                BoundingBox box = MapPanel.GetBoundingBox(path);
+                double d = Math.Abs((box.West + box.East) / 2.0 - cx) + Math.Abs((box.South + box.North) / 2.0 - cy);
+                near.Add((d, path));
+            }
+            near.Sort((a, b) => a.d.CompareTo(b.d));
+            var text = new System.Text.StringBuilder($"Coastal line: {near.Count} cell paths, scale {scale:0.0} px/deg, map {Map.ActualWidth:0}x{Map.ActualHeight:0}");
+            for (int i = 0; i < Math.Min(5, near.Count); i++)
+            {
+                Path path = near[i].path;
+                BoundingBox box = MapPanel.GetBoundingBox(path);
+                Point at = path.TranslatePoint(new Point(0, 0), Map);
+                text.Append($" | cell W{box.West:0.##} N{box.North:0.##}: size {path.ActualWidth:0}x{path.ActualHeight:0}, at {at.X:0},{at.Y:0}, visible {path.IsVisible}");
+            }
+            ModLog.Debug(text.ToString());
+        }
+        catch (Exception ex)
+        {
+            ModLog.Debug($"Coastal line diagnostics: {ex.Message}");
+        }
+    }
+
+    // One small path per cell of the tile, each placed by its own bounding box. Null when the tile has no line at
+    // this level (it is still remembered as done).
+    private List<ScaleTransform> AddWaterPaths(SeaLimitTile tile, int detail)
+    {
+        List<SeaLimitPiece> pieces = tile.Levels[detail];
+        if (pieces.Count == 0)
             return null;
         ApplyScale();
-        float west = tile.TileX * BorderData.Tile - 180f - (float)SeaLimits.Pad;
-        float north = tile.TileY * BorderData.Tile - 90f + BorderData.Tile + (float)SeaLimits.Pad;
-        float size = BorderData.Tile + 2f * (float)SeaLimits.Pad;
-        var geometry = new StreamGeometry();
-        var line = new List<Point>();
-        using (StreamGeometryContext context = geometry.Open())
-        {
-            foreach (float[] p in lines)
-            {
-                context.BeginFigure(new Point(p[0] - west, north - p[1]), false, false);
-                line.Clear();
-                for (int k = 2; k < p.Length; k += 2)
-                    line.Add(new Point(p[k] - west, north - p[k + 1]));
-                context.PolyLineTo(line, true, true);
-            }
-        }
         float s = float.IsNaN(scale) ? (float)(Map.ViewTransform.Scale * MetresPerDegree) : scale;
-        var transform = new ScaleTransform(s, s);
-        geometry.Transform = transform;
-        var path = new Path
+        const float cell = (float)SeaLimits.CellDegrees;
+        var cells = new Dictionary<(int x, int y), List<SeaLimitPiece>>();
+        foreach (SeaLimitPiece piece in pieces)
         {
-            Data = geometry,
-            Stroke = waterBrush,
-            StrokeThickness = Settings.LineWidth.Value * 0.8f,
-            StrokeDashArray = "3 3",
-            StrokeLineJoin = PenLineJoin.Round,
-            IsHitTestVisible = false,
-        };
-        MapPanel.SetBoundingBox(path, new BoundingBox(north - size, west, north, west + size));
-        waterPanel.Children.Add(path);
-        return transform;
+            if (!cells.TryGetValue((piece.Cx, piece.Cy), out List<SeaLimitPiece> list))
+                cells[(piece.Cx, piece.Cy)] = list = new List<SeaLimitPiece>();
+            list.Add(piece);
+        }
+        var transforms = new List<ScaleTransform>();
+        var line = new List<Point>();
+        foreach (KeyValuePair<(int x, int y), List<SeaLimitPiece>> kv in cells)
+        {
+            float west = kv.Key.x * cell - 180f, south = kv.Key.y * cell - 90f, north = south + cell;
+            var geometry = new StreamGeometry();
+            using (StreamGeometryContext context = geometry.Open())
+            {
+                foreach (SeaLimitPiece piece in kv.Value)
+                {
+                    float[] p = piece.Points;
+                    context.BeginFigure(new Point(p[0] - west, north - p[1]), false, false);
+                    line.Clear();
+                    for (int k = 2; k < p.Length; k += 2)
+                        line.Add(new Point(p[k] - west, north - p[k + 1]));
+                    context.PolyLineTo(line, true, true);
+                }
+            }
+            var transform = new ScaleTransform(s, s);
+            geometry.Transform = transform;
+            transforms.Add(transform);
+            var path = new Path
+            {
+                Data = geometry,
+                Stroke = waterBrush,
+                StrokeThickness = Settings.LineWidth.Value * 0.8f,
+                StrokeDashArray = "3 3",
+                StrokeLineJoin = PenLineJoin.Round,
+                IsHitTestVisible = false,
+            };
+            MapPanel.SetBoundingBox(path, new BoundingBox(south, west, north, west + cell));
+            waterPanel.Children.Add(path);
+        }
+        return transforms;
     }
 
     private void ClearWaters()
@@ -296,12 +351,15 @@ internal sealed class BorderLines
                 t.ScaleX = s;
                 t.ScaleY = s;
             }
-            foreach (ScaleTransform t in waterTiles.Values)
+            foreach (List<ScaleTransform> transforms in waterTiles.Values)
             {
-                if (t == null)
+                if (transforms == null)
                     continue;
-                t.ScaleX = s;
-                t.ScaleY = s;
+                foreach (ScaleTransform t in transforms)
+                {
+                    t.ScaleX = s;
+                    t.ScaleY = s;
+                }
             }
         }
         catch (Exception ex)

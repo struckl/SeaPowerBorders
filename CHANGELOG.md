@@ -1,11 +1,20 @@
 # Changelog
 
+## 0.3.1 – Unreleased
+
+- The line is called **coastal distance line** and is **off by default**: it is one distance from the game's coast for
+  every country, not any state's territorial sea, and not a zone of any mission. README ("Read this first") and the
+  config text say so, with the data sources.
+- Drawn as small 2.5° cells with the opacity in the brush, instead of one path per 10° tile inside an opacity group:
+  at some map positions a tile's line did not show although its data was there. The scale is also re-synced every
+  frame. Verbose log: every few seconds the size, position and visibility of the cell paths nearest the view.
+
 ## 0.3.0 – Unreleased
 
-- **Territorial waters** in the Borders layer: a dashed blue line 12 nm off the coast the game's map draws (3 or 6 nm
-  or none in the config), around islands too, once zoomed in. Worked out in the game from its 3′ world grid – sea
-  flooded from the oceans, so the Caspian and the Dead Sea get none – with an exact distance transform per 10° tile
-  on a worker thread. Checked offline, not yet in the game.
+- **Coastal distance line** (then called territorial waters) in the Borders layer: a dashed blue line 12 nm off the
+  coast the game's map draws (3 or 6 nm or none in the config), around islands too, once zoomed in. Worked out in the
+  game from its 3′ world grid – sea flooded from the oceans, so the Caspian and the Dead Sea get none – with an exact
+  distance transform per 10° tile on a worker thread. Tested in the game: a median 12.0 nm from the drawn coast.
 
 ## 0.2.0 – Unreleased
 

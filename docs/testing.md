@@ -4,17 +4,33 @@ Log: `E:\Games\steamapps\common\Sea Power\BepInEx\LogOutput.log`. Config:
 `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` – turn on `Verbose log` for this test (every label pick and
 border level change is logged).
 
-## 0.3.0 – Territorial waters (first build)
+## 0.3.1 – Coastal distance line (reworked)
+
+The line is **off by default now**: set `Coastal distance line (nm) = 12` first.
 
 1. **Trollfjorden (1985), map zoomed in on the Norwegian coast** (about 6° view or closer). Log: `Sea mask read in …
-   ms.` once, then with verbose log `Territorial waters 12 nm, tile …` for the tiles around the view. A dashed blue
-   line appears off the coast within a second or so, outside the outermost islands.
-2. **Measure:** with the map's ruler (or its scale bar), coast to line ≈ 12 nm all along, also round islands.
-3. **Zoom out** until the line would crowd the coast: it goes; zoom in again: back, finer. Line width stays the same.
-4. **Pan along the coast:** new tiles come in without stutter; no gaps where tiles meet (every 10°).
-5. **The Baltic and the Black Sea** have lines (seas the 3′ grid may cut off); the Caspian has none.
-6. Config `Territorial waters = 3`, `6`, `0` – applied at once; Borders layer off – the line goes too.
-7. Night theme: light blue.
+   ms.` once, then with verbose log `Territorial waters 12 nm, tile …` for the tiles around the view and, every
+   four seconds, a `Coastal line: N cell paths …` line. A dashed blue line appears off the coast within a second or so.
+2. **The bug that led to the rework – check it first:** `center 70.3 19.8` at zoom 8.6 (view about 5.6° tall), and
+   `center 70.5 24` at zoom 8.6: the line must continue east of 20°E along Sørøya and Magerøya and must not stop at
+   the 20°E meridian (in 0.3.0 it did, although the tile was computed). If a part is still missing, send the
+   `Coastal line:` lines of the log: they say where each cell path ended up and whether Noesis counts it visible.
+3. **Measure:** with the map's scale bar, coast to line ≈ 12 nm (east–west distances on the map are shorter at high
+   latitude: the map is plate carrée). Measured in the game with 0.3.0: median 12.0 nm, middle half 11.3–12.5.
+4. **Zoom out** until the line would crowd the coast: it goes; zoom in again: back, finer. Line width stays the same.
+5. **Pan along the coast:** new tiles come in without stutter; no gaps where cells and tiles meet.
+6. **The Baltic and the Black Sea** have lines (seas the 3′ grid may cut off); the Caspian has none.
+7. Config 3, 6, 0 – applied at once; Borders layer off (Layers menu) – the line goes too; night theme: light blue.
+8. **Opacity** is in the brush now: the line looks the same as before with `Opacity = 0.85`, and changing `Opacity`
+   in the config changes it at once.
+
+### Result 0.3.0, 2026-10-24 (in the game, Shot Director)
+
+Median 12.0 nm from the drawn coast (middle half 11.3–12.5); islands ringed; Black Sea, Azov and Marmara have lines,
+the Caspian none; gone at a 60° view, back at 32°; 3 / 6 / 0 / 12 nm apply at once; Layers menu entry removes it with
+the borders; night colours; no frame-rate change (about 135 FPS with and without). **Bug:** at some positions the
+tiles east of 20°E were not drawn (70.3°N 19.8°E and 70.5°N 24°E at zoom 8.6; fine at zoom 8 and at 69.9°N) –
+reworked in 0.3.1, to be checked in the game.
 
 ## 0.2.0 – Borders (first build)
 

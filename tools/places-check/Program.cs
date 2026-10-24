@@ -107,7 +107,8 @@ internal static class Program
         // then x,y pairs.
         if (sea != null)
         {
-            int wl = SeaLimits.LevelFor(1.0 / dpp), pieces = 0, points = 0;
+            int wl = SeaLimits.LevelFor(1.0 / dpp), pieces = 0, points = 0, outside = 0, cellsTouched = 0;
+            var cellSet = new HashSet<(int, int)>();
             var timer = System.Diagnostics.Stopwatch.StartNew();
             int tx0 = (int)Math.Floor((west + 180) / BorderData.Tile), tx1 = (int)Math.Floor((west + dpp * width + 180) / BorderData.Tile);
             int ty0 = Math.Max(0, (int)Math.Floor((north - span + 90) / BorderData.Tile)), ty1 = Math.Min(17, (int)Math.Floor((north + 90) / BorderData.Tile));
@@ -121,8 +122,18 @@ internal static class Program
                     tiles++;
                     points += tile.Points;
                     double shift = (tx - wrapped) * BorderData.Tile;
-                    foreach (float[] line in tile.Levels[wl])
+                    foreach (SeaLimitPiece piece in tile.Levels[wl])
                     {
+                        float[] line = piece.Points;
+                        // Every point of a piece lies in its cell (up to a grid step: the ends can overshoot a hair).
+                        double cw = piece.Cx * SeaLimits.CellDegrees - 180.0, cs = piece.Cy * SeaLimits.CellDegrees - 90.0;
+                        for (int k = 0; k < line.Length; k += 2)
+                        {
+                            if (line[k] < cw - 0.02 || line[k] > cw + SeaLimits.CellDegrees + 0.02 || line[k + 1] < cs - 0.02 || line[k + 1] > cs + SeaLimits.CellDegrees + 0.02)
+                                outside++;
+                        }
+                        if (cellSet.Add((piece.Cx, piece.Cy)))
+                            cellsTouched++;
                         var xy = new List<string>();
                         for (int k = 0; k < line.Length; k += 2)
                             xy.Add(((line[k] + shift - west) / dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((north - line[k + 1]) / dpp).ToString("0.0", CultureInfo.InvariantCulture));
@@ -131,7 +142,7 @@ internal static class Program
                     }
                 }
             }
-            Console.WriteLine($"Waters {waters} nm: {tiles} tiles in {timer.ElapsedMilliseconds} ms, {points} points at full detail, {pieces} lines at level {wl}");
+            Console.WriteLine($"Waters {waters} nm: {tiles} tiles in {timer.ElapsedMilliseconds} ms, {points} points at full detail, {pieces} pieces in {cellsTouched} cells at level {wl}, points outside their cell: {outside}");
         }
         int level = borders.LevelFor(1.0 / dpp), lineCount = 0;
         foreach (BorderPiece piece in borders.Pieces)

@@ -1,12 +1,52 @@
 # Sea Power Borders
 
 > **Status: in development.** Cities and naval bases (0.1.0) and national borders (0.2.0), both tested in the game
-> with a 1985 and a 1991 mission, and territorial waters (0.3.0, checked offline, not yet in the game) are in;
-> country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
+> with a 1985 and a 1991 mission, and an optional coastal distance line (0.3.x, tested in the game, being reworked)
+> are in; country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
 national borders, cities and naval bases **of the mission's date** on the tactical map. The stock map shows
 coastlines only.
+
+## Read this first: what the lines are and what they are not
+
+**The mod only draws on the map. It changes nothing in the game or in any mission** – no rules of engagement, no
+triggers, no zones, no scoring, nothing about what units see or do. But what it draws is a **reference map**, and
+**it is not the rules of your mission**:
+
+- **Missions set their own areas and rules**, and they often differ from real geography. *Northern Vigil*, for
+  example, announces "weapons free" when two Soviet vessels enter its own **10 nm circle** around a point (the
+  mission asks for it to be displayed; the game's *Map Layers → On Map Areas* is where such areas show), not when
+  they cross the coast or a border. *Don't Mess With Texas* fails the
+  mission for attacking an airbase; *Operation Trident* has an exclusion zone off Karachi. In missions that say
+  "don't escalate" or "hold fire", **follow the briefing and the mission's own map areas, never a line from this
+  mod** – a ship crossing a border or the coastal line drawn here is not a violation in the game unless the mission
+  says so.
+- **Borders** are Natural Earth's present-day de-facto lines with date rules: approximate, simplified, drawn as
+  Natural Earth draws disputed ones. They are land borders only – **no sea borders, no airspace, no zones**. The
+  Berlin Wall and the Vietnam DMZ are hand-drawn and only approximate.
+- **The coastal distance line** (off by default) is **one distance from the game's own coastline, the same for every
+  country**. It is **not any state's territorial sea**: in 1985 Norway claimed 4 nm, the United States and the United
+  Kingdom 3, Greece and Turkey 6 in the Aegean, the Soviet Union 12, Libya claimed the whole Gulf of Sidra – and
+  states draw their limits from baselines across bays and fjords, not from the shore.
+- **Cities, capitals and bases** come from the game's own lists plus public data; names and capitals follow the
+  mission's date. A base on the map doesn't mean the mission models it, and the labels are public Cold War
+  locations, **not intelligence about the mission's forces** – units and contacts are exactly as the game shows them.
+
+Where the data comes from:
+
+| What | Source |
+| --- | --- |
+| Land borders | [Natural Earth](https://www.naturalearthdata.com/) 1:10m boundary lines, public domain (release 5.1.2) |
+| Date rules (which borders existed when) | the author's rules in `mod/borders/eras.csv` |
+| Inner-German border, North/South Yemen, West Berlin | Natural Earth's state lines (the old Länder, today's governorates) |
+| Berlin Wall, Vietnam DMZ | drawn by hand in `tools/borders-data/extra.csv`, approximate |
+| Coastal distance line | computed in the game from its own 3′ world grid; nothing of the game's terrain is shipped |
+| Cities, ports, airfields | the game's own campaign lists, read from your install at mission start |
+| More cities, capitals | Natural Earth populated places, public domain – **today's populations**, so the ranking of cities of 1985 is not exact |
+| Naval bases with side and years | the author's list, `mod/places/naval_bases.csv`, approximate positions |
+
+Made with Natural Earth. Free vector and raster map data at naturalearthdata.com.
 
 ## Borders
 
@@ -20,9 +60,9 @@ A **Borders** entry in the map's Layers menu (or **Shift+F7**):
 - Borders solid; disputed borders, lines of control (Korea, Kashmir, the Golan, Cyprus) and lease limits
   (Guantánamo, Baikonur) dashed.
 - The same width on screen at every zoom, the detail following the zoom; light lines on the night theme.
-- **Territorial waters:** a dashed blue line 12 nm off the coast (3 or 6 nm in the config, or none), once zoomed in
-  far enough that it stands clear of the coast – around islands too, merging where coasts are less than twice the
-  distance apart.
+- **Coastal distance line** (optional, off by default – see above, it is *not* a territorial limit): a dashed blue
+  line 3, 6 or 12 nm off the coast as the game's map draws it, once zoomed in far enough that it stands clear of
+  the coast – around islands too, merging where coasts are less than twice the distance apart.
 
 Where the lines come from:
 
@@ -36,12 +76,13 @@ Where the lines come from:
    Natural Earth's state lines (the old Länder against the new ones; today's Yemeni governorates on either side),
    the Berlin Wall and the Vietnam DMZ hand-drawn in `tools/borders-data/extra.csv` (approximate), West Berlin's outer
    boundary from Natural Earth's state line around Berlin.
-4. **Territorial waters from the game's own coast**, worked out in the game, not shipped: the 3′ world grid behind
-   the zoomed-out map (`terrain/data/lowres.raw`) is read once on a worker thread and flooded from points in the
-   oceans and their seas, so lakes and dry land below sea level (the Caspian, the Dead Sea) get no line. For each
+4. **The coastal distance line from the game's own coast**, worked out in the game, not shipped: the 3′ world grid
+   behind the zoomed-out map (`terrain/data/lowres.raw`) is read once on a worker thread and flooded from points in
+   the oceans and their seas, so lakes and dry land below sea level (the Caspian, the Dead Sea) get no line. For each
    10° tile in view, the distance to the nearest land on a grid four times finer (land where the map draws it) by an
    exact Euclidean distance transform with the east–west spacing of each row's latitude, then marching squares at
-   the distance (`Borders/SeaMask.cs`, `Borders/SeaLimits.cs`; about 30 ms a tile). Measured from the coast as the
+   the distance, the line cut into 2.5° cells (`Borders/SeaMask.cs`, `Borders/SeaLimits.cs`; about 60 ms a tile).
+   Checked in the game against its scale bar: a median 12.0 nm from the drawn coast. Measured from the coast as the
    game has it, not from the straight baselines states draw across bays and fjords, and the same breadth for every
    state.
 
@@ -50,10 +91,11 @@ The map places each by its tile's bounding box on every pan and zoom (and wraps 
 degrees from the tile's corner with a scale transform set from the map's `ViewportChanged`, so the stroke keeps its
 width (`Map/BorderLines.cs`).
 
-Territorial waters in a second panel below the borders, the same way, one path per tile as the tiles come in.
+The coastal distance line is in a second panel below the borders, the same way, one small path per 2.5° cell as the
+tiles come in.
 
 Config `BepInEx/config/dev.sewerlabs.seapowerborders.cfg`, section "3. Borders": toggle key, era (`MissionDate` /
-`Today`), disputed lines, line width, opacity, territorial waters (0 / 3 / 6 / 12 nm).
+`Today`), disputed lines, line width, opacity, coastal distance line (0 = off, 3 / 6 / 12 nm).
 
 ## Cities and bases
 
@@ -118,7 +160,7 @@ python -I tools/borders-data/build.py tools/borders-data/input tools/borders-dat
 ```
 
 Offline check of the places and borders of a date against your game files, and a picture of the labels and lines a
-view would show (`--era Today` for today's borders, `--waters 12` for territorial waters):
+view would show (`--era Today` for today's borders, `--waters 12` for the coastal distance line):
 
 ```bash
 dotnet run --project tools/places-check -c Release -- --date 1985-06-26 --find Leningrad
@@ -132,7 +174,7 @@ src/SeaPowerBorders/
   AtlasHost.cs        per-frame driver: Layers entries, toggle keys, the mission's places and borders, every map's layers
   LayerEntry.cs       an entry in the map's Layers menu ("Borders", "Cities and bases")
   Patches.cs          mission start/end hooks, the late map hook
-  Borders/            the border lines (BorderData), which ones a date has (BorderEras), territorial waters
+  Borders/            the border lines (BorderData), which ones a date has (BorderEras), the coastal distance line
                       (SeaMask, SeaLimits, SeaLimitCache)
   Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas)
   Map/                lines in the map (BorderLines), labels (CityLabels), which ones show (LabelPicker), symbols

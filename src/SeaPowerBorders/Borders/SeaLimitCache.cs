@@ -81,7 +81,7 @@ internal sealed class SeaLimitCache
             }
             catch (Exception ex)
             {
-                done[key] = new SeaLimitTile { TileX = key.x, TileY = key.y, Levels = Array.ConvertAll(SeaLimits.Tolerances, _ => new List<float[]>()) };
+                done[key] = new SeaLimitTile { TileX = key.x, TileY = key.y, Levels = Array.ConvertAll(SeaLimits.Tolerances, _ => new List<SeaLimitPiece>()) };
                 log.Enqueue($"Territorial waters failed for tile {key.x},{key.y}: {ex}");
             }
         }

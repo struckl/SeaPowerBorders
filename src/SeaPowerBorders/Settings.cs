@@ -30,7 +30,7 @@ internal static class Settings
     public static ConfigEntry<bool> DisputedLines;
     public static ConfigEntry<float> LineWidth;
     public static ConfigEntry<float> LineOpacity;
-    public static ConfigEntry<int> TerritorialWaters;
+    public static ConfigEntry<int> CoastalLine;
 
     /// <summary>Bumped on every config change, so the labels and lines are made again.</summary>
     public static int Version { get; private set; }
@@ -74,10 +74,12 @@ internal static class Settings
             new ConfigDescription("Width of the border lines on screen.", new AcceptableValueRange<float>(0.5f, 3f)));
         LineOpacity = file.Bind("3. Borders", "Opacity", 0.85f,
             new ConfigDescription("How strongly the border lines show.", new AcceptableValueRange<float>(0.2f, 1f)));
-        TerritorialWaters = file.Bind("3. Borders", "Territorial waters", 12,
+        CoastalLine = file.Bind("3. Borders", "Coastal distance line (nm)", 0,
             new ConfigDescription("A dashed line this many nautical miles off the coast as the game's map draws it, once " +
-                                  "zoomed in (0 = none). Most states claimed 12 nm in the Cold War; the US and the UK " +
-                                  "3 nm until 1987–88, Greece and Turkey 6 nm in the Aegean.",
+                                  "zoomed in (0 = off). A reference distance only, the same for every country: NOT any " +
+                                  "state's legal territorial sea (in 1985 Norway claimed 4 nm, the US and UK 3, Greece and " +
+                                  "Turkey 6 in the Aegean, the Soviet Union 12) and NOT a zone of any mission - missions " +
+                                  "set their own areas and rules (map menu > Map Layers > On Map Areas, and the briefing).",
                                   new AcceptableValueList<int>(0, 3, 6, 12)));
 
         // Turning a layer on and off is not a reason to make the labels and lines again.

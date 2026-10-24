@@ -1,7 +1,7 @@
 # Build plan
 
 > **Built:** cities and bases (0.1.0), the land borders of the mission's date (0.2.0, steps 1–4 of the order of
-> work below) and territorial waters (0.3.0, step 5) - see the README. **Still to build:** country names (step 6).
+> work below) and an optional coastal distance line (0.3.x, step 5) - see the README. **Still to build:** country names (step 6).
 > Territorial waters differ from the plan below: from the 3′ world grid everywhere (read from the file on a worker
 > thread, sea flooded from the oceans) rather than the 30″ DEM, which the game only has loaded around the mission
 > and only lends out on the main thread; per 10° tile as the map shows it, not once for the mission area; 0 / 3 / 6
