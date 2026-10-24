@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+
+# Release staging (tools/package.ps1)
+dist/
+
+# Offline preview renders
+/*.png
+
+# Local
+.env
+.claude/
+
+# Natural Earth downloads for the data tool
+tools/borders-data/input/
