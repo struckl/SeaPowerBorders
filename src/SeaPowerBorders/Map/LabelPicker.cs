@@ -14,10 +14,21 @@ internal enum Density { Fewer, Normal, More }
 internal static class LabelPicker
 {
     /// <summary>View height in degrees up to which a rank shows (rank 0 always).</summary>
-    private static readonly double[] RankHeights = { double.MaxValue, 70, 25, 9 };
+    private static readonly double[] RankHeights = { double.MaxValue, 70, 25, 14 };
     public static readonly float[] FontSizes = { 13f, 12f, 11f, 10f };
     private const int MaxLabels = 450;
     private const float Cell = 64f;
+
+    /// <summary>Room a label keeps free around it, in its font size across and down.</summary>
+    private const float GapAcross = 0.6f, GapDown = 0.2f;
+
+    /// <summary>
+    /// Room the small places (rank 2 and 3) keep from each other: a crowded region (the North China Plain, the Ruhr)
+    /// then shows its big places and a few towns instead of a carpet of names, while a sparse one keeps its towns.
+    /// Natural Earth counts Chinese cities by prefecture, so China alone has more places over 750 000 people than all
+    /// of Europe.
+    /// </summary>
+    private const float CrowdAcross = 3f, CrowdDown = 1f;
 
     /// <summary>
     /// Most important first: rank, then capitals, then the bigger cities, then naval bases (a base next to a big
@@ -66,6 +77,7 @@ internal static class LabelPicker
     {
         int maxRank = MaxRank(viewHeight, density);
         var occupied = new Dictionary<long, List<(float x, float y, float w, float h)>>();
+        var small = new Dictionary<long, List<(float x, float y, float w, float h)>>();
         var picked = new Dictionary<Place, bool>();
         foreach (Place p in ordered)
         {
@@ -81,16 +93,32 @@ internal static class LabelPicker
             var right = (x: x - icon / 2f - 2f, y: y - font * 0.7f - 1f, w: width, h: font * 1.4f + 2f);
             var left = (x: x + icon / 2f + 2f - width, y: right.y, w: width, h: right.h);
             bool onLeft = false;
-            if (Overlaps(occupied, right))
+            bool crowd = p.Rank >= 2;
+            if (Taken(occupied, small, right, font, crowd))
             {
-                if (Overlaps(occupied, left))
+                if (Taken(occupied, small, left, font, crowd))
                     continue;
                 onLeft = true;
             }
             Occupy(occupied, onLeft ? left : right);
+            if (crowd)
+                Occupy(small, onLeft ? left : right);
             picked[p] = onLeft;
         }
         return picked;
+    }
+
+    private static bool Taken(Dictionary<long, List<(float x, float y, float w, float h)>> occupied,
+                              Dictionary<long, List<(float x, float y, float w, float h)>> small,
+                              (float x, float y, float w, float h) box, float font, bool crowd)
+    {
+        return Overlaps(occupied, Grow(box, font * GapAcross, font * GapDown))
+               || crowd && Overlaps(small, Grow(box, font * CrowdAcross, font * CrowdDown));
+    }
+
+    private static (float x, float y, float w, float h) Grow((float x, float y, float w, float h) box, float across, float down)
+    {
+        return (box.x - across, box.y - down, box.w + 2f * across, box.h + 2f * down);
     }
 
     private static bool Inside(Place p, (double west, double south, double east, double north) a)

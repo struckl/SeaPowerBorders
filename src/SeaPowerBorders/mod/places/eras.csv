@@ -16,6 +16,7 @@ rename;*;Brest Fr;Brest;;
 rename;*;Nurnberg;Nuremberg;;
 rename;*;København;Copenhagen;;
 rename;CHN;Shenyeng;Shenyang;;
+rename;*;Mildenahll;RAF Mildenhall;;
 
 # --- Names of the time -------------------------------------------------------------------------------------------
 # The game's lists use the Cold War name for these; later missions get today's.
