@@ -29,3 +29,19 @@ logged).
 
 Worth reporting: a naval base in the wrong place or with the wrong side, a name of the wrong time, labels drawn over
 the units, a stutter when zooming (the pick is logged with verbose log on).
+
+### Result 2026-10-24 (Claude, with the Shot Director dev tool from SeaPowerTopo)
+
+- **Trollfjorden (1985-02-26):** `1619 places for 1985-02-26 (494 from the game's lists, 90 naval bases, 177
+  capitals)`. Steps 1–7 as expected: East Berlin and Bonn capitals, Kiev not; Kola bases red, NATO bases blue; names
+  left of their symbol where the right is taken; units on top; F7 and the Layers entry; day and night palettes.
+- **Strawberries Can Kill (Red Side), 1991-06-03:** `1617 places … 87 naval bases, 176 capitals`. Berlin capital (not
+  East), Bonn no longer, Chemnitz, Rostock and Peenemünde no longer naval bases, Świnoujście and Gdynia still red
+  (until July 1991), Leningrad (renamed only in September), Kiev and Minsk plain cities, Nizhny Novgorod (renamed back
+  in 1990).
+- No `[Error  :SeaPowerBorders]` lines. Found and fixed: the North China Plain was a carpet of names at a 25° view and
+  East Germany empty at 9° (label spacing for small places, rank 3 from 14°), the game's "Mildenahll" spelling.
+- Not checked: step 9 (config changes while running).
+- Test tool, not the mod: loading a mission from inside a running one, or within seconds of the main menu appearing,
+  breaks the game (`Gameobject is not a root in a scene`, a `NullReferenceException` in `SeaPower.Utils.GetSOP`).
+  Load from the main menu, once it has settled.

@@ -1,7 +1,7 @@
 # Sea Power Borders
 
-> **Status: in development.** Cities and naval bases are in (0.1.0); national borders come next – see
-> [docs/plan.md](docs/plan.md).
+> **Status: in development.** Cities and naval bases are in (0.1.0, tested in the game with a 1985 and a 1991
+> mission); national borders come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
 cities, naval bases and (next) the national borders **of the mission's date** on the tactical map. The stock map
@@ -42,7 +42,9 @@ How: the labels are children of a `MapControl.MapPanel` laid into the map contro
 map itself puts each at its latitude and longitude on every pan and zoom, below its drag surface and the units, so
 clicks go through. Which labels show is picked when the zoom changes or a pan has gone a quarter of the view
 (`Map/LabelPicker.cs`): within the view and half its size around it, by rank, capitals, population, then naval
-bases, each where its box doesn't overlap one already placed.
+bases, each where its box doesn't overlap one already placed. Small places also keep three font sizes across and one
+down from each other, so a crowded region (the North China Plain, the Ruhr) shows its big places and a few towns
+instead of a carpet of names, while a sparse one (East Germany) keeps its towns.
 
 Config `BepInEx/config/dev.sewerlabs.seapowerborders.cfg`, section "2. Cities": toggle key, density (Fewer / Normal /
 More), naval bases, air bases, civil airports, label size.
@@ -86,7 +88,8 @@ src/SeaPowerBorders/
 tools/cities-data/    Natural Earth -> world.csv
 tools/places-check/   offline check and label picture
 docs/plan.md          the borders, still to build
-docs/testing.md       in-game test checklist
+docs/testing.md       in-game test checklist and results
+workshop/screenshots/ in-game screenshots for the Workshop page
 ```
 
 ## Related
