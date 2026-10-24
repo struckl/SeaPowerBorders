@@ -187,6 +187,9 @@ tools/cities-data/    Natural Earth -> world.csv
 tools/places-check/   offline check, label and border picture
 docs/plan.md          build plan; country names still to build
 docs/testing.md       in-game test checklist and results
+docs/workshop.md      how to release on the Steam Workshop (and what every public text must say)
+tools/package.ps1     stage / install the release folder for the Workshop upload
+workshop/             description.bbcode, changenote.txt, preview.jpg, promotion.md (Reddit, forum, Discord texts)
 workshop/screenshots/ in-game screenshots for the Workshop page
 ```
 

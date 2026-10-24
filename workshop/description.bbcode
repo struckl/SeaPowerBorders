@@ -1,0 +1,48 @@
+[h1]Borders[/h1]
+National borders, capitals, cities and naval bases of the mission's date on the tactical map – the Soviet Union, East and West Germany, Yugoslavia, Leningrad and Bonn, Holy Loch and Cam Ranh Bay. The stock map shows coastlines only.
+
+[b]This mod only draws on the map. It changes nothing in the game or in any mission – and what it draws is a reference map, not the rules of your mission. Please read "Read this first" below.[/b]
+
+[list]
+[*][b]Land borders as they were on the mission's date[/b]: the Soviet Union whole (the Baltic states apart from September 1991, the other republics from December 1991), the inner-German border and West Berlin until October 1990, Yugoslavia until 1991–92, Czechoslovakia until 1993, North and South Yemen until May 1990, the Vietnam DMZ until 1976; Eritrea, South Sudan, East Timor, Hong Kong and Macau by their years. Disputed borders and lines of control (Korea, Kashmir, the Golan, Cyprus) are dashed.
+[*][b]Cities and bases[/b]: capitals of the time (East Berlin and Bonn before October 1990; the Soviet republics' capitals, Kiev and Riga among them, are not national capitals until the Union ends), cities, naval bases with an anchor in the colour of their side – blue for NATO and its allies, red for the Warsaw Pact – and air bases. Names follow the date: Leningrad, Gorky, Karl-Marx-Stadt, Bombay, Peking before 1979. Bases only in the years they were used (Holy Loch until 1992, Cam Ranh Bay Soviet 1979–2002, Kings Bay from 1979).
+[*][b]Optional coastal distance line[/b] (off by default): a dashed line 3, 6 or 12 nm off the coast as the game's map draws it, around islands too.
+[*]The same line width at every zoom, names that never overlap, a light colour set for the night map. Unit symbols, waypoints and the map's own labels stay on top.
+[/list]
+
+[h2]Read this first – what the lines are and are not[/h2]
+[list]
+[*][b]The mod changes nothing in the game or in any mission.[/b] No rules of engagement, no triggers, no zones, no scoring – nothing about what your units see or do. It only draws.
+[*][b]Missions set their own areas and rules, and they often differ from real geography.[/b] [i]Northern Vigil[/i], for example, announces "weapons free" when two Soviet vessels enter its own 10 nm circle around a point – not when they cross the coast or a border. [i]Don't Mess With Texas[/i] fails the mission for attacking an airbase. [i]Operation Trident[/i] has an exclusion zone off Karachi. In missions that say "don't escalate" or "hold fire", [b]follow the briefing and the mission's own map areas (the game's Map Layers → On Map Areas), never a line from this mod.[/b] A ship crossing a border or the distance line drawn here is not a violation in the game unless the mission says so – and the other way round.
+[*][b]Borders[/b] are present-day lines with date rules: approximate and simplified, drawn as Natural Earth draws disputed ones. Land borders only – [b]no sea borders, no airspace, no zones[/b]. The Berlin Wall and the Vietnam DMZ are hand-drawn and only approximate.
+[*][b]The coastal distance line is not a territorial limit.[/b] It is one distance from the game's own coastline, the same for every country. In 1985 Norway claimed 4 nm, the United States and the United Kingdom 3, Greece and Turkey 6 in the Aegean, the Soviet Union 12, Libya the whole Gulf of Sidra – and states measure from baselines across bays and fjords, not from the shore. Use it as a ruler, not as a border.
+[*][b]Cities, capitals and bases[/b] come from the game's own lists plus public data. A base on the map doesn't mean the mission models it, and the labels are public Cold War locations – [b]not intelligence about the mission's forces[/b]. Units and contacts are exactly as the game shows them.
+[/list]
+
+[h2]Where the data comes from[/h2]
+[list]
+[*][b]Land borders[/b]: [url=https://www.naturalearthdata.com/]Natural Earth[/url] 1:10m boundary lines, public domain (release 5.1.2). The date rules (which borders existed when) are the author's own.
+[*][b]Inner-German border, North/South Yemen, West Berlin[/b]: from Natural Earth's state lines (the old Länder, today's governorates). [b]Berlin Wall and Vietnam DMZ[/b]: drawn by hand, approximate.
+[*][b]Cities, ports and airfields[/b]: the game's own campaign lists, read from your install when a mission starts – nothing of the game's data is copied or shipped.
+[*][b]More cities and capitals[/b]: Natural Earth populated places, public domain. They carry today's populations, so the ranking of the cities of 1985 is not exact.
+[*][b]Naval bases with side and years[/b]: the author's own list, approximate positions.
+[*][b]Coastal distance line[/b]: computed in the game from the game's own world grid; nothing of the game's terrain is shipped.
+[/list]
+Made with Natural Earth. Free vector and raster map data at naturalearthdata.com.
+
+[h2]How to use[/h2]
+Open the map in a mission. Switch the layers in the map menu (≡) → Map Layers → [b]Borders[/b] and [b]Cities and bases[/b], or with [b]Shift+F7[/b] (borders) and [b]F7[/b] (cities). The coastal distance line is off until you set [i]Coastal distance line (nm)[/i] to 3, 6 or 12 in the config.
+
+[h2]Requirements[/h2]
+[b]Anchor Chain[/b] is required: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3380210757]subscribe[/url] and follow its [url=https://seapower-modders.github.io/AnchorChain/install-anchor-chain.html]installation guide[/url] (one manual step: copy its preloader into the game folder).
+
+[h2]Settings[/h2]
+[i]<Sea Power>\BepInEx\config\dev.sewerlabs.seapowerborders.cfg[/i] – for borders: toggle key, era (the mission's date or today's borders), disputed lines, line width, opacity, coastal distance line; for cities: toggle key, density, naval bases, air bases, civil airports, label size.
+
+[h2]Compatibility[/h2]
+Sea Power 0.8.x. Tested with Topographic Map, Better TacMap, Rats Radio and Rats Pop-Out Windows loaded. No game files are changed; if a game update breaks one of the mod's hooks, the mod says so in the log and stays out of the way.
+
+[h2]Problems?[/h2]
+Please post the file [i]<Sea Power>\BepInEx\LogOutput.log[/i] with your report, and tell me the mission and the date it starts on.
+
+Source code (MIT): [url=https://github.com/struckl/SeaPowerBorders]github.com/struckl/SeaPowerBorders[/url]

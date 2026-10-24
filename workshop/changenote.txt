@@ -1,0 +1,1 @@
+1.0.0: First release. National borders of the mission's date (USSR, two Germanys and West Berlin, Yugoslavia and more), capitals, cities and naval bases by date, optional coastal distance line. Display only: missions keep their own zones and rules - the lines are a reference, not the mission's rules.
