@@ -1,5 +1,7 @@
 using System;
 using AnchorChain;
+using HarmonyLib;
+using UnityEngine;
 
 namespace SeaPowerBorders;
 
@@ -7,14 +9,14 @@ namespace SeaPowerBorders;
 /// Entry point. Loaded by Anchor Chain (the Sea Power community chainloader on top of BepInEx 5), which scans
 /// every mod folder — Steam Workshop items and <c>StreamingAssets/&lt;folder&gt;</c> — for classes implementing
 /// <see cref="IAnchorChainMod"/>.
-/// <para>Nothing is drawn yet: the build plan is in <c>docs/plan.md</c>.</para>
+/// <para>Cities and naval bases are in; the borders are next (<c>docs/plan.md</c>).</para>
 /// </summary>
 [ACPlugin(Guid, Name, Version)]
 public class Plugin : IAnchorChainMod
 {
     public const string Guid = "dev.sewerlabs.seapowerborders";
     public const string Name = "Sea Power Borders";
-    public const string Version = "0.0.1";
+    public const string Version = "0.1.0";
 
     // Anchor Chain loads assemblies with Assembly.LoadFile, so the same DLL found in two folders would be two
     // separate assemblies with separate statics. The marker lives on the AppDomain so only the first one starts.
@@ -37,7 +39,17 @@ public class Plugin : IAnchorChainMod
                 ModLog.Info("Disabled in config.");
                 return;
             }
-            ModLog.Info($"{Name} {Version} loaded - in development, nothing is drawn yet.");
+
+            // Only the hooks on plain game classes now; the map hook follows once NoesisGUI runs (see Patches).
+            if (!Patches.ApplyGameHooks(new Harmony(Guid)))
+                return;
+
+            var host = new GameObject("SeaPowerBorders");
+            UnityEngine.Object.DontDestroyOnLoad(host);
+            host.hideFlags = HideFlags.HideAndDontSave;
+            host.AddComponent<AtlasHost>();
+
+            ModLog.Info($"{Name} {Version} loaded.");
         }
         catch (Exception ex)
         {

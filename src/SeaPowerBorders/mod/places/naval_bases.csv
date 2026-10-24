@@ -1,0 +1,91 @@
+# Cold War naval bases the game's own port lists don't mark (those come from the game and win where both have one).
+# Positions are approximate (a few km). side: West = US and its allies, East = Soviet Union and its allies, Other.
+# since / until (YYYY-MM-DD, empty = open): the years the base was used by that side. rank 0 = main fleet bases.
+name;lat;lon;side;since;until;rank
+
+# --- Soviet Union and Warsaw Pact ---------------------------------------------------------------------------------
+Severomorsk;69.073;33.417;East;;;0
+Polyarny;69.198;33.456;East;;;1
+Gadzhiyevo;69.255;33.336;East;;;1
+Zapadnaya Litsa;69.430;32.430;East;;;1
+Vidyayevo;69.323;32.810;East;;;1
+Gremikha;68.067;39.460;East;;;1
+Severodvinsk;64.567;39.830;East;;;1
+Kronstadt;59.990;29.770;East;;;1
+Baltiysk;54.650;19.910;East;;;0
+Liepāja;56.530;21.000;East;;1994-08-31;1
+Paldiski;59.350;24.050;East;;1994-08-30;1
+Sevastopol;44.616;33.525;East;;;0
+Poti;42.150;41.670;East;;1992-01-01;1
+Vladivostok;43.115;131.885;East;;;0
+Petropavlovsk;53.020;158.650;East;;;0
+Rybachiy;52.930;158.400;East;;;1
+Sovetskaya Gavan;48.970;140.280;East;;;1
+Cam Ranh Bay;11.900;109.220;East;1979-05-01;2002-05-02;1
+Tartus;34.890;35.870;East;1971-01-01;;1
+Berbera;10.440;45.020;East;1972-01-01;1977-11-13;1
+Aden;12.790;44.980;East;1978-01-01;1990-05-22;1
+Cienfuegos;22.130;-80.450;East;1970-01-01;1991-12-26;1
+Świnoujście;53.910;14.250;East;;1991-07-01;1
+Gdynia;54.530;18.540;East;;1991-07-01;1
+Rostock;54.090;12.140;East;;1990-10-03;1
+Peenemünde;54.140;13.770;East;;1990-10-03;1
+Varna;43.200;27.920;East;;1991-07-01;1
+Constanța;44.170;28.640;East;;1991-07-01;1
+
+# --- United States and NATO ---------------------------------------------------------------------------------------
+Norfolk;36.950;-76.330;West;;;0
+Kings Bay;30.800;-81.520;West;1979-07-01;;1
+Charleston;32.870;-79.950;West;;;1
+Holy Loch;55.990;-4.930;West;1961-03-03;1992-03-31;1
+Faslane;56.070;-4.820;West;;;0
+Rosyth;56.030;-3.430;West;;;1
+Gibraltar;36.140;-5.350;West;;;0
+Brest;48.380;-4.500;West;;;0
+Île Longue;48.310;-4.510;West;1970-01-01;;1
+Toulon;43.110;5.930;West;;;0
+Cherbourg;49.650;-1.630;West;;;1
+Lorient;47.730;-3.370;West;;;1
+Kiel;54.330;10.140;West;;;0
+Wilhelmshaven;53.520;8.130;West;;;1
+Eckernförde;54.470;9.840;West;;;1
+Den Helder;52.960;4.760;West;;;1
+Zeebrugge;51.330;3.200;West;;;1
+Haakonsvern;60.330;5.230;West;;;1
+Olavsvern;69.570;19.040;West;1967-01-01;2009-01-01;1
+Frederikshavn;57.440;10.540;West;;;1
+Holmen;55.690;12.600;West;;;1
+Keflavík;63.980;-22.610;West;;2006-09-30;0
+Halifax;44.650;-63.570;West;;;1
+Esquimalt;48.430;-123.430;West;;;1
+La Maddalena;41.210;9.400;West;1972-01-01;2008-01-25;1
+Naples;40.840;14.250;West;;;0
+Gaeta;41.210;13.570;West;1967-01-01;;1
+Taranto;40.470;17.240;West;;;1
+La Spezia;44.100;9.820;West;;;1
+Souda Bay;35.490;24.120;West;;;1
+Salamis;37.950;23.500;West;;;1
+Gölcük;40.720;29.820;West;;;1
+San Diego;32.680;-117.130;West;;;0
+Bangor;47.730;-122.720;West;1977-01-01;;1
+Bremerton;47.560;-122.640;West;;;1
+Alameda;37.780;-122.300;West;;1997-04-25;1
+Pearl Harbor;21.350;-157.950;West;;;0
+Apra Harbor;13.440;144.650;West;;;1
+Yokosuka;35.290;139.670;West;;;0
+Sasebo;33.160;129.720;West;;;1
+Subic Bay;14.800;120.270;West;;1992-11-24;0
+Chinhae;35.140;128.660;West;;;1
+Diego Garcia;-7.320;72.420;West;1971-03-01;;0
+Bahrain;26.210;50.610;West;;;1
+Guantánamo Bay;19.900;-75.130;West;;;1
+Roosevelt Roads;18.240;-65.620;West;;2004-03-31;1
+Bermuda;32.360;-64.680;West;;1995-09-01;1
+
+# --- Others -------------------------------------------------------------------------------------------------------
+Karlskrona;56.160;15.590;Other;;;1
+Simonstown;-34.190;18.430;Other;;;1
+Visakhapatnam;17.690;83.290;Other;;;1
+Bandar Abbas;27.180;56.270;Other;;;1
+Qingdao;36.070;120.330;Other;;;1
+Zhanjiang;21.200;110.400;Other;;;1

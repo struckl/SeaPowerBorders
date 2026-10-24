@@ -1,5 +1,10 @@
 # Build plan
 
+> **Cities and bases are built (0.1.0)** - see the README. What follows is the plan for the **borders**, still to
+> build; the cities part reused the same pieces (the map hook, the Layers-menu entry, the mission date, Natural
+> Earth data through a small tool), and the borders layer can share the cities layer's map panel approach for
+> labels of country names.
+
 Goal: a **Borders** entry in the map's Layers menu that draws national land borders **as they were on the mission's
 date** (the Soviet Union, East and West Germany, Yugoslavia, …), a line marking **territorial waters**, and
 optionally the country names of the time. Written 2026-10-24 before anything was built; check the game version

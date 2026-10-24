@@ -16,3 +16,9 @@ dist/
 
 # Natural Earth downloads for the data tool
 tools/borders-data/input/
+
+# Natural Earth downloads for the cities data tool
+tools/cities-data/input/
+
+# places-check output
+/*.tsv

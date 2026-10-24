@@ -1,0 +1,112 @@
+# What changes with the mission's date. Dates are YYYY-MM-DD; a rule applies from `since` (empty = always before)
+# until the day before `until` (empty = still today). Country = Natural Earth's three-letter code; * = any.
+# Place names without a country (the game's own lists) match a rule by name alone.
+#
+#   rename      the place is called `value` instead of `name`
+#   capital     `name` is a national capital (marked as one) in that time
+#   notcapital  `name` is not a national capital in that time (it is today)
+#   place       an extra place: value = lat,lon,population
+#
+kind;country;name;value;since;until
+
+# --- Spellings: the game's lists and Natural Earth, made English ----------------------------------------------------
+rename;*;Ad-Dauha;Doha;;
+rename;*;Warszawa;Warsaw;;
+rename;*;Brest Fr;Brest;;
+rename;*;Nurnberg;Nuremberg;;
+rename;*;København;Copenhagen;;
+rename;CHN;Shenyeng;Shenyang;;
+
+# --- Names of the time -------------------------------------------------------------------------------------------
+# The game's lists use the Cold War name for these; later missions get today's.
+rename;*;Leningrad;St. Petersburg;1991-09-06;
+rename;*;Saigon;Ho Chi Minh City;1976-07-02;
+rename;DEU;Chemnitz;Karl-Marx-Stadt;1953-05-10;1990-06-01
+rename;BLR;Homel;Gomel;;1991-12-26
+rename;BLR;Hrodno;Grodno;;1991-12-26
+rename;RUS;St. Petersburg;Leningrad;;1991-09-06
+rename;RUS;Nizhny Novgorod;Gorky;;1990-10-22
+rename;RUS;Samara;Kuibyshev;;1991-01-25
+rename;RUS;Yekaterinburg;Sverdlovsk;;1991-09-04
+rename;RUS;Volgograd;Stalingrad;;1961-11-10
+rename;RUS;Tver;Kalinin;;1990-07-17
+rename;RUS;Izhevsk;Ustinov;1984-12-27;1987-06-19
+rename;RUS;Naberezhnyye Chelny;Brezhnev;1982-11-19;1988-01-06
+rename;UKR;Kyiv;Kiev;;1995-10-01
+rename;UKR;Kharkiv;Kharkov;;1995-10-01
+rename;UKR;Dnipro;Dnepropetrovsk;;2016-05-19
+rename;UKR;Lviv;Lvov;;1991-08-24
+rename;UKR;Zaporizhzhya;Zaporozhye;;1995-10-01
+rename;UKR;Kryvyy Rih;Krivoy Rog;;1995-10-01
+rename;UKR;Mykolayiv;Nikolayev;;1995-10-01
+rename;UKR;Luhansk;Voroshilovgrad;1970-03-05;1990-05-04
+rename;UKR;Mariupol;Zhdanov;;1989-01-13
+rename;MDA;Chișinău;Kishinev;;1991-08-27
+rename;KAZ;Almaty;Alma-Ata;;1993-01-28
+rename;KAZ;Nur-Sultan;Tselinograd;;1992-06-06
+rename;KAZ;Qaraghandy;Karaganda;;1991-12-26
+rename;KAZ;Shymkent;Chimkent;;1991-12-26
+rename;KGZ;Bishkek;Frunze;;1991-02-05
+rename;TKM;Ashgabat;Ashkhabad;;1992-01-01
+rename;DEU;Berlin;East Berlin;;1990-10-03
+rename;VNM;Ho Chi Minh City;Saigon;;1976-07-02
+rename;IND;Mumbai;Bombay;;1995-11-01
+rename;IND;Chennai;Madras;;1996-07-17
+rename;IND;Kolkata;Calcutta;;2001-01-01
+rename;IND;Bengaluru;Bangalore;;2014-11-01
+rename;BGD;Dhaka;Dacca;;1982-01-01
+rename;MMR;Yangon;Rangoon;;1989-06-18
+rename;ZWE;Harare;Salisbury;;1982-04-18
+rename;COD;Kinshasa;Léopoldville;;1966-05-02
+rename;COD;Lubumbashi;Élisabethville;;1966-05-02
+# Before 1979 the West wrote Chinese names the old way.
+rename;CHN;Beijing;Peking;;1979-01-01
+rename;CHN;Guangzhou;Canton;;1979-01-01
+rename;CHN;Nanjing;Nanking;;1979-01-01
+rename;CHN;Tianjin;Tientsin;;1979-01-01
+rename;CHN;Chongqing;Chungking;;1979-01-01
+rename;CHN;Qingdao;Tsingtao;;1979-01-01
+rename;CHN;Xiamen;Amoy;;1979-01-01
+
+# --- Capitals of the time ----------------------------------------------------------------------------------------
+# Soviet republics: capitals of a republic, not of a country, until the Soviet Union ended.
+notcapital;EST;Tallinn;;;1991-09-06
+notcapital;LVA;Riga;;;1991-09-06
+notcapital;LTU;Vilnius;;;1991-09-06
+notcapital;UKR;Kyiv;;;1991-12-26
+notcapital;BLR;Minsk;;;1991-12-26
+notcapital;MDA;Chișinău;;;1991-12-26
+notcapital;GEO;Tbilisi;;;1991-12-26
+notcapital;ARM;Yerevan;;;1991-12-26
+notcapital;AZE;Baku;;;1991-12-26
+notcapital;UZB;Tashkent;;;1991-12-26
+notcapital;TKM;Ashgabat;;;1991-12-26
+notcapital;KGZ;Bishkek;;;1991-12-26
+notcapital;TJK;Dushanbe;;;1991-12-26
+notcapital;KAZ;Nur-Sultan;;;1997-12-10
+capital;KAZ;Almaty;;1991-12-26;1997-12-10
+# Yugoslavia, Czechoslovakia and the others that came later.
+notcapital;SVN;Ljubljana;;;1991-06-25
+notcapital;HRV;Zagreb;;;1991-06-25
+notcapital;MKD;Skopje;;;1991-09-08
+notcapital;BIH;Sarajevo;;;1992-03-03
+notcapital;MNE;Podgorica;;;2006-06-03
+notcapital;KOS;Pristina;;;2008-02-17
+notcapital;SVK;Bratislava;;;1993-01-01
+notcapital;ERI;Asmara;;;1993-05-24
+notcapital;SSD;Juba;;;2011-07-09
+notcapital;TLS;Dili;;;2002-05-20
+notcapital;NAM;Windhoek;;;1990-03-21
+# Two Germanys, two Yemens.
+place;DEU;Bonn;50.7374,7.0982,290000;1949-09-07;1990-10-03
+capital;DEU;Bonn;;1949-09-07;1990-10-03
+place;DEU;West Berlin;52.5065,13.3240,1900000;1949-05-23;1990-10-03
+capital;YEM;Aden;;1967-11-30;1990-05-22
+# Capitals that moved.
+notcapital;NGA;Abuja;;;1991-12-12
+capital;NGA;Lagos;;;1991-12-12
+notcapital;CIV;Yamoussoukro;;;1983-03-21
+notcapital;MMR;Naypyidaw;;;2005-11-06
+notcapital;BRA;Brasília;;;1960-04-21
+capital;BRA;Rio de Janeiro;;;1960-04-21
+capital;VNM;Ho Chi Minh City;;1955-10-26;1975-04-30
