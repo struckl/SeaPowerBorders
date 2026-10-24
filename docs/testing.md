@@ -1,8 +1,30 @@
 # In-game test checklist
 
 Log: `E:\Games\steamapps\common\Sea Power\BepInEx\LogOutput.log`. Config:
-`BepInEx\config\dev.sewerlabs.seapowerborders.cfg` – turn on `Verbose log` for this test (every label pick is
-logged).
+`BepInEx\config\dev.sewerlabs.seapowerborders.cfg` – turn on `Verbose log` for this test (every label pick and
+border level change is logged).
+
+## 0.2.0 – Borders (first build)
+
+Load missions from the **main menu** only, once it has settled (see the 0.1.0 result below).
+
+1. **Start Sea Power.** Log: `Sea Power Borders 0.2.0 loaded.`, `Map hook in place.`
+2. **Trollfjorden (1985).** Log: `Map layer 'Borders' added to the Layers menu (#601), on.`, `… of 511 border lines
+   for 1985-02-26 with Inner-German border, North/South Yemen, West Berlin.`, `Attached to the map: border lines
+   place labels.`
+3. **Europe zoomed out:** the inner-German border and West Berlin's ring are drawn; no lines between Russia and the
+   Baltic states, Belarus or Ukraine, none inside Yugoslavia or Czechoslovakia; the Kaliningrad–Poland line is there,
+   Kaliningrad–Lithuania isn't. Lines below the city labels and the units; clicks and drags work as before.
+4. **Zoom from the whole world down to a fjord and back:** the lines keep their width; no gaps where tiles meet
+   (every 10°: 10°E, 20°E, 50°N, 60°N ...); the detail changes without a jump (log: `Borders: level …`); no stutter.
+5. **Pan across ±180°** (Bering Strait): the Alaska–Canada line moves with the map and doesn't vanish.
+6. **Layers menu → Borders** off and on, or Shift+F7 (F7 alone must still toggle only the cities).
+7. **Night theme:** light lines. Cyprus, Korea, Kashmir: dashed lines.
+8. **The 1991 mission (Strawberries Can Kill, 1991-06-03):** Germany one, Yemen one; the USSR and Yugoslavia still
+   whole.
+9. Config: `Era = Today` (all of today's borders, no inner-German border), `Line width = 2.5`, `Opacity = 0.5`,
+   `Disputed lines = false` – applied at once.
+10. With Topographic Map on as well: lines on top of its colours, both layers toggle independently.
 
 ## 0.1.0 – Cities and bases (first build)
 

@@ -1,0 +1,67 @@
+# Which of today's borders (Natural Earth, borders.bin) were not borders on a mission's date. Lines added for the
+# Cold War (inner-German border, West Berlin, North/South Yemen, Vietnam DMZ) carry their own years in borders.bin.
+#
+# union;name;country;since;until
+#   The countries of one union were one country: a border between two of its members is not drawn while both belong
+#   to it (dates YYYY-MM-DD, empty = open). Countries are Natural Earth's ADM0_A3 codes.
+# line;country;country;class;since;until
+#   Borders of that class between the two countries are drawn only from / until those dates (class: International,
+#   Indefinite, Disputed, LineOfControl, Lease, Overlay, Indeterminant, Unrecognized, or * for all).
+kind;a;b;c;d;e
+
+# --- The Soviet Union: the Baltic states from 6 September 1991, the others from 26 December 1991 ------------------
+union;USSR;EST;;1991-09-06
+union;USSR;LVA;;1991-09-06
+union;USSR;LTU;;1991-09-06
+union;USSR;RUS;;1991-12-26
+union;USSR;UKR;;1991-12-26
+union;USSR;BLR;;1991-12-26
+union;USSR;MDA;;1991-12-26
+union;USSR;GEO;;1991-12-26
+union;USSR;ARM;;1991-12-26
+union;USSR;AZE;;1991-12-26
+union;USSR;KAZ;;1991-12-26
+union;USSR;UZB;;1991-12-26
+union;USSR;TKM;;1991-12-26
+union;USSR;KGZ;;1991-12-26
+union;USSR;TJK;;1991-12-26
+# Baikonur, leased to Russia since December 1994.
+union;Kazakhstan;KAZ;;
+union;Kazakhstan;KAB;;1994-12-10
+# Crimea: the line Natural Earth marks as disputed came in 2014.
+line;RUS;UKR;Disputed;2014-03-18;
+
+# --- Yugoslavia, then Serbia and Montenegro, then Serbia with Kosovo ------------------------------------------------
+union;Yugoslavia;SVN;;1991-06-25
+union;Yugoslavia;HRV;;1991-06-25
+union;Yugoslavia;MKD;;1991-09-08
+union;Yugoslavia;BIH;;1992-03-03
+union;Yugoslavia;SRB;;2006-06-03
+union;Yugoslavia;MNE;;2006-06-03
+union;Yugoslavia;KOS;;2006-06-03
+union;Serbia;SRB;;
+union;Serbia;KOS;;2008-02-17
+
+# --- Others ---------------------------------------------------------------------------------------------------------
+union;Czechoslovakia;CZE;;1993-01-01
+union;Czechoslovakia;SVK;;1993-01-01
+union;Ethiopia;ETH;;
+union;Ethiopia;ERI;;1993-05-24
+union;Sudan;SDN;;
+union;Sudan;SDS;;2011-07-09
+union;Somalia;SOM;;
+union;Somalia;SOL;1960-07-01;1991-05-18
+# East Timor: Portuguese until 1975, annexed by Indonesia, independent 2002.
+union;Indonesia;IDN;;
+union;Indonesia;TLS;1976-07-17;2002-05-20
+# Hong Kong and Macau: British and Portuguese until handed over.
+union;China;CHN;;
+union;China;HKG;1997-07-01;
+union;China;MAC;1999-12-20;
+# Cyprus: the buffer zone and the line of control came with the ceasefire of August 1974.
+union;Cyprus;CYP;;
+union;Cyprus;CYN;;1974-08-16
+union;Cyprus;CNM;;1974-08-16
+# The West Bank: annexed by Jordan 1950-1967.
+union;Jordan;JOR;;
+union;Jordan;PSX;1950-04-24;1967-06-07

@@ -1,6 +1,7 @@
 using System.IO;
 using BepInEx;
 using BepInEx.Configuration;
+using SeaPowerBorders.Borders;
 using SeaPowerBorders.Map;
 using UnityEngine;
 
@@ -23,7 +24,14 @@ internal static class Settings
     public static ConfigEntry<bool> Airports;
     public static ConfigEntry<float> LabelSize;
 
-    /// <summary>Bumped on every config change, so the labels are made again.</summary>
+    public static ConfigEntry<bool> BordersVisible;
+    public static ConfigEntry<KeyboardShortcut> BordersKey;
+    public static ConfigEntry<BorderEra> Era;
+    public static ConfigEntry<bool> DisputedLines;
+    public static ConfigEntry<float> LineWidth;
+    public static ConfigEntry<float> LineOpacity;
+
+    /// <summary>Bumped on every config change, so the labels and lines are made again.</summary>
     public static int Version { get; private set; }
 
     public static void Init()
@@ -51,10 +59,25 @@ internal static class Settings
         LabelSize = file.Bind("2. Cities", "Label size", 1f,
             new ConfigDescription("Size of names and symbols.", new AcceptableValueRange<float>(0.7f, 1.6f)));
 
-        // Turning the layer on and off is not a reason to make the labels again.
+        BordersVisible = file.Bind("3. Borders", "Visible", true,
+            "Whether the Borders map layer is on. Written by the mod when you toggle it in the map's Layers menu or " +
+            "with the toggle key.");
+        BordersKey = file.Bind("3. Borders", "Toggle key", new KeyboardShortcut(KeyCode.F7, KeyCode.LeftShift),
+            "Turns the Borders map layer on and off (same as its entry in the map's Layers menu).");
+        Era = file.Bind("3. Borders", "Era", BorderEra.MissionDate,
+            "MissionDate: the borders of the mission's date (the Soviet Union, two Germanys, Yugoslavia ...). " +
+            "Today: today's borders.");
+        DisputedLines = file.Bind("3. Borders", "Disputed lines", true,
+            "Draw disputed borders, lines of control (Korea, Kashmir, Cyprus) and lease limits, dashed.");
+        LineWidth = file.Bind("3. Borders", "Line width", 1.3f,
+            new ConfigDescription("Width of the border lines on screen.", new AcceptableValueRange<float>(0.5f, 3f)));
+        LineOpacity = file.Bind("3. Borders", "Opacity", 0.85f,
+            new ConfigDescription("How strongly the border lines show.", new AcceptableValueRange<float>(0.2f, 1f)));
+
+        // Turning a layer on and off is not a reason to make the labels and lines again.
         file.SettingChanged += (_, e) =>
         {
-            if (e.ChangedSetting != CitiesVisible)
+            if (e.ChangedSetting != CitiesVisible && e.ChangedSetting != BordersVisible)
                 Version++;
         };
     }

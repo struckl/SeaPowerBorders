@@ -51,17 +51,7 @@ internal sealed class CityLabels
         Map = map;
         panel = new MapPanel { IsHitTestVisible = false };
         MapPanel.SetParentMap(panel, map);
-        // Right above the graticule: below the scale, the drag surface and the units.
-        int index = Math.Min(1, map.Children.Count);
-        for (int i = 0; i < map.Children.Count; i++)
-        {
-            if (map.Children[i] is MapGraticule)
-            {
-                index = i + 1;
-                break;
-            }
-        }
-        map.Children.Insert(index, panel);
+        MapSlots.Insert(map, panel, MapSlots.Cities);
     }
 
     /// <summary>False once the map has left the visual tree (window closed, mission over).</summary>

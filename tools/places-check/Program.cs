@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using SeaPowerBorders.Borders;
 using SeaPowerBorders.Map;
 using SeaPowerBorders.Places;
 
@@ -18,9 +19,10 @@ internal static class ModLog
 /// <summary>
 /// Builds the places of one mission date the way the mod does and prints what it got.
 /// <code>dotnet run --project tools/places-check -- [--date 1985-06-26] [--game "E:\Games\steamapps\common\Sea Power"] [--find Leningrad]
-///     [--view 62,5,20 --size 1920x1080 --out labels.tsv]</code>
-/// --view lat,lon,height draws a map view of that height in degrees: the labels the mod would show there go to
-/// --out (tab-separated, positions in pixels), for tools/places-check/draw.py.
+///     [--view 62,5,20 --size 1920x1080 --out labels.tsv] [--era Today]</code>
+/// --view lat,lon,height draws a map view of that height in degrees: the labels and border lines the mod would show
+/// there go to --out (tab-separated, positions in pixels), for tools/places-check/draw.py. --era Today draws
+/// today's borders instead of the date's.
 /// </summary>
 internal static class Program
 {
@@ -28,6 +30,7 @@ internal static class Program
     {
         DateTime date = new DateTime(1985, 6, 26);
         string game = @"E:\Games\steamapps\common\Sea Power", find = null, view = null, output = "labels.tsv";
+        BorderEra era = BorderEra.MissionDate;
         int width = 1920, height = 1080;
         for (int i = 0; i + 1 < args.Length; i += 2)
         {
@@ -36,6 +39,7 @@ internal static class Program
             else if (args[i] == "--find") find = args[i + 1];
             else if (args[i] == "--view") view = args[i + 1];
             else if (args[i] == "--out") output = args[i + 1];
+            else if (args[i] == "--era") era = (BorderEra)Enum.Parse(typeof(BorderEra), args[i + 1], true);
             else if (args[i] == "--size")
             {
                 string[] s = args[i + 1].Split('x');
@@ -63,13 +67,20 @@ internal static class Program
             foreach (Place p in places.Where(p => p.Label.IndexOf(find, StringComparison.OrdinalIgnoreCase) >= 0 || p.Name.IndexOf(find, StringComparison.OrdinalIgnoreCase) >= 0))
                 Console.WriteLine($"  {p.Label} [{p.Name}/{p.AltName}] {p.Kind} {p.Country} pop {p.Population} cap {p.Capital} naval {p.Naval} {p.NavalSide} rank {p.Rank} game {p.FromGame} ({p.Lat:0.000}, {p.Lon:0.000})");
         }
+        string bordersDir = Path.GetFullPath(Path.Combine(data, "..", "borders"));
+        BorderData borders = BorderData.Load(Path.Combine(bordersDir, "borders.bin"));
+        BorderEras borderEras = BorderEras.Load(bordersDir);
+        var drawn = borders.Lines.Where(l => borderEras.Drawn(l, date, era)).ToHashSet();
+        Console.WriteLine($"Borders: {drawn.Count} of {borders.Lines.Count} lines for {date:yyyy-MM-dd} ({era}); not drawn: " +
+                          string.Join(", ", borders.Lines.Where(l => !drawn.Contains(l) && l.Class != BorderClass.Added).Select(l => l.Name).Distinct()));
+        Console.WriteLine("Added: " + string.Join(", ", borders.Lines.Where(l => drawn.Contains(l) && l.Class == BorderClass.Added).Select(l => l.Name).Distinct()));
         if (view != null)
-            Draw(places, view, width, height, output);
+            Draw(places, borders, drawn, view, width, height, output);
         return 0;
     }
 
     // The map is lon/lat, equirectangular: x by longitude, y by latitude, the same degrees per pixel both ways.
-    private static void Draw(List<Place> places, string view, int width, int height, string output)
+    private static void Draw(List<Place> places, BorderData borders, HashSet<BorderLine> drawn, string view, int width, int height, string output)
     {
         string[] v = view.Split(',');
         double lat = double.Parse(v[0], CultureInfo.InvariantCulture), lon = double.Parse(v[1], CultureInfo.InvariantCulture);
@@ -82,6 +93,24 @@ internal static class Program
             p => ((float)((p.Lon - west) / dpp), (float)((north - p.Lat) / dpp)));
         using var w = new StreamWriter(output);
         w.WriteLine($"#view	{west.ToString(CultureInfo.InvariantCulture)}	{north.ToString(CultureInfo.InvariantCulture)}	{dpp.ToString(CultureInfo.InvariantCulture)}	{width}	{height}");
+        // Border lines first (drawn below the labels): one row per piece, "#line", dashed or solid, then x,y pairs.
+        int level = borders.LevelFor(1.0 / dpp), lineCount = 0;
+        foreach (BorderPiece piece in borders.Pieces)
+        {
+            if (piece.Level != level || !drawn.Contains(piece.Line))
+                continue;
+            var xy = new List<string>();
+            // The map runs on past ±180°: like MapPanel, each tile goes within half a turn of the view's centre.
+            double offset = piece.TileX * BorderData.Tile - 180 + BorderData.Tile / 2 - (west + dpp * width / 2);
+            double shift = offset > 180 ? -360 * Math.Ceiling((offset - 180) / 360) : offset < -180 ? 360 * Math.Ceiling((-offset - 180) / 360) : 0;
+            for (int k = 0; k < piece.Points.Length; k += 2)
+            {
+                double plon = piece.Points[k] + shift;
+                xy.Add(((plon - west) / dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((north - piece.Points[k + 1]) / dpp).ToString("0.0", CultureInfo.InvariantCulture));
+            }
+            w.WriteLine("#line	" + (piece.Line.Dashed ? "dashed" : "solid") + "	" + string.Join(" ", xy));
+            lineCount++;
+        }
         foreach (Place p in ordered.Where(picked.ContainsKey))
         {
             float x = (float)((p.Lon - west) / dpp), y = (float)((north - p.Lat) / dpp);
@@ -91,6 +120,7 @@ internal static class Program
             w.WriteLine(string.Join("	", p.Label, x.ToString("0.0", CultureInfo.InvariantCulture), y.ToString("0.0", CultureInfo.InvariantCulture),
                                     kind, p.Naval ? p.NavalSide.ToString() : p.AirSide.ToString(), p.Rank, picked[p] ? "left" : "right"));
         }
-        Console.WriteLine($"{output}: {picked.Count} labels picked for a {span}° view, up to rank {LabelPicker.MaxRank(span, Density.Normal)}");
+        Console.WriteLine($"{output}: {picked.Count} labels picked for a {span}° view, up to rank {LabelPicker.MaxRank(span, Density.Normal)}; " +
+                          $"{lineCount} border pieces at level {level}");
     }
 }

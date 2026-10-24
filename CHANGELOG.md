@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 – Unreleased
+
+- **Borders** layer in the map's Layers menu (Shift+F7): land borders as they were on the mission's date – the Soviet
+  Union, the inner-German border and West Berlin, Yugoslavia, Czechoslovakia, North and South Yemen, the Vietnam DMZ,
+  Eritrea, South Sudan, East Timor, Hong Kong, Macau, Cyprus. Natural Earth's 1:10m land borders with date rules
+  (`mod/borders/eras.csv`), plus the Cold War lines it doesn't have. Disputed lines and lines of control dashed. The
+  same width at every zoom. Checked offline (`tools/places-check`), not yet in the game.
+- Config section "3. Borders": toggle key, era (mission date or today), disputed lines, line width, opacity.
+
 ## 0.1.0 – Unreleased
 
 - **Cities and bases** layer in the map's Layers menu (F7): cities, capitals, naval bases and air bases of the

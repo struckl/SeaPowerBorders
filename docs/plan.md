@@ -1,9 +1,12 @@
 # Build plan
 
-> **Cities and bases are built (0.1.0)** - see the README. What follows is the plan for the **borders**, still to
-> build; the cities part reused the same pieces (the map hook, the Layers-menu entry, the mission date, Natural
-> Earth data through a small tool), and the borders layer can share the cities layer's map panel approach for
-> labels of country names.
+> **Built:** cities and bases (0.1.0) and the land borders of the mission's date (0.2.0, steps 1–4 of the order of
+> work below) - see the README. **Still to build:** territorial waters (step 5) and country names (step 6).
+> Built differently from this plan: the lines are not a mesh in the Unity map scene but Noesis paths in a
+> `MapControl.MapPanel` (like the city labels), one per 10° tile and style, placed by the map through their bounding
+> box and scaled by a geometry transform, so they keep their width without a rebuild on every zoom; the era rules
+> are *unions* of countries plus *line* rules (`mod/borders/eras.csv`) rather than the table below; the data tool is
+> Python, like the cities one.
 
 Goal: a **Borders** entry in the map's Layers menu that draws national land borders **as they were on the mission's
 date** (the Soviet Union, East and West Germany, Yugoslavia, …), a line marking **territorial waters**, and

@@ -1,0 +1,13 @@
+# Hand-drawn border lines Natural Earth doesn't have, for tools/borders-data/build.py. Approximate: a few hundred
+# metres in Berlin, a few kilometres along the Ben Hai river.
+# name;since;until;snap;points as "lat lon" pairs, comma-separated
+# snap: both ends are moved onto the nearest point of that line when it is within 0.25° - "Berlin" is the state line
+# around Berlin, a pair such as LAO-VNM a Natural Earth border.
+name;since;until;snap;points
+
+# The sector border between West and East Berlin (the Wall), north to south. build.py adds West Berlin's outer
+# boundary from Natural Earth's state line around Berlin, from one end of this line to the other.
+West Berlin;1949-05-23;1990-10-03;Berlin;52.648 13.360, 52.620 13.372, 52.596 13.372, 52.585 13.375, 52.570 13.385, 52.556 13.398, 52.548 13.403, 52.5345 13.3876, 52.532 13.378, 52.527 13.369, 52.522 13.372, 52.5163 13.3770, 52.5096 13.3760, 52.5075 13.3820, 52.5075 13.3904, 52.5064 13.4002, 52.5060 13.4140, 52.5070 13.4200, 52.5080 13.4265, 52.5015 13.4455, 52.4975 13.4530, 52.4880 13.4500, 52.4775 13.4560, 52.4630 13.4740, 52.4480 13.4930, 52.4200 13.5050, 52.3960 13.4970
+
+# The demarcation line between North and South Vietnam along the Ben Hai river (Geneva 1954 until reunification).
+Vietnam DMZ;1954-07-21;1976-07-02;LAO-VNM;16.97 106.50, 17.00 106.70, 16.99 106.90, 17.00 107.00, 17.015 107.11

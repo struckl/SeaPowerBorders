@@ -1,4 +1,5 @@
-"""Draws the labels picked by places-check over the game's own world grid (land/water), for checking density.
+"""Draws the labels and border lines picked by places-check over the game's own world grid (land/water), for checking
+density and the borders of a date.
 
     python -I tools/places-check/draw.py labels.tsv "E:/Games/steamapps/common/Sea Power" out.png
 """
@@ -13,6 +14,8 @@ SIZES = [13, 12, 11, 10]
 
 def main(labels, game, target):
     rows = [l.rstrip("\n").split("\t") for l in open(labels, encoding="utf-8")]
+    lines = [r for r in rows if r[0] == "#line"]
+    rows = [r for r in rows if r[0] != "#line"]
     _, west, north, dpp, width, height = rows[0]
     west, north, dpp, width, height = float(west), float(north), float(dpp), int(width), int(height)
     grid = open(f"{game}/Sea Power_Data/StreamingAssets/original/terrain/data/lowres.raw", "rb").read()
@@ -25,6 +28,13 @@ def main(labels, game, target):
             h = struct.unpack_from("<h", grid, (ly * 7200 + lx) * 2)[0]
             px[x, y] = (196, 186, 170) if h >= 0 else (144, 163, 182)
     d = ImageDraw.Draw(img)
+    for _, style, points in lines:
+        xy = [tuple(float(v) for v in p.split(",")) for p in points.split()]
+        if style == "solid":
+            d.line(xy, fill=(70, 60, 80), width=2, joint="curve")
+        else:
+            for a, b in zip(xy[::2], xy[1::2]):
+                d.line([a, b], fill=(120, 60, 80), width=1)
     for label, x, y, kind, side, rank, place in rows[1:]:
         x, y, size = float(x), float(y), SIZES[int(rank)]
         font = ImageFont.truetype("arialbd.ttf" if kind == "capital" or rank == "0" else "arial.ttf", size)
@@ -41,7 +51,7 @@ def main(labels, game, target):
         tx = x + 8 if place == "right" else x - 8 - d.textlength(label, font=font)
         d.text((tx, y - size * 0.62), label, fill=(34, 40, 49), font=font, stroke_width=2, stroke_fill=(242, 238, 228))
     img.save(target)
-    print(target, len(rows) - 1, "labels")
+    print(target, len(rows) - 1, "labels,", len(lines), "border pieces")
 
 
 if __name__ == "__main__":

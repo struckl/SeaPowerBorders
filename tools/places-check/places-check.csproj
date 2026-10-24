@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Offline check of the place lists: the mod's Places code against the game's campaign files. -->
+  <!-- Offline check of the place lists and borders: the mod's Places and Borders code against the game's campaign files. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,5 +10,6 @@
   <ItemGroup>
     <Compile Include="..\..\src\SeaPowerBorders\Places\*.cs" />
     <Compile Include="..\..\src\SeaPowerBorders\Map\LabelPicker.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Borders\*.cs" />
   </ItemGroup>
 </Project>

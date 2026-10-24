@@ -85,8 +85,8 @@ internal static class ModLists
     }
 
     // Data rows of a list: the header line (the first that isn't a comment) is skipped, rows with the wrong number
-    // of fields are logged and skipped.
-    private static IEnumerable<string[]> Rows(string path, int fields)
+    // of fields are logged and skipped. Up to <optional> fields may be left off the end of a row (they come back empty).
+    internal static IEnumerable<string[]> Rows(string path, int fields, int optional = 0)
     {
         if (!File.Exists(path))
         {
@@ -105,19 +105,21 @@ internal static class ModLists
                 continue;
             }
             string[] f = line.Split(';');
+            if (f.Length < fields && f.Length >= fields - optional)
+                Array.Resize(ref f, fields);
             if (f.Length != fields)
             {
                 ModLog.Warn($"{Path.GetFileName(path)}: skipped '{line}'");
                 continue;
             }
             for (int i = 0; i < f.Length; i++)
-                f[i] = f[i].Trim();
+                f[i] = f[i]?.Trim() ?? "";
             yield return f;
         }
     }
 
     private static double D(string s) => double.Parse(s, NumberStyles.Float, CultureInfo.InvariantCulture);
 
-    private static DateTime? Date(string s) =>
+    internal static DateTime? Date(string s) =>
         DateTime.TryParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d) ? d : (DateTime?)null;
 }
