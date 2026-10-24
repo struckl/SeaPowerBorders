@@ -26,7 +26,7 @@ internal sealed class BorderLines
     private int linesVersion = -1, settingsVersion = -1, level = -1;
     private bool dark;
     private float scale = float.NaN;
-    private SolidColorBrush solid, dashed;
+    private SolidColorBrush brush;
     private bool loggedFailure;
 
     /// <summary>Lays a border panel into the map, or returns null if the map isn't the panel we expect.</summary>
@@ -89,8 +89,8 @@ internal sealed class BorderLines
                 linesVersion = version;
                 dark = darkTheme;
                 settingsVersion = Settings.Version;
-                solid = new SolidColorBrush(dark ? Color.FromArgb(255, 205, 200, 215) : Color.FromArgb(255, 58, 50, 72));
-                dashed = new SolidColorBrush(dark ? Color.FromArgb(255, 215, 170, 185) : Color.FromArgb(255, 120, 52, 76));
+                // Dashed lines in the same colour: a lighter tint got lost on the terrain (the Korean line by day).
+                brush = new SolidColorBrush(dark ? Color.FromArgb(255, 205, 200, 215) : Color.FromArgb(255, 58, 50, 72));
                 panel.Opacity = Settings.LineOpacity.Value;
                 level = -1;
             }
@@ -157,13 +157,13 @@ internal sealed class BorderLines
             var path = new Path
             {
                 Data = geometry,
-                Stroke = tile.Key.dashed ? dashed : solid,
+                Stroke = brush,
                 StrokeThickness = Settings.LineWidth.Value,
                 StrokeLineJoin = PenLineJoin.Round,
                 IsHitTestVisible = false,
             };
             if (tile.Key.dashed)
-                path.StrokeDashArray = "4 3";
+                path.StrokeDashArray = "6 3";
             MapPanel.SetBoundingBox(path, new BoundingBox(south, west, north, west + BorderData.Tile));
             panel.Children.Add(path);
         }

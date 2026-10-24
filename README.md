@@ -1,7 +1,7 @@
 # Sea Power Borders
 
 > **Status: in development.** Cities and naval bases (0.1.0, tested in the game with a 1985 and a 1991 mission) and
-> national borders (0.2.0, checked offline, not yet in the game) are in; territorial waters and country names come
+> national borders (0.2.0, tested in the game with the same two missions) are in; territorial waters and country names come
 > next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the

@@ -26,6 +26,22 @@ Load missions from the **main menu** only, once it has settled (see the 0.1.0 re
    `Disputed lines = false` – applied at once.
 10. With Topographic Map on as well: lines on top of its colours, both layers toggle independently.
 
+### Result 2026-10-24 (Claude, with the Shot Director dev tool from SeaPowerTopo, plus held-Shift keys)
+
+- **Trollfjorden (1985-02-26):** `446 of 511 border lines for 1985-02-26 with Inner-German border, North/South Yemen,
+  West Berlin.` Steps 1–7, 9 and 10 as expected: the Cold War Europe (inner-German border, USSR, Yugoslavia and
+  Czechoslovakia whole), the same stroke at zoom 5.4 / 7.3 / 9.5 / 12, levels switching 3 → 0 as you zoom in, no gaps
+  where lines cross 20°E or 50°N, both sides of the date line (Alaska–Canada, Amur), F7 only the cities and Shift+F7
+  only the borders, the Layers entry (#601, between Topography and Cities) toggles and writes `Visible`, night
+  theme light lines, `Era = Today` / width / opacity / disputed lines applied at once. FPS the same with the layer on
+  and off (the map is GPU-bound).
+- **Strawberries Can Kill (1991-06-03):** `444 of 511 border lines`, no added lines; Germany one, USSR, Yugoslavia and
+  Czechoslovakia whole.
+- Fixed: the dashed lines (a lighter red tint) were hard to see on the terrain – the Korean line by day; now in the
+  border colour with longer dashes.
+- No `[Error  :SeaPowerBorders]` lines. The game's own `NullReferenceException` in `MapFormationViewModel.Dispose` when
+  quitting from inside a mission is not the mod's.
+
 ## 0.1.0 – Cities and bases (first build)
 
 1. **Start Sea Power.** Main menu → Mods: tick **Sea Power Borders**, restart if asked. Log:

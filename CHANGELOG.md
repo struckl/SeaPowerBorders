@@ -6,7 +6,8 @@
   Union, the inner-German border and West Berlin, Yugoslavia, Czechoslovakia, North and South Yemen, the Vietnam DMZ,
   Eritrea, South Sudan, East Timor, Hong Kong, Macau, Cyprus. Natural Earth's 1:10m land borders with date rules
   (`mod/borders/eras.csv`), plus the Cold War lines it doesn't have. Disputed lines and lines of control dashed. The
-  same width at every zoom. Checked offline (`tools/places-check`), not yet in the game.
+  same width at every zoom. Tested in the game with a 1985 and a 1991 mission; dashed lines drawn in the border
+  colour with longer dashes after the test (a lighter tint got lost on the terrain).
 - Config section "3. Borders": toggle key, era (mission date or today), disputed lines, line width, opacity.
 
 ## 0.1.0 – Unreleased
