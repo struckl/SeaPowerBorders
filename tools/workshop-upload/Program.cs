@@ -69,7 +69,10 @@ static int UpdateExisting(string command, ulong itemId, string[] args)
         return 1;
     }
     if (command == "check")
+    {
+        Verify(item);
         return 0;
+    }
 
     string folder = Path.GetFullPath(args[2]);
     string note = File.ReadAllText(args[3]).Trim();
@@ -269,6 +272,43 @@ static bool Pump(Func<bool> done, TimeSpan timeout)
         Thread.Sleep(100);
     }
     return done();
+}
+
+// What the item page will show: tags, size, description length, preview, the compatibility metadata and the required
+// items – to check a freshly created item without opening the web page.
+static void Verify(PublishedFileId_t item)
+{
+    UGCQueryHandle_t query = SteamUGC.CreateQueryUGCDetailsRequest(new[] { item }, 1);
+    SteamUGC.SetReturnLongDescription(query, true);
+    SteamUGC.SetReturnMetadata(query, true);
+    SteamUGC.SetReturnChildren(query, true);
+    SteamUGCQueryCompleted_t completed = default;
+    bool done = false, failed = false;
+    var call = CallResult<SteamUGCQueryCompleted_t>.Create((r, f) => { completed = r; failed = f; done = true; });
+    call.Set(SteamUGC.SendQueryUGCRequest(query));
+    Pump(() => done, TimeSpan.FromSeconds(30));
+    if (!done || failed || completed.m_eResult != EResult.k_EResultOK || completed.m_unNumResultsReturned == 0
+        || !SteamUGC.GetQueryUGCResult(query, 0, out SteamUGCDetails_t d))
+    {
+        Console.Error.WriteLine("Could not read the item for verification.");
+        SteamUGC.ReleaseQueryUGCRequest(query);
+        return;
+    }
+    Console.WriteLine($"  title:       {d.m_rgchTitle}");
+    Console.WriteLine($"  visibility:  {d.m_eVisibility}");
+    Console.WriteLine($"  tags:        {d.m_rgchTags}");
+    Console.WriteLine($"  file size:   {d.m_nFileSize / 1024.0:0} KB");
+    Console.WriteLine($"  description: {d.m_rgchDescription.Length} characters, starts \"{d.m_rgchDescription.Substring(0, Math.Min(60, d.m_rgchDescription.Length)).Replace("\n", " ")}\"");
+    if (SteamUGC.GetQueryUGCPreviewURL(query, 0, out string preview, 512))
+        Console.WriteLine($"  preview:     {(string.IsNullOrEmpty(preview) ? "(none)" : preview)}");
+    if (SteamUGC.GetQueryUGCMetadata(query, 0, out string metadata, 5000))
+        Console.WriteLine($"  metadata:    {metadata}");
+    var children = new PublishedFileId_t[Math.Max(1, (int)d.m_unNumChildren)];
+    if (d.m_unNumChildren > 0 && SteamUGC.GetQueryUGCChildren(query, 0, children, d.m_unNumChildren))
+        Console.WriteLine($"  requires:    {string.Join(", ", children.Take((int)d.m_unNumChildren).Select(c => c.m_PublishedFileId))}");
+    else
+        Console.WriteLine("  requires:    (none)");
+    SteamUGC.ReleaseQueryUGCRequest(query);
 }
 
 static bool Details(PublishedFileId_t item, out SteamUGCDetails_t details)
