@@ -40,6 +40,11 @@ them in full, the posts in short):
 
 ## Upload
 
+**Done 2026-10-25: the item exists** – [3827360064](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064), created hidden with the command below (title "Sea Power: Rats
+Cities and Borders", tags Overhaul, Realism, Scripting like the Topographic Map, the Anchor Chain requirement, preview,
+metadata `ApproximateVersion=0.8.7`; read back with `check`). To make it public, set the visibility on the item page
+(Visibility → Public) after the checks below. Updates go through `upload` (further down).
+
 **Without starting the game** (preferred – like the other mods): `tools/workshop-upload` talks to the running,
 signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
 Create Mod screen does (title, description, tags, content, preview, the `[Compatibility]` line of `_info.ini` as
@@ -47,15 +52,14 @@ metadata, visibility, then the dependency); it is **private (hidden) unless `--v
 
 ```powershell
 dotnet build tools\workshop-upload -c Release
-dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Cities and Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags Scripting --depends 3380210757
+dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Cities and Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags "Overhaul,Realism,Scripting" --depends 3380210757
 ```
 
 It prints the new item id and link. Put the id into the README and `promotion.md`; later updates are
 `... -- upload <item id> dist\SeaPowerBorders workshop\changenote.txt workshop\description.bbcode`, and
-`... -- check <item id>` only reads. The `create` command has been built and its `check` sibling run against an
-existing item, but **`create` itself has not been run yet** – look at the item page right after (title, tags, the
-Anchor Chain requirement, preview) and fix anything in the web form. Make the repository public before the item
-goes public.
+`... -- check <item id>` only reads and prints title, visibility, tags, size, description, preview, metadata and the
+required items. Before the item goes public: make the repository public (the description links to the source) and
+look at the item page once in the browser.
 
 **Or in the game** (needs the game started, and `package.ps1 -Install` first): Mods → Create Mod:
 
@@ -65,7 +69,7 @@ goes public.
 | Name | Sea Power: Rats Cities and Borders |
 | Description | [workshop/description.bbcode](../workshop/description.bbcode) |
 | Preview image | `StreamingAssets\SeaPowerBorders\preview.jpg` (put there by `package.ps1`; Steam wants it under 1 MB) |
-| Tags | Scripting |
+| Tags | Overhaul, Realism, Scripting |
 | Dependencies | `3380210757` (Anchor Chain) |
 | Visibility | first upload **Hidden** (or Friends only); Public once the subscribed copy is tested |
 | Change log | [workshop/changenote.txt](../workshop/changenote.txt) – a few lines, plain ASCII (long text freezes the field) |
@@ -99,7 +103,7 @@ cities and bases only. All were taken in the game at 4K, the FPS strip cut off, 
 every Reddit picture. The pictures are ready in order: `workshop/reddit/` (gallery, 6) and `workshop/discord/` (3; the
 MicroProse post takes the first). Fill in the Workshop link once the item exists. Each text carries the short version
 of the points above; do not cut that paragraph. In every picture the game's Discord voice overlay (other people's names
-and avatars, top left of the map) is painted out – check that again if you take new ones.
+and avatars, top left of the map) is painted out – check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` does it for a 1920 x 1057 picture (the rectangle is x 8–200, y 340–482). Never put an unscrubbed picture into git: it stays in the history.
 
 ## Testing the Workshop copy
 

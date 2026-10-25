@@ -1,6 +1,6 @@
 # Sea Power: Rats Cities and Borders – release and promotion
 
-Workshop: <not uploaded yet – fill in the link here and in every text below>
+Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064 (item 3827360064, created hidden on 2026-10-25 – it is public only after the first release)
 Source: https://github.com/struckl/SeaPowerBorders (public before the first post)
 Pictures, ready to attach in this order: `workshop/reddit/` (gallery), `workshop/discord/` (BuOrd: 1–3, MicroProse: 1),
 `workshop/screenshots/` (all, for the Workshop page – the order is in [docs/workshop.md](../docs/workshop.md)).
@@ -44,7 +44,7 @@ The stock map only shows coastlines. This mod adds a **Borders** and a **Cities 
 
 **Data**: borders and extra cities from Natural Earth (public domain); cities, ports and airfields from the game's own lists, read from your install; date rules, the naval-base list and the Berlin Wall / Vietnam DMZ lines are my own and approximate; city ranking uses today's populations.
 
-Needs Anchor Chain. Workshop: <link>
+Needs Anchor Chain. Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 Source (MIT): https://github.com/struckl/SeaPowerBorders
 
 Screenshots: Trollfjorden (1985) and Strawberries Can Kill (1991), 4K. Corrections welcome – a base on the wrong side or in the wrong years, a name of the wrong time, a border that was different on the day.
@@ -75,7 +75,7 @@ Data: borders and extra cities from [url=https://www.naturalearthdata.com/]Natur
 
 Requires [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3380210757]Anchor Chain[/url].
 
-[url=<Workshop link>]Workshop page[/url] · [url=https://github.com/struckl/SeaPowerBorders]Source code (MIT)[/url]
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064]Workshop page[/url] · [url=https://github.com/struckl/SeaPowerBorders]Source code (MIT)[/url]
 
 Bug reports and corrections welcome here or on the Workshop page – please attach BepInEx\LogOutput.log and tell me the mission and its date.
 
@@ -98,7 +98,7 @@ Borders, capitals and naval bases **of the mission's date** on the tactical map:
 **Data:** Natural Earth (public domain) for borders and extra cities, the game's own lists for its cities/ports/airfields; date rules, naval-base list, Berlin Wall and Vietnam DMZ lines are mine and approximate; city ranking uses today's populations.
 
 Needs **Anchor Chain**.
-**Workshop:** <link>
+**Workshop:** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 **Source (MIT):** <https://github.com/struckl/SeaPowerBorders>
 Corrections welcome – wrong side, wrong years, a border that was different on the day!
 ```
@@ -110,5 +110,5 @@ https://discord.gg/CTDqUUJAVC – a mods / showcase channel if there is one, not
 
 ```
 Made a Sea Power mod that puts the **borders, capitals and naval bases of the mission's date** on the tactical map – USSR whole until 1991, inner-German border, Yugoslavia, Leningrad/East Berlin/Bonn, anchors blue for NATO and red for the Warsaw Pact. Display only: the lines are a reference, not the rules of a mission (missions set their own areas – follow the briefing in "don't escalate" ones). Borders and extra cities from Natural Earth (public domain), the game's own lists for the rest; approximate. Needs Anchor Chain.
-**Sea Power: Rats Cities and Borders** – Workshop: <link>
+**Sea Power: Rats Cities and Borders** – Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 ```

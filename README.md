@@ -3,6 +3,7 @@
 > **Version 1.0.0, ready for its first Workshop release (not published yet).** National borders, cities and naval
 > bases of the mission's date and an optional coastal distance line, tested in the game with a 1985 and a 1991
 > mission; country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
+> Workshop item 3827360064 exists as a hidden draft: https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
 national borders, cities and naval bases **of the mission's date** on the tactical map. The stock map shows
