@@ -24,6 +24,19 @@ The line is **off by default now**: set `Coastal distance line (nm) = 12` first.
 8. **Opacity** is in the brush now: the line looks the same as before with `Opacity = 0.85`, and changing `Opacity`
    in the config changes it at once.
 
+### Result 0.3.1, 2026-10-25 (in the game, Shot Director; mouse-free commands except one click on Play)
+
+- **The missing-line bug is gone.** At 70.3°N 19.8°E and 70.5°N 24°E (zoom 8.6), the two positions that lost their
+  line in 0.3.0, and at 70.0°N 20°E and 70.8°N 22°E, the dashed line runs unbroken along the whole coast, east of
+  20°E included (checked with the stock map showing, the Topo colours faded out with `topo Opacity 0`). The verbose
+  log's `Coastal line:` lines list every cell path as arranged (size 690x690 at the 8.6 zoom, visible True).
+- Distance against the game's scale bar: median 12.2 nm, middle half 11.0–12.7 (0.3.0: 12.0, 11.3–12.5).
+- Baltic, Black Sea and the Sea of Azov have lines, the Caspian none; the line is gone at a 60° view (zoom 5) and
+  back at 32° (zoom 6); 3, 6, 0 and 12 nm apply at once; `Opacity = 0.4` makes it fainter at once; the night map
+  shows it in light blue with white borders; no `[Error  :SeaPowerBorders]` line in the log.
+- Not checked again (unchanged since 0.3.0, which passed): the Layers-menu entry and Shift+F7 taking the coastal
+  line away with the borders – these need mouse or keyboard input on the game window.
+
 ### Result 0.3.0, 2026-10-24 (in the game, Shot Director)
 
 Median 12.0 nm from the drawn coast (middle half 11.3–12.5); islands ringed; Black Sea, Azov and Marmara have lines,

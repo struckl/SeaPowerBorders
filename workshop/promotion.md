@@ -1,4 +1,4 @@
-# Sea Power Borders – release and promotion
+# Rats Borders – release and promotion
 
 Workshop: <not uploaded yet – fill in the link here and in every text below>
 Source: https://github.com/struckl/SeaPowerBorders (make it public before the first post)
@@ -17,7 +17,7 @@ Images, in this order: 12-borders-europe-1985.jpg, 13-borders-europe-1991.jpg, 1
 
 **Title**
 
-Sea Power Borders – the borders, capitals and naval bases of your mission's date on the tactical map
+Rats Borders – the borders, capitals and naval bases of your mission's date on the tactical map
 
 **Body**
 
@@ -45,7 +45,7 @@ https://steamcommunity.com/app/1286220/discussions/3/ → Start a New Discussion
 
 **Title**
 
-[Mod] Sea Power Borders – borders, capitals and naval bases of the mission's date
+[Mod] Rats Borders – borders, capitals and naval bases of the mission's date
 
 **Body** (Steam forum BBCode)
 
@@ -75,7 +75,7 @@ https://discord.gg/vc8uAVH6Sh – attach 12-borders-europe-1985.jpg, 13-borders-
 (the `< >` around the GitHub link keeps Discord from adding a second preview box).
 
 ```
-## Sea Power Borders – new Sea Power mod
+## Rats Borders – new Sea Power mod
 Borders, capitals and naval bases **of the mission's date** on the tactical map:
 - **Land borders of the day** – the Soviet Union whole until 1991, inner-German border + West Berlin until Oct 1990, Yugoslavia, Czechoslovakia, North/South Yemen, Vietnam DMZ …; disputed lines dashed
 - **Capitals, cities, naval bases of the day** – East Berlin/Bonn, Leningrad, Holy Loch until 1992; anchors blue for NATO, red for the Warsaw Pact

@@ -21,31 +21,48 @@ them in full, the posts in short):
 
 ## Before a release
 
-1. Run the checklists in [testing.md](testing.md) on the current game version (0.3.1 is not yet checked in the
-   game: the coastal line was reworked after a bug).
-2. Bump the version in `src/SeaPowerBorders/Plugin.cs` (`Version`) and `src/SeaPowerBorders/SeaPowerBorders.csproj`
-   (`<Version>`) – 1.0.0 for the first upload – and move the CHANGELOG entries under it.
+1. Run the checklists in [testing.md](testing.md) on the current game version (done for 0.1.0–0.3.1 on 2026-10-24
+   and 25; 1.0.0 only changed the version number, the Mod Manager text and the docs).
+2. Version: `src/SeaPowerBorders/Plugin.cs` (`Version`) and `src/SeaPowerBorders/SeaPowerBorders.csproj`
+   (`<Version>`) are 1.0.0; the CHANGELOG has its entry.
 3. Check `src/SeaPowerBorders/mod/_info.ini`: Mod Manager name and description, and `[Compatibility]`
    (`ApproximateVersion` = the game version tested against).
 4. Make the GitHub repository public (the description links to the source) – or take the link out.
-5. Close Sea Power, then stage and install the release folder:
+5. Stage the release folder:
 
    ```powershell
-   powershell -ExecutionPolicy Bypass -File tools\package.ps1 -Install
+   powershell -ExecutionPolicy Bypass -File tools\package.ps1
    ```
 
-   This replaces `<Sea Power>\Sea Power_Data\StreamingAssets\SeaPowerBorders\` with exactly what players get: the
-   DLL, `_info.ini`, `LICENSE.txt`, `preview.jpg`, and the data folders `borders\` and `places\` (about 1.5 MB).
-   Without `-Install` it only stages `dist\SeaPowerBorders\`.
+   This builds a release and fills `dist\SeaPowerBorders\` with exactly what players get: the DLL, `_info.ini`,
+   `LICENSE.txt`, `preview.jpg`, and the data folders `borders\` and `places\` (about 1.5 MB). With `-Install` (game
+   closed) it also copies that folder into `<Sea Power>\Sea Power_Data\StreamingAssets\SeaPowerBorders\`.
 
 ## Upload
 
-Start Sea Power → Mods → Create Mod:
+**Without starting the game** (preferred – like the other mods): `tools/workshop-upload` talks to the running,
+signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
+Create Mod screen does (title, description, tags, content, preview, the `[Compatibility]` line of `_info.ini` as
+metadata, visibility, then the dependency); it is **private (hidden) unless `--visibility` says otherwise**:
+
+```powershell
+dotnet build tools\workshop-upload -c Release
+dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags Scripting --depends 3380210757
+```
+
+It prints the new item id and link. Put the id into the README and `promotion.md`; later updates are
+`... -- upload <item id> dist\SeaPowerBorders workshop\changenote.txt workshop\description.bbcode`, and
+`... -- check <item id>` only reads. The `create` command has been built and its `check` sibling run against an
+existing item, but **`create` itself has not been run yet** – look at the item page right after (title, tags, the
+Anchor Chain requirement, preview) and fix anything in the web form. Make the repository public before the item
+goes public.
+
+**Or in the game** (needs the game started, and `package.ps1 -Install` first): Mods → Create Mod:
 
 | Field | Value |
 | --- | --- |
 | Folder | `StreamingAssets\SeaPowerBorders` (the folder `package.ps1 -Install` filled). **Double-click** `SeaPowerBorders` so the picker is *inside* it, then confirm; confirming in `StreamingAssets` itself gets "… is a forbidden path!" |
-| Name | Sea Power Borders |
+| Name | Sea Power: Rats Borders |
 | Description | [workshop/description.bbcode](../workshop/description.bbcode) |
 | Preview image | `StreamingAssets\SeaPowerBorders\preview.jpg` (put there by `package.ps1`; Steam wants it under 1 MB) |
 | Tags | Scripting |

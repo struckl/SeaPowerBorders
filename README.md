@@ -1,8 +1,8 @@
 # Sea Power Borders
 
-> **Status: in development.** Cities and naval bases (0.1.0) and national borders (0.2.0), both tested in the game
-> with a 1985 and a 1991 mission, and an optional coastal distance line (0.3.x, tested in the game, being reworked)
-> are in; country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
+> **Version 1.0.0, ready for its first Workshop release (not published yet).** National borders, cities and naval
+> bases of the mission's date and an optional coastal distance line, tested in the game with a 1985 and a 1991
+> mission; country names come next – see [docs/plan.md](docs/plan.md). Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
 national borders, cities and naval bases **of the mission's date** on the tactical map. The stock map shows
@@ -189,6 +189,7 @@ docs/plan.md          build plan; country names still to build
 docs/testing.md       in-game test checklist and results
 docs/workshop.md      how to release on the Steam Workshop (and what every public text must say)
 tools/package.ps1     stage / install the release folder for the Workshop upload
+tools/workshop-upload create / update the Workshop item through the running Steam client, no game needed
 workshop/             description.bbcode, changenote.txt, preview.jpg, promotion.md (Reddit, forum, Discord texts)
 workshop/screenshots/ in-game screenshots for the Workshop page
 ```
