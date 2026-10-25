@@ -15,7 +15,7 @@ namespace SeaPowerBorders;
 public class Plugin : IAnchorChainMod
 {
     public const string Guid = "dev.sewerlabs.seapowerborders";
-    public const string Name = "Sea Power Borders";
+    public const string Name = "Sea Power Cities and Borders";
     public const string Version = "1.0.0";
 
     // Anchor Chain loads assemblies with Assembly.LoadFile, so the same DLL found in two folders would be two

@@ -1,4 +1,4 @@
-# Sea Power Borders
+# Sea Power: Rats Cities and Borders
 
 > **Version 1.0.0, ready for its first Workshop release (not published yet).** National borders, cities and naval
 > bases of the mission's date and an optional coastal distance line, tested in the game with a 1985 and a 1991

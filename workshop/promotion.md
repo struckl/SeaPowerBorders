@@ -1,8 +1,10 @@
-# Rats Borders – release and promotion
+# Sea Power: Rats Cities and Borders – release and promotion
 
 Workshop: <not uploaded yet – fill in the link here and in every text below>
-Source: https://github.com/struckl/SeaPowerBorders (make it public before the first post)
-Images: `workshop/screenshots/` – the order is in [docs/workshop.md](../docs/workshop.md)
+Source: https://github.com/struckl/SeaPowerBorders (public before the first post)
+Pictures, ready to attach in this order: `workshop/reddit/` (gallery), `workshop/discord/` (BuOrd: 1–3, MicroProse: 1),
+`workshop/screenshots/` (all, for the Workshop page – the order is in [docs/workshop.md](../docs/workshop.md)).
+The player-name overlay of the game's Discord is painted out of every picture (other people's names and avatars).
 
 **Every post keeps the heads-up paragraph** (marked below): the mod is display-only, its lines are not the rules of
 a mission, and where the data comes from. Players in missions like "do a training exercise, don't escalate" must not
@@ -12,12 +14,22 @@ read a line on the map as a mission zone.
 
 ## 1. Reddit – r/SeaPower_NCMA (image gallery post)
 
-Images, in this order: 12-borders-europe-1985.jpg, 13-borders-europe-1991.jpg, 14-borders-inner-german.jpg,
-18-baltic-1985.jpg, 20-levant-1985.jpg, 19-korea-dmz.jpg. No flair needed.
+Gallery, in this order (captions go into the caption field of each image, 180 characters at most):
+
+| # | File in `workshop/reddit/` | Caption |
+| --- | --- | --- |
+| 1 | `1-europe-1985.jpg` | 26 February 1985: borders, capitals and the naval bases of both sides (shown with the Topographic Map colours) |
+| 2 | `2-europe-1991.jpg` | 3 June 1991: Germany is one, Berlin is the capital again, the Soviet Union is still whole |
+| 3 | `3-west-berlin.jpg` | 1985: West Berlin as an enclave in the GDR, East Berlin, and the inner-German border |
+| 4 | `4-baltic-1985.jpg` | The Baltic in 1985: Soviet (red) and NATO (blue) bases. The dashed blue line is the optional coastal distance line – a ruler, not a territorial limit |
+| 5 | `5-levant-1985.jpg` | The Levant in 1985: lines of control and disputed borders are dashed. Optional coastal distance line switched on |
+| 6 | `6-korea.jpg` | The Korean demarcation line, dashed |
+
+No flair needed (the sub has none).
 
 **Title**
 
-Rats Borders – the borders, capitals and naval bases of your mission's date on the tactical map
+Sea Power: Rats Cities and Borders – the borders, capitals and naval bases of your mission's date on the tactical map
 
 **Body**
 
@@ -45,7 +57,7 @@ https://steamcommunity.com/app/1286220/discussions/3/ → Start a New Discussion
 
 **Title**
 
-[Mod] Rats Borders – borders, capitals and naval bases of the mission's date
+[Mod] Sea Power: Rats Cities and Borders – borders, capitals and naval bases of the mission's date
 
 **Body** (Steam forum BBCode)
 
@@ -71,11 +83,11 @@ Bug reports and corrections welcome here or on the Workshop page – please atta
 
 ## 3. Discord – BuOrd: Naval Modding Community, `#sp-mods` (Naval Technicians)
 
-https://discord.gg/vc8uAVH6Sh – attach 12-borders-europe-1985.jpg, 13-borders-europe-1991.jpg and 14-borders-inner-german.jpg
+https://discord.gg/vc8uAVH6Sh – attach `workshop/discord/1-europe-1985.jpg`, `2-europe-1991.jpg` and `3-west-berlin.jpg`
 (the `< >` around the GitHub link keeps Discord from adding a second preview box).
 
 ```
-## Rats Borders – new Sea Power mod
+## Sea Power: Rats Cities and Borders – new Sea Power mod
 Borders, capitals and naval bases **of the mission's date** on the tactical map:
 - **Land borders of the day** – the Soviet Union whole until 1991, inner-German border + West Berlin until Oct 1990, Yugoslavia, Czechoslovakia, North/South Yemen, Vietnam DMZ …; disputed lines dashed
 - **Capitals, cities, naval bases of the day** – East Berlin/Bonn, Leningrad, Holy Loch until 1992; anchors blue for NATO, red for the Warsaw Pact
@@ -94,9 +106,9 @@ Corrections welcome – wrong side, wrong years, a border that was different on 
 ## 4. Discord – MicroProse (Official), Sea Power mods or showcase channel
 
 https://discord.gg/CTDqUUJAVC – a mods / showcase channel if there is one, not the general chat. Attach
-12-borders-europe-1985.jpg.
+`workshop/discord/1-europe-1985.jpg`.
 
 ```
 Made a Sea Power mod that puts the **borders, capitals and naval bases of the mission's date** on the tactical map – USSR whole until 1991, inner-German border, Yugoslavia, Leningrad/East Berlin/Bonn, anchors blue for NATO and red for the Warsaw Pact. Display only: the lines are a reference, not the rules of a mission (missions set their own areas – follow the briefing in "don't escalate" ones). Borders and extra cities from Natural Earth (public domain), the game's own lists for the rest; approximate. Needs Anchor Chain.
-Workshop: <link>
+**Sea Power: Rats Cities and Borders** – Workshop: <link>
 ```

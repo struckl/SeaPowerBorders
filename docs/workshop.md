@@ -47,7 +47,7 @@ metadata, visibility, then the dependency); it is **private (hidden) unless `--v
 
 ```powershell
 dotnet build tools\workshop-upload -c Release
-dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags Scripting --depends 3380210757
+dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Cities and Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags Scripting --depends 3380210757
 ```
 
 It prints the new item id and link. Put the id into the README and `promotion.md`; later updates are
@@ -62,7 +62,7 @@ goes public.
 | Field | Value |
 | --- | --- |
 | Folder | `StreamingAssets\SeaPowerBorders` (the folder `package.ps1 -Install` filled). **Double-click** `SeaPowerBorders` so the picker is *inside* it, then confirm; confirming in `StreamingAssets` itself gets "… is a forbidden path!" |
-| Name | Sea Power: Rats Borders |
+| Name | Sea Power: Rats Cities and Borders |
 | Description | [workshop/description.bbcode](../workshop/description.bbcode) |
 | Preview image | `StreamingAssets\SeaPowerBorders\preview.jpg` (put there by `package.ps1`; Steam wants it under 1 MB) |
 | Tags | Scripting |
@@ -95,8 +95,11 @@ cities and bases only. All were taken in the game at 4K, the FPS strip cut off, 
 
 ## Posts
 
-[workshop/promotion.md](../workshop/promotion.md) has the Reddit, Steam forum and Discord texts. Fill in the Workshop
-link once the item exists. Each carries the short version of the points above; do not cut that paragraph.
+[workshop/promotion.md](../workshop/promotion.md) has the Reddit, Steam forum and Discord texts, with a caption for
+every Reddit picture. The pictures are ready in order: `workshop/reddit/` (gallery, 6) and `workshop/discord/` (3; the
+MicroProse post takes the first). Fill in the Workshop link once the item exists. Each text carries the short version
+of the points above; do not cut that paragraph. In every picture the game's Discord voice overlay (other people's names
+and avatars, top left of the map) is painted out – check that again if you take new ones.
 
 ## Testing the Workshop copy
 
