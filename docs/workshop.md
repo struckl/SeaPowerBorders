@@ -78,6 +78,7 @@ Then add the screenshots on the Workshop page itself: open the item while signed
 | 1 | 12-borders-europe-1985 | Europe on 26 February 1985 with the Topographic Map colours: borders, capitals, bases of both sides |
 | 2 | 13-borders-europe-1991 | the same on 3 June 1991: Germany one, Berlin the capital, the Soviet Union still whole |
 | 3 | 14-borders-inner-german | the inner-German border between Wolfsburg and Magdeburg |
+| 3b | 21-west-berlin-inner-german | West Berlin as an enclave in the GDR, East Berlin, and the inner-German border down the left (a wider view than 14) |
 | 4 | 18-baltic-1985 | the Baltic: Soviet and NATO bases, the Kaliningrad border, (coastal distance line on) |
 | 5 | 20-levant-1985 | the Levant: dashed lines of control, (coastal distance line on) |
 | 6 | 19-korea-dmz | the Korean demarcation line, dashed |
