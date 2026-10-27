@@ -24,6 +24,17 @@
     <ModDeployDir>$(GameDir)\Sea Power_Data\StreamingAssets\SeaPowerBorders</ModDeployDir>
   </PropertyGroup>
 
+  <!--The flat-map build: the same sources compiled against Sea Power 0.8.7's assemblies (a copy of its
+      Sea Power_Data\Managed; default: the workspace's _gamerefs), as SeaPowerBordersFlat.dll with FLATMAP defined.
+      The default build is for the 3D-globe game. Each stays off on the game version the other is for.
+        dotnet build -p:GameBuild=Flat [-p:FlatManagedDir="D:\refs\Sea Power 0.8.7\Managed"]-->
+  <PropertyGroup Condition="'$(GameBuild)' == 'Flat'">
+    <AssemblyName>SeaPowerBordersFlat</AssemblyName>
+    <DefineConstants>$(DefineConstants);FLATMAP</DefineConstants>
+    <FlatManagedDir Condition="'$(FlatManagedDir)' == ''">$(MSBuildThisFileDirectory)..\..\..\_gamerefs\SeaPower-0.8.7-public\Managed</FlatManagedDir>
+    <ManagedDir>$(FlatManagedDir)</ManagedDir>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" IncludeAssets="compile" PrivateAssets="all" />
     <PackageReference Include="HarmonyX" Version="2.9.0" IncludeAssets="compile" PrivateAssets="all" />

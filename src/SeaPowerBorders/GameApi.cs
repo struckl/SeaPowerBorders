@@ -1,3 +1,4 @@
+#if !FLATMAP
 using System;
 using System.Reflection;
 using SeaPower.LiveMap;
@@ -43,3 +44,4 @@ internal static class GameApi
         return (Func<T, TResult>)Delegate.CreateDelegate(typeof(Func<T, TResult>), get);
     }
 }
+#endif

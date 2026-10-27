@@ -152,6 +152,16 @@ copies `SeaPowerBorders.dll` and `mod/` (with `places/`) into `Sea Power_Data/St
 the game is installed (pass `-p:Deploy=false` to skip that, `-p:GameDir=...` for another install). Enable "Sea Power
 Borders" in the game's Mod Manager.
 
+**Two game versions, two builds.** Sea Power exists in two versions with different map code: 0.8.7's flat map and the
+3D-globe build (the public beta of 26 October 2026). A mod compiled against one fails on the other, so the same sources
+are built twice: the default build is for the globe game (`SeaPowerBorders.dll`), `-p:GameBuild=Flat` compiles against
+a copy of 0.8.7's `Sea Power_Data\Managed` (`-p:FlatManagedDir=...`, default `..\_gamerefs\SeaPower-0.8.7-public\Managed`
+next to the mod folders in the workspace) into `SeaPowerBordersFlat.dll`. The package holds both; each looks at the game
+it runs on and stays off when it is not the one it was made for (the log says which runs). Anchor Chain skips a plugin
+whose GUID it has already seen, so the flat build registers as `dev.sewerlabs.seapowerborders.flatmap`. `tools/package.ps1`
+builds and checks both (`tools/compat-check` in the workspace: every reference a DLL makes into the game's assemblies
+must exist in the game it is made for, and its entry point in both).
+
 The Natural Earth files are turned into the mod's data once (download the files the scripts name into
 `tools/cities-data/input/` and `tools/borders-data/input/`):
 

@@ -131,11 +131,17 @@ internal sealed class AtlasHost : MonoBehaviour
         seaLimits ??= new SeaLimitCache(Path.Combine(Application.streamingAssetsPath, "original", "terrain", "data", "lowres.raw"),
                                          () => Settings.VerboseLog.Value);
         seaLimits.DrainLog();
+#if FLATMAP
+        // Sea Power 0.8.7: one theme for every map.
+        bool dark = Singleton<ThemeTracker>.InstanceExists() && Singleton<ThemeTracker>.Instance.CurrentTheme == ThemeMode.Dark;
+#endif
         bool bordersOn = bordersLayer.Visible, citiesOn = citiesLayer.Visible;
         foreach (MapDecor map in maps)
         {
-            // Each map has its own palette (Auto follows the sun at the centre of its view).
+#if !FLATMAP
+            // The 3D-globe build: each map has its own palette (Auto follows the sun at the centre of its view).
             bool dark = GameApi.IsDark((map.Map.DataContext as MapViewModel)?.Palette);
+#endif
             map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark, seaLimits);
             map.Labels?.Update(citiesOn, places, placesVersion, dark, Time.unscaledTime);
         }

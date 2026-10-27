@@ -38,6 +38,27 @@ internal sealed class LayerEntry
             return;
         try
         {
+#if FLATMAP
+            // Sea Power 0.8.7: one layer manager for the whole game.
+            GizmoLayerManager manager = GizmoLayerManager.Instance;
+            if (manager.LayersByName.TryGetValue(name, out MapLayer existing))
+            {
+                Adopt(existing);
+                return;
+            }
+            int number = preferredNumber;
+            while (manager.LayersById.ContainsKey(number))
+                number++;
+
+            // MapLayer looks its menu text up in the language table; give it ours first.
+            Singleton<LanguageResourceHandler>.Instance.LanguageDictionary[("MapLayers" + name).ToLowerInvariant()] = displayName;
+            var created = new MapLayer(number, name, true);
+            manager.Layers.Add(created);
+            manager.LayersByName[name] = created;
+            manager.LayersById[number] = created;
+            Adopt(created);
+#else
+            // The 3D-globe build: every map has its own display state with its own layer list.
             MapDisplayState state = MapDisplayState.Tactical;
             if (state.LayersByName.TryGetValue(name, out MapLayer existing))
             {
@@ -62,6 +83,7 @@ internal sealed class LayerEntry
             byName[name] = created;
             byId[number] = created;
             Adopt(created);
+#endif
             ModLog.Info($"Map layer '{displayName}' added to the Layers menu (#{number}), {(created.Visible ? "on" : "off")}.");
         }
         catch (Exception ex)

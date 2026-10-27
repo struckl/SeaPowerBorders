@@ -1,9 +1,15 @@
 # Changelog
 
-## Unreleased – for the 3D globe map (game build 26223125, the 11 November release)
+## Unreleased – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
 
-The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it.
-Built and checked offline against the game's own projection; **not yet run in the game**.
+Sea Power exists in two versions with different map code, and a mod compiled against one fails on the other. The
+package now carries **two builds of the same sources**: `SeaPowerBorders.dll` for the 3D-globe game and
+`SeaPowerBordersFlat.dll` for 0.8.7; each looks at the game it runs on (the globe build has `MapDisplayState`) and stays
+off on the other, and the log says which runs. The flat build is the code tested in the game with 0.8.7 (0.3.1), plus
+the entry check. Checked offline with `tools/compat-check`: every DLL has nothing missing on its own game, and its
+entry point nothing missing on either; **not yet run in the game**.
+
+The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
 - **Layers menu and night colours** use the new map state: the entries go into `MapDisplayState.Tactical`, and the
   line and label colours follow each map's own palette (there is no global theme any more).

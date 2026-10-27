@@ -11,8 +11,16 @@ against the game's own `OrthographicProjection` (positions within 0.0002 px of t
 0.4 px of the curve, cut ends on the limb, 0.1-3 ms per view). Pictures: `-- --view 70.3,20,60 --out n.tsv`, then
 `python -I tools/globe-check/draw.py n.tsv n.png`. Passed 2026-10-28.
 
-In the game (Claude never starts it for this; turn on `Verbose log`, mouse and keys are his):
+Offline too: `python tools/modtool.py compat borders` (workspace) builds both DLLs and checks them against both games'
+assemblies - passed 2026-10-28; `docs/both-versions.md` in the workspace has the whole scheme.
 
+In the game (Claude never starts it for this; turn on `Verbose log`, mouse and keys are his). The package folder holds
+**both DLLs**; on the globe build Anchor Chain needs Topo's dev shim (workspace `docs/both-versions.md`):
+
+0. **Which build runs.** Globe game: `SeaPowerBordersFlat.dll` logs `This game has the globe map: the globe build runs, the
+   flat-map build stays off.` and `Sea Power Cities and Borders 1.0.0 loaded.` comes from the globe DLL. 0.8.7: the globe DLL
+   logs `This game has the flat map: the flat-map build runs, the globe build stays off.` and `Sea Power Cities and Borders
+   (flat map) 1.0.0 loaded.` appears. No duplicate-plugin warning from Anchor Chain.
 1. Log: `Map hook in place.`, then on the first mission `Attached to the map: border lines place labels.` and `Border
    lines: drawing for the globe.` No `[Error  :SeaPowerBorders]` and no `MissingMethodException`.
 2. **Layers menu**: entries "Borders" and "Cities and bases" exist and switch the lines and labels (Shift+F7 / F7 too).
@@ -26,6 +34,13 @@ In the game (Claude never starts it for this; turn on `Verbose log`, mouse and k
 7. **Night map**: lines and names change colour with each map's palette (Auto follows the sun).
 8. The editor's flat map still draws the borders (old drawing).
 9. Speed: dragging and zooming stay smooth with everything on (the log line `Border lines (globe): N points` shows the size).
+
+## Sea Power 0.8.7 (flat map) with the two-build package
+
+The flat build is the code of 0.3.1 plus the entry check, so the results below still stand; to confirm nothing changed on
+the old game, with the package from `tools\package.ps1 -Install` (both DLLs): step 0 above (flat build runs, globe build
+off), then the 0.3.1 checklist below (the coastal line off by default, Layers entries, Shift+F7, a 1985 and a 1991 mission,
+borders and labels as before) and no `[Error  :SeaPowerBorders]`.
 
 ## 0.3.1 – Coastal distance line (reworked)
 

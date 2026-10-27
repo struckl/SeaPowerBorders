@@ -110,9 +110,7 @@ internal sealed class CityLabels
         {
             // The visible lon/lat box stops changing once the pole or the whole globe is in view: follow the centre
             // the globe is turned to instead, a tenth of the view's height at a time.
-            Location centre = Map.MapProjection.Center;
-            cx = centre.Longitude;
-            cy = centre.Latitude;
+            (cx, cy) = GlobeCentre();
             double turn = cx - laidOutX;
             turn -= 360.0 * Math.Round(turn / 360.0);
             panned = Math.Abs(turn) * Math.Max(0.2, Math.Cos(cy * Math.PI / 180.0)) > height * 0.1 || Math.Abs(cy - laidOutY) > height * 0.1;
@@ -144,14 +142,43 @@ internal sealed class CityLabels
         view = null;
         if (Map.ActualWidth <= 0 || Map.ActualHeight <= 0)
             return false;
-        view = Globe
-            ? Map.MapProjection.GetVisibleGeoBounds(Map.ViewTransform, new Size((float)Map.ActualWidth, (float)Map.ActualHeight))
-            : Map.ViewRectToBoundingBox(new Rect(0, 0, Map.ActualWidth, Map.ActualHeight));
+        view = Globe ? GlobeBounds() : Map.ViewRectToBoundingBox(new Rect(0, 0, Map.ActualWidth, Map.ActualHeight));
         return view != null;
     }
 
+#if FLATMAP
+    // Sea Power 0.8.7 has the flat map only.
+    private bool Globe => false;
+    private BoundingBox GlobeBounds() => null;
+    private (double lon, double lat) GlobeCentre() => (0, 0);
+    private bool GlobePoint(Place p, out float x, out float y)
+    {
+        x = y = 0;
+        return false;
+    }
+#else
     /// <summary>The map is the globe (an orthographic projection): places on its far side have no position.</summary>
     private bool Globe => Map.MapProjection is OrthographicProjection;
+
+    private BoundingBox GlobeBounds() =>
+        Map.MapProjection.GetVisibleGeoBounds(Map.ViewTransform, new Size((float)Map.ActualWidth, (float)Map.ActualHeight));
+
+    // The point the globe is turned to.
+    private (double lon, double lat) GlobeCentre()
+    {
+        Location centre = Map.MapProjection.Center;
+        return (centre.Longitude, centre.Latitude);
+    }
+
+    // Where a place is on screen; false on the far side.
+    private bool GlobePoint(Place p, out float x, out float y)
+    {
+        bool near = Map.TryLocationToView(new SeaPower.GeoPosition(p.Lat, p.Lon), out Point view);
+        x = view.X;
+        y = view.Y;
+        return near;
+    }
+#endif
 
     private void Order()
     {
@@ -186,10 +213,7 @@ internal sealed class CityLabels
         Dictionary<Place, bool> visible = LabelPicker.Pick(order, height, Settings.Density.Value, Settings.NavalBases.Value, scale, area, p =>
         {
             if (globe)
-            {
-                bool near = Map.TryLocationToView(new SeaPower.GeoPosition(p.Lat, p.Lon), out Point g);
-                return near ? (g.X, g.Y) : (float.NaN, 0f);
-            }
+                return GlobePoint(p, out float gx, out float gy) ? (gx, gy) : (float.NaN, 0f);
             Point v = Map.LocationToView(new Location(p.Lat, p.Lon));
             return (v.X, v.Y);
         });
