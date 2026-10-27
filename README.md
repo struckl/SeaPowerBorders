@@ -178,14 +178,16 @@ src/SeaPowerBorders/
   Borders/            the border lines (BorderData), which ones a date has (BorderEras), the coastal distance line
                       (SeaMask, SeaLimits, SeaLimitCache)
   Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas)
-  Map/                lines in the map (BorderLines), labels (CityLabels), which ones show (LabelPicker), symbols
-                      (Icons), the order of our panels (MapSlots)
+  Map/                lines in the map (BorderLines; on the globe projected point by point with ProjectedLines), labels
+                      (CityLabels), which ones show (LabelPicker), symbols (Icons), the order of our panels (MapSlots)
+  GameApi.cs          the few internal game members used (a map's night flag, a Layers-menu entry), by reflection
   mod/borders/        borders.bin (generated), eras.csv
   mod/places/         world.csv (generated), naval_bases.csv, eras.csv
   Settings.cs, ModLog.cs, mod/_info.ini
 tools/borders-data/   Natural Earth -> borders.bin, with the hand-drawn lines (extra.csv)
 tools/cities-data/    Natural Earth -> world.csv
 tools/places-check/   offline check, label and border picture
+tools/globe-check/    offline check of the globe drawing against the game's own projection (accuracy, horizon, timing, pictures)
 docs/plan.md          build plan; country names still to build
 docs/testing.md       in-game test checklist and results
 docs/workshop.md      how to release on the Steam Workshop (and what every public text must say)

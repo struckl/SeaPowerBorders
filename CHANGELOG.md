@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased – for the 3D globe map (game build 26223125, the 11 November release)
+
+The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it.
+Built and checked offline against the game's own projection; **not yet run in the game**.
+
+- **Layers menu and night colours** use the new map state: the entries go into `MapDisplayState.Tactical`, and the
+  line and label colours follow each map's own palette (there is no global theme any more).
+- **Border lines and the coastal distance line on the globe** are projected point by point on every change of the view,
+  instead of being laid out as lon/lat rectangles (which the globe's converging meridians skew by up to ~9° at 70° N).
+  Long straight stretches are cut into steps so they follow the curve (within 0.4 px), lines are cut where they cross the
+  horizon, and only the pieces that meet the visible area are projected (0.1–3 ms per view on a 4K screen).
+- **City labels** skip the far side of the globe, and their pick follows the point the globe is turned to.
+- The editor's flat map keeps the old drawing (equirectangular projection).
+- New offline check `tools/globe-check` (accuracy against the game's projection, horizon cuts, timing, pictures).
+
 ## 1.0.0 – first release
 
 Borders, capitals, cities and naval bases of the mission's date on the tactical map, with an optional coastal

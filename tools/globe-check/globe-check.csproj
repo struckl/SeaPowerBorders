@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Offline check of the globe drawing: the mod's ProjectedLines/GeoArea code against the game's own orthographic projection. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>SeaPowerBorders</RootNamespace>
+    <!--Override with your own install: dotnet build -p:GameDir="D:\Steam\steamapps\common\Sea Power"-->
+    <GameDir Condition="'$(GameDir)' == ''">E:\Games\steamapps\common\Sea Power</GameDir>
+    <ManagedDir>$(GameDir)\Sea Power_Data\Managed</ManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\SeaPowerBorders\Map\ProjectedLines.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Borders\BorderData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Seapower-Scripts"><HintPath>$(ManagedDir)\Seapower-Scripts.dll</HintPath></Reference>
+    <Reference Include="Noesis.NoesisGUI"><HintPath>$(ManagedDir)\Noesis.NoesisGUI.dll</HintPath></Reference>
+    <Reference Include="Unity.Mathematics"><HintPath>$(ManagedDir)\Unity.Mathematics.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

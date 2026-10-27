@@ -11,6 +11,11 @@ internal sealed class SeaLimitPiece
 
     /// <summary>Longitude, latitude, longitude, latitude, ...</summary>
     public float[] Points;
+
+    private float[] bounds;
+
+    /// <summary>West, south, east, north of the points (worked out once, for the globe's culling).</summary>
+    public float[] Bounds => bounds ??= Map.ProjectedLines.Bounds(Points);
 }
 
 /// <summary>The line a set distance off the coast in one 10° tile, at a few levels of detail.</summary>

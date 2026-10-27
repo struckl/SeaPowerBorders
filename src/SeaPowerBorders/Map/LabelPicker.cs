@@ -84,6 +84,8 @@ internal static class LabelPicker
             if (p.Rank > maxRank || picked.Count >= MaxLabels || !Inside(p, area))
                 continue;
             (float x, float y) = project(p);
+            if (float.IsNaN(x))                   // not on the map's visible side (the globe's far side)
+                continue;
             bool anchor = p.Naval && naval;
             float icon = (anchor ? 12f : p.Capital ? 9f : 6f) * scale;
             float font = FontSizes[Math.Min(p.Rank, FontSizes.Length - 1)] * scale;

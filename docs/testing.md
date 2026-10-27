@@ -4,6 +4,29 @@ Log: `E:\Games\steamapps\common\Sea Power\BepInEx\LogOutput.log`. Config:
 `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` – turn on `Verbose log` for this test (every label pick and
 border level change is logged).
 
+## Globe build (needs the game build 26223125)
+
+Offline first (no game): `dotnet run --project tools/globe-check -c Release -- --check` - the mod's projection code
+against the game's own `OrthographicProjection` (positions within 0.0002 px of the textbook formula, chords within
+0.4 px of the curve, cut ends on the limb, 0.1-3 ms per view). Pictures: `-- --view 70.3,20,60 --out n.tsv`, then
+`python -I tools/globe-check/draw.py n.tsv n.png`. Passed 2026-10-28.
+
+In the game (Claude never starts it for this; turn on `Verbose log`, mouse and keys are his):
+
+1. Log: `Map hook in place.`, then on the first mission `Attached to the map: border lines place labels.` and `Border
+   lines: drawing for the globe.` No `[Error  :SeaPowerBorders]` and no `MissingMethodException`.
+2. **Layers menu**: entries "Borders" and "Cities and bases" exist and switch the lines and labels (Shift+F7 / F7 too).
+3. **Borders follow the stock map**: Trollfjorden (1985) zoomed on the Norwegian-Soviet-Finnish border at 70° N, Europe
+   at a 20-30° view with the globe turned and the map rotated; the lines must sit on the stock coastlines/borders at every
+   zoom, also while dragging (no lag, no flicker) and across the date line (a Pacific mission).
+4. **Whole globe in view**: no lines on the far side, none across the disc.
+5. **Labels**: none for places on the far side; after turning the globe by a tenth of the view the new side gets its labels.
+6. **Coastal distance line** (`Coastal distance line (nm) = 12`): follows the drawn coast on the globe, no tiles missing
+   east of 20°E (the 0.3.0 bug), off again with the setting at 0.
+7. **Night map**: lines and names change colour with each map's palette (Auto follows the sun).
+8. The editor's flat map still draws the borders (old drawing).
+9. Speed: dragging and zooming stay smooth with everything on (the log line `Border lines (globe): N points` shows the size).
+
 ## 0.3.1 – Coastal distance line (reworked)
 
 The line is **off by default now**: set `Coastal distance line (nm) = 12` first.

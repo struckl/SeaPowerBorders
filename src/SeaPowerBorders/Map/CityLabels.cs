@@ -106,6 +106,17 @@ internal sealed class CityLabels
         bool zoomed = laidOutHeight <= 0 || Math.Abs(Math.Log(height / laidOutHeight)) >= 0.04;
         double cx = (view.West + view.East) / 2, cy = (view.South + view.North) / 2;
         bool panned = Math.Abs(cx - laidOutX) > (view.East - view.West) * 0.25 || Math.Abs(cy - laidOutY) > height * 0.25;
+        if (Globe)
+        {
+            // The visible lon/lat box stops changing once the pole or the whole globe is in view: follow the centre
+            // the globe is turned to instead, a tenth of the view's height at a time.
+            Location centre = Map.MapProjection.Center;
+            cx = centre.Longitude;
+            cy = centre.Latitude;
+            double turn = cx - laidOutX;
+            turn -= 360.0 * Math.Round(turn / 360.0);
+            panned = Math.Abs(turn) * Math.Max(0.2, Math.Cos(cy * Math.PI / 180.0)) > height * 0.1 || Math.Abs(cy - laidOutY) > height * 0.1;
+        }
         if (!zoomed && !panned)
             return;
         if (now < nextLayout)
@@ -133,9 +144,14 @@ internal sealed class CityLabels
         view = null;
         if (Map.ActualWidth <= 0 || Map.ActualHeight <= 0)
             return false;
-        view = Map.ViewRectToBoundingBox(new Rect(0, 0, Map.ActualWidth, Map.ActualHeight));
+        view = Globe
+            ? Map.MapProjection.GetVisibleGeoBounds(Map.ViewTransform, new Size((float)Map.ActualWidth, (float)Map.ActualHeight))
+            : Map.ViewRectToBoundingBox(new Rect(0, 0, Map.ActualWidth, Map.ActualHeight));
         return view != null;
     }
+
+    /// <summary>The map is the globe (an orthographic projection): places on its far side have no position.</summary>
+    private bool Globe => Map.MapProjection is OrthographicProjection;
 
     private void Order()
     {
@@ -166,8 +182,14 @@ internal sealed class CityLabels
     private void Layout(double height, (double west, double south, double east, double north) area)
     {
         float scale = Settings.LabelSize.Value;
+        bool globe = Globe;
         Dictionary<Place, bool> visible = LabelPicker.Pick(order, height, Settings.Density.Value, Settings.NavalBases.Value, scale, area, p =>
         {
+            if (globe)
+            {
+                bool near = Map.TryLocationToView(new SeaPower.GeoPosition(p.Lat, p.Lon), out Point g);
+                return near ? (g.X, g.Y) : (float.NaN, 0f);
+            }
             Point v = Map.LocationToView(new Location(p.Lat, p.Lon));
             return (v.X, v.Y);
         });

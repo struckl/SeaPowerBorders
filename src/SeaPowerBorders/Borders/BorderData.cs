@@ -33,6 +33,11 @@ internal sealed class BorderPiece
 
     /// <summary>Longitude, latitude, longitude, latitude, ...</summary>
     public float[] Points;
+
+    private float[] bounds;
+
+    /// <summary>West, south, east, north of the points (worked out once, for the globe's culling).</summary>
+    public float[] Bounds => bounds ??= Map.ProjectedLines.Bounds(Points);
 }
 
 /// <summary>
