@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using BepInEx.Configuration;
 using SeaPower;
@@ -7,7 +8,7 @@ using SeapowerUI;
 namespace SeaPowerBorders;
 
 /// <summary>
-/// An entry in the map's Layers menu (the menu lists <c>GizmoLayerManager.Layers</c>, so one more
+/// An entry in the map's Layers menu (the menu lists <c>MapDisplayState.Tactical.Layers</c>, so one more
 /// <see cref="MapLayer"/> there gets a checkbox like the stock layers). Its state is kept in our config.
 /// Numbers: Better Tac Map uses 500-509, Topographic Map 600, Borders 601, Cities 602.
 /// </summary>
@@ -37,22 +38,29 @@ internal sealed class LayerEntry
             return;
         try
         {
-            GizmoLayerManager manager = GizmoLayerManager.Instance;
-            if (manager.LayersByName.TryGetValue(name, out MapLayer existing))
+            MapDisplayState state = MapDisplayState.Tactical;
+            if (state.LayersByName.TryGetValue(name, out MapLayer existing))
             {
                 Adopt(existing);
                 return;
             }
             int number = preferredNumber;
-            while (manager.LayersById.ContainsKey(number))
+            while (state.LayersById.ContainsKey(number))
                 number++;
 
             // MapLayer looks its menu text up in the language table; give it ours first.
             Singleton<LanguageResourceHandler>.Instance.LanguageDictionary[("MapLayers" + name).ToLowerInvariant()] = displayName;
-            var created = new MapLayer(number, name, true);
-            manager.Layers.Add(created);
-            manager.LayersByName[name] = created;
-            manager.LayersById[number] = created;
+            MapLayer created = GameApi.NewLayer(state, number, name, true);
+            if (created == null || !(state.LayersByName is IDictionary<string, MapLayer> byName) ||
+                !(state.LayersById is IDictionary<int, MapLayer> byId))
+            {
+                failed = true;
+                ModLog.Warn($"The map's layer list has changed - no '{displayName}' entry in the Layers menu; the toggle key still works.");
+                return;
+            }
+            state.Layers.Add(created);
+            byName[name] = created;
+            byId[number] = created;
             Adopt(created);
             ModLog.Info($"Map layer '{displayName}' added to the Layers menu (#{number}), {(created.Visible ? "on" : "off")}.");
         }
