@@ -107,6 +107,11 @@ domain.
 - **Labels (optional, last):** country names of the time (USSR, GDR, FRG, Yugoslavia, Czechoslovakia, North and South
   Yemen, …) at Natural Earth's label points, fading in by zoom. Either Noesis text laid over the map control (like
   Topographic Map's legend) or a TextMesh in the scene.
+- **If the mod gains traction (2026-10-28, his wish; also said on the Workshop page under "What may come"):** go into more
+  detail – draw a country's borders and sea limit the way that country defined them on the mission's date (in 1985 the Soviet
+  Union claimed 12 nm of territorial sea, Norway 4, the US and UK 3, Greece and Turkey 6 in the Aegean) instead of the one
+  coastal distance the 0.3.x line uses for everybody. Needs a per-country, per-year table of claims (and the baselines they
+  were measured from) – a research job, so only when there is interest. Still a reference, never a mission rule.
 
 ## Settings (section "2. Borders")
 
