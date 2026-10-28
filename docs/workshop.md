@@ -46,6 +46,10 @@ metadata `ApproximateVersion=0.8.7`; read back with `check`). **Made public on 2
 `WorkshopUpload visibility 3827360064 public "<change note>"` after the new description (`upload … <note> workshop/description.bbcode`).
 Updates go through `upload` (further down).
 
+**Main picture (`workshop/preview.jpg`, 1000 × 1000):** the same look as the other mods' pictures – a dark band over the bottom fifth with the
+title (Segoe UI Semibold) and a lighter subtitle. `python tools/make-preview.py` draws it from `workshop/preview-source.jpg`; replace it on the item
+with `modtool workshop borders upload --preview` (the staged `dist/…/preview.jpg` is the same file). Done 2026-10-28.
+
 **Without starting the game** (preferred – like the other mods): `tools/workshop-upload` talks to the running,
 signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
 Create Mod screen does (title, description, tags, content, preview, the `[Compatibility]` line of `_info.ini` as
