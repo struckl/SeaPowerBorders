@@ -7,7 +7,9 @@ package now carries **two builds of the same sources**: `SeaPowerBorders.dll` fo
 `SeaPowerBordersFlat.dll` for 0.8.7; each looks at the game it runs on (the globe build has `MapDisplayState`) and stays
 off on the other, and the log says which runs. The flat build is the code tested in the game with 0.8.7 (0.3.1), plus
 the entry check. Checked offline with `tools/compat-check`: every DLL has nothing missing on its own game, and its
-entry point nothing missing on either; **not yet run in the game**.
+entry point nothing missing on either. **Run in the game on the globe build (2026-10-28, Trollfjorden 1985):** layer entries,
+labels, borders at three zooms in both palettes, and the coastal line work (two bugs found there and fixed: see below);
+0.8.7 with the flat build is not yet run.
 
 The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
@@ -18,6 +20,9 @@ The mission map of the new build is a globe (an orthographic projection), and th
   Long straight stretches are cut into steps so they follow the curve (within 0.4 px), lines are cut where they cross the
   horizon, and only the pieces that meet the visible area are projected (0.1–3 ms per view on a 4K screen).
 - **City labels** skip the far side of the globe, and their pick follows the point the globe is turned to.
+- Found in the game and fixed: the lines go to Noesis in paths of at most 600 points (one path with thousands of points is not
+  drawn at all - the borders vanished at wide zoom), the line opacity is in the brush instead of the panel, and a delegate that
+  had been left unassigned by the file split.
 - The editor's flat map keeps the old drawing (equirectangular projection).
 - New offline check `tools/globe-check` (accuracy against the game's projection, horizon cuts, timing, pictures).
 

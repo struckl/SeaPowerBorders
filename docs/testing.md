@@ -11,6 +11,22 @@ against the game's own `OrthographicProjection` (positions within 0.0002 px of t
 0.4 px of the curve, cut ends on the limb, 0.1-3 ms per view). Pictures: `-- --view 70.3,20,60 --out n.tsv`, then
 `python -I tools/globe-check/draw.py n.tsv n.png`. Passed 2026-10-28.
 
+### Result 2026-10-28 (Claude, on his go; mouse-free, with the Shot Director dev tool, Anchor Chain through Topo's dev shim, Trollfjorden 1985)
+
+Globe build 26223125, package with both DLLs (the flat DLL logged `This game has the globe map … stays off`, no duplicate-plugin
+warning, no `[Error  :SeaPowerBorders]` in the end):
+- Layers entries "Borders" (#601) and "Cities and bases" (#602) added; 1619 places and 446 of 511 border lines for 1985-02-26.
+- Labels on the globe: right places and symbols (Kirkenes, Murmansk, Severomorsk, East Berlin, Moscow ...), none for the far side.
+- Border lines, night and day palette: Norwegian-Soviet and Finnish-Soviet frontier at 70° N (zoom 7), 1985 Europe and the Middle East
+  incl. the inner-German line (zoom 5), Africa/Asia with the globe turned (zoom 3.5): on the stock map's features, cut at the limb.
+- **Two bugs found only in the game and fixed (558901b):** a delegate that was never assigned after the file split
+  (`NullReferenceException` in the first rebuild), and one path with thousands of points that Noesis does not draw at all
+  (the borders vanished at zoom 5 although 11,689 points were produced) - now chunked paths of at most 600 points.
+- **Coastal distance line** (`Coastal distance line (nm) = 12`, set through the config while running): the tiles are read in the
+  background (50-60 ms each) and the dashed line follows the Finnmark coast at zoom 8.5 with the frontier alongside.
+- **Not tested yet:** the Layers menu entry clicked (log only), Shift+F7, the editor's flat map, 0.8.7 with the flat DLL (needs the
+  Steam branch switched), a mission over the date line or the poles, dragging/zooming by hand for stutter (only jumps by command).
+
 Offline too: `python tools/modtool.py compat borders` (workspace) builds both DLLs and checks them against both games'
 assemblies - passed 2026-10-28; `docs/both-versions.md` in the workspace has the whole scheme.
 
