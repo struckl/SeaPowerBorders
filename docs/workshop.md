@@ -42,8 +42,9 @@ them in full, the posts in short):
 
 **Done 2026-10-25: the item exists** – [3827360064](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064), created hidden with the command below (title "Sea Power: Rats
 Cities and Borders", tags Overhaul, Realism, Scripting like the Topographic Map, the Anchor Chain requirement, preview,
-metadata `ApproximateVersion=0.8.7`; read back with `check`). To make it public, set the visibility on the item page
-(Visibility → Public) after the checks below. Updates go through `upload` (further down).
+metadata `ApproximateVersion=0.8.7`; read back with `check`). **Made public on 2026-10-28** with
+`WorkshopUpload visibility 3827360064 public "<change note>"` after the new description (`upload … <note> workshop/description.bbcode`).
+Updates go through `upload` (further down).
 
 **Without starting the game** (preferred – like the other mods): `tools/workshop-upload` talks to the running,
 signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
