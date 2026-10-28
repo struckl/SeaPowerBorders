@@ -22,14 +22,17 @@ internal sealed partial class BorderLines
     private const float MinStepPixels = 0.4f;
     private const double GlobeRadiusMetres = 6378137.0;
     private bool globe;
-    private Path globeSolid, globeDashed, globeWater;
+    private PathSet solidSet, dashedSet, waterSet;
     private readonly List<BorderPiece> solidPieces = new List<BorderPiece>(), dashedPieces = new List<BorderPiece>();
     private readonly Dictionary<(int x, int y), SeaLimitTile> globeWaterTiles = new Dictionary<(int x, int y), SeaLimitTile>();
     private BorderData lastData;
     private HashSet<BorderLine> lastDrawn;
     private bool piecesStale = true, globeDirty = true, loggedBudget;
     private ViewKey viewKey;
-    private readonly Projector projector;
+    // The delegate for ProjectedLines, made on first use here (not in the constructor of BorderLines.cs, which the flat-map
+    // build shares and which knows nothing of the globe).
+    private Projector projectorCache;
+    private Projector projector => projectorCache ??= Project;
 
     /// <summary>The view as far as it matters for the globe's paths: changes whenever a projected point moves.</summary>
     private readonly struct ViewKey : IEquatable<ViewKey>
@@ -50,15 +53,90 @@ internal sealed partial class BorderLines
         public override int GetHashCode() => HashCode.Combine(lat, lon, scale, rotation);
     }
 
-    /// <summary>Appends the projected points to a stream geometry; points within a fraction of a pixel of the last one are dropped.</summary>
-    private sealed class GeometrySink : ILineSink
+    /// <summary>
+    /// The paths of one line style in a panel. Noesis does not draw a path with thousands of points (round joins and dashes
+    /// multiply them) - the lines of a wide view simply vanished - so the lines are cut into paths of a few hundred points
+    /// each. The paths are made once and reused on every rebuild.
+    /// </summary>
+    private sealed class PathSet
     {
-        private readonly StreamGeometryContext context;
+        private readonly Panel host;
+        private readonly List<Path> paths = new List<Path>();
+        private Brush stroke;
+        private float thickness = 1f;
+        private string dashes;
+        private int used;
+
+        public PathSet(Panel host) => this.host = host;
+
+        public void Style(Brush stroke, float thickness, string dashes)
+        {
+            this.stroke = stroke;
+            this.thickness = thickness;
+            this.dashes = dashes;
+            foreach (Path path in paths)
+                Apply(path);
+        }
+
+        private void Apply(Path path)
+        {
+            path.Stroke = stroke;
+            path.StrokeThickness = thickness;
+            if (dashes != null)
+                path.StrokeDashArray = dashes;
+        }
+
+        /// <summary>Forget the paths (the panel was cleared by the caller).</summary>
+        public void Forget()
+        {
+            paths.Clear();
+            used = 0;
+        }
+
+        public void Reset() => used = 0;
+
+        public Path Next()
+        {
+            if (used == paths.Count)
+            {
+                var path = new Path { IsHitTestVisible = false, StrokeLineJoin = PenLineJoin.Round };
+                Apply(path);
+                host.Children.Add(path);
+                paths.Add(path);
+            }
+            return paths[used++];
+        }
+
+        /// <summary>Empties the paths that were not used this time.</summary>
+        public void Trim()
+        {
+            for (int i = used; i < paths.Count; i++)
+                paths[i].Data = null;
+        }
+    }
+
+    /// <summary>
+    /// Appends the projected points to the paths of a <see cref="PathSet"/>, starting a new path between two lines once the
+    /// current one has a few hundred points; points within a fraction of a pixel of the last one are dropped.
+    /// </summary>
+    private sealed class ChunkSink : ILineSink
+    {
+        private const int ChunkPoints = 600;
+
+        private readonly PathSet set;
+        private StreamGeometry geometry;
+        private StreamGeometryContext context;
+        private Path path;
         private Point pending, last;
         private bool hasPending;
+        private int inChunk;
         public int Points;
 
-        public GeometrySink(StreamGeometryContext context) => this.context = context;
+        public ChunkSink(PathSet set)
+        {
+            this.set = set;
+            set.Reset();
+        }
 
         public void Begin(float x, float y)
         {
@@ -72,6 +150,8 @@ internal sealed partial class BorderLines
                 return;
             if (hasPending)
             {
+                if (context == null || inChunk >= ChunkPoints)
+                    Roll();
                 context.BeginFigure(pending, false, false);
                 hasPending = false;
             }
@@ -81,7 +161,33 @@ internal sealed partial class BorderLines
             }
             last = new Point(x, y);
             context.LineTo(last, true, true);
+            inChunk++;
             Points++;
+        }
+
+        private void Roll()
+        {
+            Close();
+            path = set.Next();
+            geometry = new StreamGeometry();
+            context = geometry.Open();
+            inChunk = 0;
+        }
+
+        private void Close()
+        {
+            if (context == null)
+                return;
+            context.Dispose();
+            context = null;
+            path.Data = geometry;
+        }
+
+        /// <summary>Hands the last geometry over and empties the paths that stay unused.</summary>
+        public void Finish()
+        {
+            Close();
+            set.Trim();
         }
     }
 
@@ -133,30 +239,33 @@ internal sealed partial class BorderLines
         scale = float.NaN;
         globe = toGlobe;
         piecesStale = globeDirty = true;
+        solidSet?.Forget();
+        dashedSet?.Forget();
+        waterSet?.Forget();
         if (!globe)
+        {
+            panel.Opacity = Settings.LineOpacity.Value;     // the flat drawing takes its opacity from the panel
             return;
-        globeDashed ??= NewGlobePath();
-        globeSolid ??= NewGlobePath();
-        globeWater ??= NewGlobePath();
-        panel.Children.Add(globeDashed);
-        panel.Children.Add(globeSolid);
-        waterPanel.Children.Add(globeWater);
+        }
+        solidSet ??= new PathSet(panel);
+        dashedSet ??= new PathSet(panel);
+        waterSet ??= new PathSet(waterPanel);
         StyleGlobe();
         ModLog.Debug("Border lines: drawing for the globe.");
     }
 
-    private static Path NewGlobePath() => new Path { IsHitTestVisible = false, StrokeLineJoin = PenLineJoin.Round };
-
     private void StyleGlobe()
     {
-        if (globeSolid == null)
+        if (solidSet == null)
             return;
-        globeSolid.Stroke = globeDashed.Stroke = brush;
-        globeSolid.StrokeThickness = globeDashed.StrokeThickness = Settings.LineWidth.Value;
-        globeDashed.StrokeDashArray = "6 3";
-        globeWater.Stroke = waterBrush;
-        globeWater.StrokeThickness = Settings.LineWidth.Value * 0.8f;
-        globeWater.StrokeDashArray = "3 3";
+        // The line opacity goes into the brush: a panel opacity below 1 makes Noesis draw the whole panel into an offscreen
+        // picture first, which is wasteful for a full-screen map.
+        panel.Opacity = 1f;
+        byte alpha = (byte)Math.Round(255.0 * Settings.LineOpacity.Value);
+        Brush lines = brush == null ? null : new SolidColorBrush(Color.FromArgb(alpha, brush.Color.R, brush.Color.G, brush.Color.B));
+        solidSet.Style(lines, Settings.LineWidth.Value, null);
+        dashedSet.Style(lines, Settings.LineWidth.Value, "6 3");
+        waterSet.Style(waterBrush, Settings.LineWidth.Value * 0.8f, "3 3");
     }
 
     private void UpdateGlobe(BorderData data, HashSet<BorderLine> drawn, SeaLimitCache waters)
@@ -281,11 +390,13 @@ internal sealed partial class BorderLines
             globeDirty = false;
             if (!TryArea(out GeoArea area))
             {
-                globeSolid.Data = globeDashed.Data = globeWater.Data = null;
+                new ChunkSink(solidSet).Finish();
+                new ChunkSink(dashedSet).Finish();
+                new ChunkSink(waterSet).Finish();
                 return;
             }
             double step = ProjectedLines.StepDegrees(Map.ViewTransform.Scale * GlobeRadiusMetres);
-            int points = FillBorders(globeDashed, dashedPieces, area, step) + FillBorders(globeSolid, solidPieces, area, step) +
+            int points = FillBorders(dashedSet, dashedPieces, area, step) + FillBorders(solidSet, solidPieces, area, step) +
                          FillWaters(area, step);
             if (Settings.VerboseLog.Value && Environment.TickCount - nextDiagnostics >= 0)
             {
@@ -303,57 +414,45 @@ internal sealed partial class BorderLines
         }
     }
 
-    private int FillBorders(Path path, List<BorderPiece> pieces, in GeoArea area, double step)
+    private int FillBorders(PathSet set, List<BorderPiece> pieces, in GeoArea area, double step)
     {
-        var geometry = new StreamGeometry();
-        int count;
-        using (StreamGeometryContext context = geometry.Open())
+        var sink = new ChunkSink(set);
+        foreach (BorderPiece piece in pieces)
         {
-            var sink = new GeometrySink(context);
-            foreach (BorderPiece piece in pieces)
+            if (!area.Meets(piece.Bounds))
+                continue;
+            ProjectedLines.Add(piece.Points, projector, step, sink);
+            if (sink.Points > MaxGlobePoints)
             {
-                if (!area.Meets(piece.Bounds))
-                    continue;
-                ProjectedLines.Add(piece.Points, projector, step, sink);
-                if (sink.Points > MaxGlobePoints)
-                {
-                    LogBudget();
-                    break;
-                }
+                LogBudget();
+                break;
             }
-            count = sink.Points;
         }
-        path.Data = geometry;
-        return count;
+        sink.Finish();
+        return sink.Points;
     }
 
     private int FillWaters(in GeoArea area, double step)
     {
-        var geometry = new StreamGeometry();
-        int count;
-        using (StreamGeometryContext context = geometry.Open())
+        var sink = new ChunkSink(waterSet);
+        foreach (SeaLimitTile tile in globeWaterTiles.Values)
         {
-            var sink = new GeometrySink(context);
-            foreach (SeaLimitTile tile in globeWaterTiles.Values)
+            if (waterLevel < 0 || waterLevel >= tile.Levels.Length)
+                continue;
+            foreach (SeaLimitPiece piece in tile.Levels[waterLevel])
             {
-                if (waterLevel < 0 || waterLevel >= tile.Levels.Length)
+                if (!area.Meets(piece.Bounds))
                     continue;
-                foreach (SeaLimitPiece piece in tile.Levels[waterLevel])
-                {
-                    if (!area.Meets(piece.Bounds))
-                        continue;
-                    ProjectedLines.Add(piece.Points, projector, step, sink);
-                }
-                if (sink.Points > MaxGlobePoints)
-                {
-                    LogBudget();
-                    break;
-                }
+                ProjectedLines.Add(piece.Points, projector, step, sink);
             }
-            count = sink.Points;
+            if (sink.Points > MaxGlobePoints)
+            {
+                LogBudget();
+                break;
+            }
         }
-        globeWater.Data = geometry;
-        return count;
+        sink.Finish();
+        return sink.Points;
     }
 
     private void LogBudget()

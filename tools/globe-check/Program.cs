@@ -132,6 +132,20 @@ internal static class Program
         var view = new View(lat, lon, ppd, heading, width, height);
         var (points, pieces, ms, lines) = Rebuild(data, view);
         Console.WriteLine($"view {lat},{lon} {ppd} px/deg: level {data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {ms:0.0} ms");
+        // What the renderer is handed: a single NaN or absurd coordinate can make it drop the whole path.
+        int bad = 0;
+        float extreme = 0;
+        foreach (List<(float x, float y)> line in lines.Lines)
+        {
+            foreach ((float x, float y) in line)
+            {
+                if (!float.IsFinite(x) || !float.IsFinite(y))
+                    bad++;
+                else
+                    extreme = Math.Max(extreme, Math.Max(Math.Abs(x), Math.Abs(y)));
+            }
+        }
+        Console.WriteLine($"  coordinates: {bad} not finite, largest |value| {extreme:0} px (globe radius {view.GlobeRadiusPixels:0} px, view {width}x{height})");
         if (output == null)
             return;
         using var w = new StreamWriter(output);
