@@ -15,7 +15,7 @@ night colours. Found there (and fixed before any release): the globe DLL had an 
 only in the globe game (`GameApi`: `Func<MapPalette, bool>`); Unity's ECS start-up loads every type of every loaded assembly, so on
 0.8.7 it failed and **no mission could load** although the globe build stays off. The field is a plain `Delegate` now, and
 `tools/compat-check --classload` (run by `tools/package.ps1`) checks every type's base, interfaces and fields against the other
-game. Not re-run on the globe with that change; the coastal line was not re-run on 0.8.7 (unchanged code).
+game. Not re-run on the globe with that change. The coastal line was tested on 0.8.7 as well (2026-10-28).
 
 The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
