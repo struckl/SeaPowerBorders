@@ -59,8 +59,10 @@ if (Test-Path $tool) {
         if (-not (Test-Path $dll)) { continue }
         dotnet run --project $tool -c Release --no-build -- $dll --against $b[1] --quiet
         if ($LASTEXITCODE -ne 0) { throw "$($b[0]) references things its own game does not have." }
-        dotnet run --project $tool -c Release --no-build -- $dll --against $b[2] --quiet @gates
-        if ($LASTEXITCODE -ne 0) { throw "$($b[0]): the entry point would fail on the other game." }
+        # --classload: Unity's ECS start-up loads EVERY type of every loaded assembly, so a field of a type the other game lacks
+        # (not just the entry point) stops all missions from loading there, although the DLL stays off (found 2026-10-28).
+        dotnet run --project $tool -c Release --no-build -- $dll --against $b[2] --quiet --classload @gates
+        if ($LASTEXITCODE -ne 0) { throw "$($b[0]): the entry point or a type's fields would fail on the other game." }
     }
 }
 else { Write-Warning 'tools\compat-check not found (the workspace next to this repo) - the DLLs were not checked against both games.' }

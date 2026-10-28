@@ -8,8 +8,14 @@ package now carries **two builds of the same sources**: `SeaPowerBorders.dll` fo
 off on the other, and the log says which runs. The flat build is the code tested in the game with 0.8.7 (0.3.1), plus
 the entry check. Checked offline with `tools/compat-check`: every DLL has nothing missing on its own game, and its
 entry point nothing missing on either. **Run in the game on the globe build (2026-10-28, Trollfjorden 1985):** layer entries,
-labels, borders at three zooms in both palettes, and the coastal line work (two bugs found there and fixed: see below);
-0.8.7 with the flat build is not yet run.
+labels, borders at three zooms in both palettes, and the coastal line work (two bugs found there and fixed: see below).
+**Run in the game on 0.8.7 (2026-10-28, Dangerous Straits 1985):** the flat build runs and the globe build stays off, layer entries
+(#601, #602) and the 1619 places / 446 of 511 border lines are loaded, borders and city labels show at zoom 5 and 7 in the day and
+night colours. Found there (and fixed before any release): the globe DLL had an internal class with a field of a type that exists
+only in the globe game (`GameApi`: `Func<MapPalette, bool>`); Unity's ECS start-up loads every type of every loaded assembly, so on
+0.8.7 it failed and **no mission could load** although the globe build stays off. The field is a plain `Delegate` now, and
+`tools/compat-check --classload` (run by `tools/package.ps1`) checks every type's base, interfaces and fields against the other
+game. Not re-run on the globe with that change; the coastal line was not re-run on 0.8.7 (unchanged code).
 
 The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
