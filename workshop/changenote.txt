@@ -1,1 +1,1 @@
-1.0.0: First release. National borders of the mission's date (USSR, two Germanys and West Berlin, Yugoslavia and more), capitals, cities and naval bases by date, optional coastal distance line. Display only: missions keep their own zones and rules - the lines are a reference, not the mission's rules.
+1.1.0: Borders and cities now also show in the mission editor's map (Borders and Cities buttons at its top left, or Shift+F7 / F7), for the date set in the editor. Display only: the zones and rules you set in the mission are the ones that count.

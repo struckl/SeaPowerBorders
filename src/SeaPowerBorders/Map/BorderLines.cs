@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using MapControl;
 using Noesis;
 using SeaPowerBorders.Borders;
@@ -25,6 +26,7 @@ internal sealed partial class BorderLines
     private const double MinWaterOffset = 5.0;                     // pixels between coast and line before it shows
 
     public readonly MapBase Map;
+    private readonly ObservableCollection<object> background;      // the editor's map: panels go in here, not in Children
     private readonly MapPanel panel;
     private readonly List<ScaleTransform> scales = new List<ScaleTransform>();
     private readonly EventHandler<ViewportChangedEventArgs> onViewport;
@@ -39,11 +41,11 @@ internal sealed partial class BorderLines
     private int nextDiagnostics;
 
     /// <summary>Lays a border panel into the map, or returns null if the map isn't the panel we expect.</summary>
-    public static BorderLines TryAttach(MapBase map)
+    public static BorderLines TryAttach(MapBase map, ObservableCollection<object> background = null)
     {
         try
         {
-            return new BorderLines(map);
+            return new BorderLines(map, background);
         }
         catch (Exception ex)
         {
@@ -52,15 +54,16 @@ internal sealed partial class BorderLines
         }
     }
 
-    private BorderLines(MapBase map)
+    private BorderLines(MapBase map, ObservableCollection<object> background)
     {
         Map = map;
+        this.background = background;
         panel = new MapPanel { IsHitTestVisible = false };
         MapPanel.SetParentMap(panel, map);
-        MapSlots.Insert(map, panel, MapSlots.Borders);
+        MapSlots.Insert(map, panel, MapSlots.Borders, background);
         waterPanel = new MapPanel { IsHitTestVisible = false };
         MapPanel.SetParentMap(waterPanel, map);
-        MapSlots.Insert(map, waterPanel, MapSlots.Waters);
+        MapSlots.Insert(map, waterPanel, MapSlots.Waters, background);
         onViewport = (_, __) =>
         {
             ApplyScale();
@@ -83,9 +86,9 @@ internal sealed partial class BorderLines
         try
         {
             Map.ViewportChanged -= onViewport;
-            Map.Children.Remove(panel);
+            MapSlots.Remove(Map, panel, background);
             MapPanel.SetParentMap(panel, null);
-            Map.Children.Remove(waterPanel);
+            MapSlots.Remove(Map, waterPanel, background);
             MapPanel.SetParentMap(waterPanel, null);
         }
         catch (Exception ex)

@@ -1,6 +1,6 @@
 # Sea Power: Rats Cities and Borders
 
-> **Version 1.0.0, on the Steam Workshop since 2026-10-28:** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
+> **Version 1.0.0 is on the Steam Workshop since 2026-10-28 (1.1.0, borders and cities in the mission editor, is prepared and not yet released):** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 > National borders, cities and naval bases of the mission's date and an optional coastal distance line, tested in the
 > game with a 1985 and a 1991 mission on 0.8.7; country names come next – see [docs/plan.md](docs/plan.md).
 > Screenshots: [workshop/screenshots](workshop/screenshots).
@@ -48,6 +48,16 @@ Where the data comes from:
 | Naval bases with side and years | the author's list, `mod/places/naval_bases.csv`, approximate positions |
 
 Made with Natural Earth. Free vector and raster map data at naturalearthdata.com.
+
+## In the mission editor
+
+The mission editor's map shows the same **border lines and city, base and capital labels** (version 1.1.0, built for 0.8.7 and
+the globe build). Two small buttons, **Borders** and **Cities**, sit at the top left of the editor's map, and the
+toggle keys (**Shift+F7**, **F7**) work there too; the editor has no Layers menu, so the choice is kept in the mod's
+config. Borders and places follow **the date set in the editor**. As in missions this is a reference drawing only:
+what counts in the mission are the zones and rules you set in the editor, never a line or a name from this mod.
+Technically: the panels go into the editor map's background elements (`Map/MapSlots.cs`), found as in Topographic
+Map (`AtlasHost.TickEditor`); buttons in `Ui/EditorButtons.cs`.
 
 ## Borders
 

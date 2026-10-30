@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.1.0 – 2026-10-31 – the mission editor (not yet run in the game)
+
+Asked for by a player: borders and cities in the mission editor, not only in missions.
+
+- **The editor's map gets the border lines and the city, base and capital labels**, built for 0.8.7 and
+  the 3D-globe build (the editor's map is a flat map in both). Found the way Topographic Map finds it (the editor's view
+  model holds the map; the control showing it is looked for in the UI once a second while no mission runs). The panels go
+  into the map view model's background elements, after the tiles and before the units, so they stay below the symbols
+  and the editor's own drawing and clicks pass through.
+- **Switches**: two small buttons, *Borders* and *Cities*, at the top left of the editor's map, and the toggle keys
+  (Shift+F7 / F7). The editor has no Layers menu, so the state is kept in the config (the same Visible settings the
+  Layers menu entries use); the menu entries appear in missions as before.
+- **The date set in the editor** picks the borders and the places, as the mission's date does in a mission; change the
+  date in the editor and the map follows within a second. The Era setting (`MissionDate` / `Today`) applies as before.
+- Display only, as everywhere: the lines and labels are a reference map, not the mission's zones or rules - the zones
+  and rules you set in the editor are the ones that count in the mission.
+- Starting a test run from the editor hands the map over to the mission; leaving the mission brings the editor's back.
+
 ## Unreleased – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
 
 Sea Power exists in two versions with different map code, and a mod compiled against one fails on the other. The

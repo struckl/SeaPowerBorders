@@ -6,6 +6,8 @@ using MapControl;
 using SeaPower;
 using SeaPower.LiveMap;
 using SeapowerUI;
+using SeapowerUI.ViewModels;
+using SeaPowerBorders.Ui;
 using SeaPowerBorders.Borders;
 using SeaPowerBorders.Map;
 using SeaPowerBorders.Places;
@@ -15,7 +17,8 @@ namespace SeaPowerBorders;
 
 /// <summary>
 /// Drives the mod: applies the map hook once NoesisGUI runs, and during a mission keeps the Layers-menu entries, the
-/// toggle keys, the border lines and the labels of every live map in step. The mission's places and borders are put
+/// toggle keys, the border lines and the labels of every live map in step. Out of a mission, the mission editor's map
+/// gets the same lines and labels (for the date set in the editor), with two buttons and the toggle keys to switch them. The mission's places and borders are put
 /// together once per mission, for its date: the game's own campaign lists, the mod's naval bases and extra places,
 /// Natural Earth's places and border lines.
 /// </summary>
@@ -61,6 +64,11 @@ internal sealed class AtlasHost : MonoBehaviour
     private HashSet<BorderLine> drawnBorders;
     private int bordersVersion, bordersSettings = -1;
 
+    // The mission editor's map (a flat map of its own, found the way Topo finds it).
+    private MapDecor editorDecor;
+    private EditorButtons editorButtons;
+    private float nextEditorCheck;
+
     private HookState mapHooks;
     private float nextHookCheck, nextPrune, nextBuildTry;
     private bool missionActive;
@@ -92,21 +100,21 @@ internal sealed class AtlasHost : MonoBehaviour
             if (Singleton<WindowHostManager>.InstanceExists())
                 ApplyMapHooks();
         }
-        if (!missionActive)
+        if (!missionActive && mapHooks == HookState.Applied)
+            TickEditor();
+        if (!missionActive && editorDecor == null)
             return;
 
-        bordersLayer.EnsureRegistered();
-        citiesLayer.EnsureRegistered();
+        // The editor has no Layers menu: the switches stay in our config there, and the entries come with the first mission.
+        if (missionActive)
+        {
+            bordersLayer.EnsureRegistered();
+            citiesLayer.EnsureRegistered();
+        }
         if (Settings.CitiesKey.Value.IsDown())
-        {
-            citiesLayer.Toggle();
-            ModLog.Info($"Cities {(citiesLayer.Visible ? "on" : "off")}.");
-        }
+            ToggleCities();
         if (Settings.BordersKey.Value.IsDown())
-        {
-            bordersLayer.Toggle();
-            ModLog.Info($"Borders {(bordersLayer.Visible ? "on" : "off")}.");
-        }
+            ToggleBorders();
         if (places == null && Time.unscaledTime >= nextBuildTry)
         {
             nextBuildTry = Time.unscaledTime + 1f;
@@ -145,6 +153,124 @@ internal sealed class AtlasHost : MonoBehaviour
             map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark, seaLimits);
             map.Labels?.Update(citiesOn, places, placesVersion, dark, Time.unscaledTime);
         }
+        editorButtons?.Update(bordersOn, citiesOn);
+    }
+
+    private void ToggleCities()
+    {
+        citiesLayer.Toggle();
+        ModLog.Info($"Cities {(citiesLayer.Visible ? "on" : "off")}.");
+    }
+
+    private void ToggleBorders()
+    {
+        bordersLayer.Toggle();
+        ModLog.Info($"Borders {(bordersLayer.Visible ? "on" : "off")}.");
+    }
+
+    /// <summary>
+    /// The mission editor: looked for once a second while no mission runs. Its map (the editor's view model holds it;
+    /// the control showing it is found in the UI) gets the lines and labels, drawn into the map view model's background
+    /// elements, and two buttons. Places and borders are those of the date set in the editor.
+    /// </summary>
+    private void TickEditor()
+    {
+        if (Time.unscaledTime < nextEditorCheck)
+            return;
+        nextEditorCheck = Time.unscaledTime + 1f;
+        MapBase found = FindEditorMap();
+        if (!ReferenceEquals(found, editorDecor?.Map))
+        {
+            LeaveEditor();
+            if (found != null)
+                EnterEditor(found);
+        }
+        if (editorDecor != null && EditorDate() is DateTime date && date.Date != missionDate.Date && places != null)
+        {
+            // The date was changed in the editor: other borders, other places.
+            places = null;
+            drawnBorders = null;
+            bordersSettings = -1;
+            nextBuildTry = 0f;
+        }
+    }
+
+    private void EnterEditor(MapBase map)
+    {
+        var model = map.DataContext as MapViewModel;
+        if (model == null)
+            return;
+        var decor = new MapDecor
+        {
+            Map = map,
+            Borders = BorderLines.TryAttach(map, model.BackgroundElements),
+            Labels = CityLabels.TryAttach(map, model.BackgroundElements),
+        };
+        if (decor.Borders == null && decor.Labels == null)
+            return;
+        editorDecor = decor;
+        maps.Add(decor);
+        editorButtons = EditorButtons.TryAttach(map, ToggleBorders, ToggleCities);
+        places = null;
+        drawnBorders = null;
+        bordersSettings = -1;
+        nextBuildTry = 0f;
+        ModLog.Info("Mission editor map found: borders and cities drawn there too.");
+    }
+
+    private void LeaveEditor()
+    {
+        if (editorDecor == null)
+            return;
+        editorDecor.Detach();
+        maps.Remove(editorDecor);
+        editorDecor = null;
+        editorButtons?.Detach();
+        editorButtons = null;
+        ModLog.Info("Mission editor map closed.");
+    }
+
+    // The date set in the mission editor, or null.
+    private static DateTime? EditorDate()
+    {
+        DateTime used = MissionEditorViewModel.Instance?.DateTimeMission?.DateTimeUsed ?? default;
+        return used.Year > 1900 ? used : (DateTime?)null;
+    }
+
+    // The editor's map control, if it is on screen.
+    private MapBase FindEditorMap()
+    {
+        MapViewModel model = MissionEditorViewModel.Instance?.Map?.Map;
+        if (model == null)
+            return null;
+        MapBase known = editorDecor?.Map;
+        if (known != null && ReferenceEquals(known.DataContext, model) && Noesis.VisualTreeHelper.GetParent(known) != null &&
+            known.ActualWidth >= 2f && known.IsVisible)
+            return known;
+        foreach (NoesisView view in FindObjectsByType<NoesisView>(FindObjectsSortMode.None))
+        {
+            if (view.Content == null)
+                continue;
+            var stack = new Stack<Noesis.DependencyObject>();
+            stack.Push(view.Content);
+            for (int seen = 0; stack.Count > 0 && seen < 50000; seen++)
+            {
+                Noesis.DependencyObject d = stack.Pop();
+                if (d is MapBase candidate)
+                {
+                    if (ReferenceEquals(candidate.DataContext, model) && candidate.IsVisible && candidate.ActualWidth > 0f)
+                        return candidate;
+                    continue;
+                }
+                if (d is Noesis.Visual v)
+                {
+                    int n = Noesis.VisualTreeHelper.GetChildrenCount(v);
+                    for (int i = 0; i < n; i++)
+                        stack.Push(Noesis.VisualTreeHelper.GetChild(v, i));
+                }
+            }
+        }
+        return null;
     }
 
     private void ApplyMapHooks()
@@ -166,6 +292,7 @@ internal sealed class AtlasHost : MonoBehaviour
     {
         try
         {
+            LeaveEditor();                     // a test run from the editor
             missionActive = true;
             places = null;
             drawnBorders = null;
@@ -185,6 +312,7 @@ internal sealed class AtlasHost : MonoBehaviour
         try
         {
             missionActive = false;
+            LeaveEditor();
             foreach (MapDecor map in maps)
                 map.Detach();
             maps.Clear();
@@ -227,9 +355,12 @@ internal sealed class AtlasHost : MonoBehaviour
         }
     }
 
-    // The mission's date (the game sets it from the mission file before the mission starts), else today.
-    private static DateTime MissionDate()
+    // The mission's date (the game sets it from the mission file before the mission starts; in the editor, the date set
+    // there), else today.
+    private DateTime MissionDate()
     {
+        if (!missionActive && EditorDate() is DateTime editorDate)
+            return editorDate.Date;
         if (Singleton<SeaPower.Environment>.InstanceExists())
         {
             SeaPower.Environment environment = Singleton<SeaPower.Environment>.Instance;

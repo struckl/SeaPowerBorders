@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using MapControl;
 using Noesis;
 using SeaPowerBorders.Places;
@@ -19,6 +20,7 @@ internal sealed class CityLabels
     private const float RelayoutSeconds = 0.2f;
 
     public readonly MapBase Map;
+    private readonly ObservableCollection<object> background;      // the editor's map: the panel goes in here, not in Children
     private readonly MapPanel panel;
     private readonly Dictionary<Place, (FrameworkElement element, bool left)> elements =
         new Dictionary<Place, (FrameworkElement element, bool left)>();
@@ -33,11 +35,11 @@ internal sealed class CityLabels
     private bool loggedFailure;
 
     /// <summary>Lays a label panel into the map, or returns null if the map isn't the panel we expect.</summary>
-    public static CityLabels TryAttach(MapBase map)
+    public static CityLabels TryAttach(MapBase map, ObservableCollection<object> background = null)
     {
         try
         {
-            return new CityLabels(map);
+            return new CityLabels(map, background);
         }
         catch (Exception ex)
         {
@@ -46,12 +48,13 @@ internal sealed class CityLabels
         }
     }
 
-    private CityLabels(MapBase map)
+    private CityLabels(MapBase map, ObservableCollection<object> background)
     {
         Map = map;
+        this.background = background;
         panel = new MapPanel { IsHitTestVisible = false };
         MapPanel.SetParentMap(panel, map);
-        MapSlots.Insert(map, panel, MapSlots.Cities);
+        MapSlots.Insert(map, panel, MapSlots.Cities, background);
     }
 
     /// <summary>False once the map has left the visual tree (window closed, mission over).</summary>
@@ -61,7 +64,7 @@ internal sealed class CityLabels
     {
         try
         {
-            Map.Children.Remove(panel);
+            MapSlots.Remove(Map, panel, background);
             MapPanel.SetParentMap(panel, null);
         }
         catch (Exception ex)

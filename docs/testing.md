@@ -178,3 +178,7 @@ the units, a stutter when zooming (the pick is logged with verbose log on).
 - Test tool, not the mod: loading a mission from inside a running one, or within seconds of the main menu appearing,
   breaks the game (`Gameobject is not a root in a scene`, a `NullReferenceException` in `SeaPower.Utils.GetSOP`).
   Load from the main menu, once it has settled.
+
+## Mission editor (1.1.0, not yet run in the game)
+
+Main menu > Mission Editor > open or start a mission (set the date in the editor's date field, e.g. 1985). Log: `Mission editor map found: borders and cities drawn there too.` Expect: border lines and place labels on the editor map, Borders and Cities buttons at its top left (lit while on); the buttons and Shift+F7 / F7 switch them; changing the editor's date changes the borders and places within a second (log: `N places for <date>`); zoom/pan like in a mission; clicks, drags and unit placement unaffected. Leaving the editor logs `Mission editor map closed.`; a test run from the editor shows the mission's own layers. Check on both game versions and next to Topographic Map (its buttons sit at the map's top right).
