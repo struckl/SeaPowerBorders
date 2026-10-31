@@ -14,6 +14,8 @@ Asked for by a player: borders and cities in the mission editor, not only in mis
   Layers menu entries use); the menu entries appear in missions as before.
 - **The date set in the editor** picks the borders and the places, as the mission's date does in a mission; change the
   date in the editor and the map follows within a second. The Era setting (`MissionDate` / `Today`) applies as before.
+- **No double names**: the editor's own *Map Labels* layer already draws the game's cities and bases, so while that
+  checkbox is on the mod labels only the other places (capitals, naval bases, places of the date); with it off, all of them.
 - Display only, as everywhere: the lines and labels are a reference map, not the mission's zones or rules - the zones
   and rules you set in the editor are the ones that count in the mission.
 - Starting a test run from the editor hands the map over to the mission; leaving the mission brings the editor's back.

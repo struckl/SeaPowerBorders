@@ -68,6 +68,9 @@ internal sealed class AtlasHost : MonoBehaviour
     private MapDecor editorDecor;
     private EditorButtons editorButtons;
     private float nextEditorCheck;
+    private List<Place> editorPlaces, editorPlacesFrom;
+    private bool editorGameLabels;
+    private int editorPlacesVersion;
 
     private HookState mapHooks;
     private float nextHookCheck, nextPrune, nextBuildTry;
@@ -151,7 +154,21 @@ internal sealed class AtlasHost : MonoBehaviour
             bool dark = GameApi.IsDark((map.Map.DataContext as MapViewModel)?.Palette);
 #endif
             map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark, seaLimits);
-            map.Labels?.Update(citiesOn, places, placesVersion, dark, Time.unscaledTime);
+            if (map == editorDecor)
+            {
+                // The editor draws the game's own cities and bases itself (its Map Labels checkbox): ours only for the rest.
+                bool gameLabels = EditorShowsGameLabels();
+                if (editorPlaces == null || editorPlacesFrom != places || editorGameLabels != gameLabels)
+                {
+                    editorPlacesFrom = places;
+                    editorGameLabels = gameLabels;
+                    editorPlaces = places == null ? null : gameLabels ? places.Where(p => !p.FromGame).ToList() : places;
+                    editorPlacesVersion++;
+                }
+                map.Labels?.Update(citiesOn, editorPlaces, editorPlacesVersion, dark, Time.unscaledTime);
+            }
+            else
+                map.Labels?.Update(citiesOn, places, placesVersion, dark, Time.unscaledTime);
         }
         editorButtons?.Update(bordersOn, citiesOn);
     }
@@ -228,6 +245,19 @@ internal sealed class AtlasHost : MonoBehaviour
         editorButtons?.Detach();
         editorButtons = null;
         ModLog.Info("Mission editor map closed.");
+    }
+
+    // The editor's own "Map Labels" layer (on by default) is on; true if that can't be read.
+    private static bool EditorShowsGameLabels()
+    {
+        try
+        {
+            return MissionEditorViewModel.Instance?.Map?.ShowMapLabels ?? true;
+        }
+        catch
+        {
+            return true;
+        }
     }
 
     // The date set in the mission editor, or null.
