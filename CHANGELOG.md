@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.1.0 – 2026-10-31 – the mission editor (not yet run in the game)
+## 1.1.0 – 2026-10-31 – the mission editor
 
-Asked for by a player: borders and cities in the mission editor, not only in missions.
+Asked for by a player: borders and cities in the mission editor, not only in missions. Run in the game on 0.8.7 (2026-10-31): editor map, buttons, keys, the editor's date, no doubled names, and missions unchanged (Red Sea, Narvik). The globe build was checked offline only (`tools/compat-check`), not run with 1.1.0.
 
 - **The editor's map gets the border lines and the city, base and capital labels**, built for 0.8.7 and
   the 3D-globe build (the editor's map is a flat map in both). Found the way Topographic Map finds it (the editor's view

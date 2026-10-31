@@ -1,1 +1,1 @@
-1.1.0: Borders and cities now also show in the mission editor's map (Borders and Cities buttons at its top left, or Shift+F7 / F7), for the date set in the editor. Display only: the zones and rules you set in the mission are the ones that count.
+1.1.0: Borders and cities now also show in the mission editor's map. Two buttons at the top left of the editor map (or F7 for cities, Shift+F7 for borders) switch them, and they follow the date set in the editor. Display only: the zones and rules you set in the mission are the ones that count.
