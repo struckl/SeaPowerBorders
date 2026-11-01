@@ -1,4 +1,6 @@
-"""Workshop main picture of the mod: the same look as the other Sea Power mods' pictures (Radio, Topographic Map, Pop-Out) - 1000 x 1000,
+"""Superseded: the R.A.T.S. look (with the brand mark) is made by the workspace's tools/brand-preview.py.
+
+Workshop main picture of the mod: the same look as the other Sea Power mods' pictures (Radio, Topographic Map, Pop-Out) - 1000 x 1000,
 a dark, slightly see-through band over the bottom fifth with the title in Segoe UI Semibold and a lighter subtitle below it.
 Source picture: workshop/preview-source.jpg (the unbanded map). Writes workshop/preview.jpg (Steam takes under 1 MB).
 

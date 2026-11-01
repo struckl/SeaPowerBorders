@@ -1,4 +1,4 @@
-# Sea Power: Rats Cities and Borders
+# Sea Power: R.A.T.S. Cities and Borders
 
 > **On the Steam Workshop since 2026-10-28; 1.1.0 (borders and cities in the mission editor) since 2026-10-31:** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 > National borders, cities and naval bases of the mission's date and an optional coastal distance line, tested in the
