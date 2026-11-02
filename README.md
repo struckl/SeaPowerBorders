@@ -150,6 +150,11 @@ instead of a carpet of names, while a sparse one (East Germany) keeps its towns.
 Config `BepInEx/config/dev.sewerlabs.seapowerborders.cfg`, section "2. Cities": toggle key, density (Fewer / Normal /
 More), naval bases, air bases, civil airports, label size.
 
+## Feedback and bug reports
+
+Bugs, feedback and ideas go on the R.A.T.S. feedback board: <https://hub.sewerlabs.dev/s/borders>.
+For a bug, add `<Sea Power>\BepInEx\LogOutput.log` as a link and name the mission and its start date.
+
 ## Building
 
 Same setup as the other Sea Power mods (Anchor Chain on top of BepInEx 5):
