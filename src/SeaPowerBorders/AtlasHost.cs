@@ -75,6 +75,7 @@ internal sealed class AtlasHost : MonoBehaviour
     private HookState mapHooks;
     private float nextHookCheck, nextPrune, nextBuildTry;
     private bool missionActive;
+    private float nextMarkerCheck;
     private int errors;
 
     private void Awake() => Instance = this;
@@ -125,6 +126,13 @@ internal sealed class AtlasHost : MonoBehaviour
         }
         if (places != null && bordersSettings != Settings.Version)
             SelectBorders();
+        // The mission's land units come in a moment after the mission starts and can change: look again every 2 s, and make the labels again when they did.
+        if (missionActive && places != null && Time.unscaledTime >= nextMarkerCheck)
+        {
+            nextMarkerCheck = Time.unscaledTime + 2f;
+            if (GameMarkers.Collect())
+                placesVersion++;
+        }
 
         if (Time.unscaledTime >= nextPrune)
         {
@@ -342,6 +350,7 @@ internal sealed class AtlasHost : MonoBehaviour
         try
         {
             missionActive = false;
+            GameMarkers.Clear();
             LeaveEditor();
             foreach (MapDecor map in maps)
                 map.Detach();

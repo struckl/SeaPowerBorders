@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **No double labels on places the mission itself marks:** a mission's land units (a port, an airfield) get a marker and a name from the game; Borders now leaves its own label off a place that one of them marks (on it, or within 12 km with the same name). The Battle of Latakia showed "Latakia" twice.
+
 ## 1.1.0 – 2026-10-31 – the mission editor
 
 Asked for by a player: borders and cities in the mission editor, not only in missions. Run in the game on 0.8.7 (2026-10-31): editor map, buttons, keys, the editor's date, no doubled names, and missions unchanged (Red Sea, Narvik). The globe build was checked offline only (`tools/compat-check`), not run with 1.1.0.

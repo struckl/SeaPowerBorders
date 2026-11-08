@@ -196,6 +196,8 @@ internal sealed class CityLabels
 
     private static bool Shown(Place p)
     {
+        if (GameMarkers.Marks(p))      // the game marks it itself (a land unit of the mission): one label is enough
+            return false;
         switch (p.Kind)
         {
             case PlaceKind.AirBase:
