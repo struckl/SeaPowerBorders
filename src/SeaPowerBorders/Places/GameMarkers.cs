@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using SeaPower;
+using SeapowerUI;
 
 namespace SeaPowerBorders.Places;
 
 /// <summary>
-/// The places a mission draws itself: its land units (a port, an airfield, a SAM site) get a marker and a name from the game. Borders
-/// keeps its own label off a place that one of them already marks, so a place is not written twice (the Battle of Latakia showed
-/// "Latakia" twice: the game's port marker and our city label).
+/// The places a mission draws itself: its land units (a port, an airfield, a SAM site) and its city markers (the mission's background
+/// data: <c>MissionManager.OnMapPoints</c>, a red dot with the city's name) get a marker and a name from the game. Borders keeps its
+/// own label off a place that one of them already marks, so a place is not written twice (the Battle of Latakia showed "Latakia"
+/// twice: the game's port marker and our city label; the Yom Kippur War missions showed every city twice: the game's red dot and ours).
 /// </summary>
 internal static class GameMarkers
 {
@@ -31,6 +33,17 @@ internal static class GameMarkers
             }
         }
         catch (Exception ex) { ModLog.Debug("land units: " + ex.Message); }
+        try
+        {
+            if (Singleton<MissionManager>.InstanceExists())
+                foreach (OnMapPointViewModel pt in Singleton<MissionManager>.Instance.OnMapPoints)
+                {
+                    if (pt == null || !pt.Visible) continue;
+                    GeoPosition g = pt.Position;
+                    now.Add((g._latitude, g._longitude, pt.Label ?? ""));
+                }
+        }
+        catch (Exception ex) { ModLog.Debug("city markers: " + ex.Message); }
         bool changed = now.Count != Units.Count;
         for (int i = 0; !changed && i < now.Count; i++)
             changed = Math.Abs(now[i].Item1 - Units[i].lat) > 1e-5 || Math.Abs(now[i].Item2 - Units[i].lon) > 1e-5;
