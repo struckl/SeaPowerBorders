@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 – 2026-11-09 – no double labels
+
+Run in the game on the globe beta (build 261107) on 2026-11-09 under R.A.T.S. Keel: the Red Sea Breakout mission shows the cities (Sanaa, Aden, Djibouti and others) once, next to the mission's own markers. Not run: the Yom Kippur War missions and the Battle of Latakia that the fix is for; 0.8.7.
 
 - **No double labels on places the mission itself marks:** a mission's land units (a port, an airfield) get a marker and a name from the game; Borders now leaves its own label off a place that one of them marks (on it, or within 12 km with the same name). The Battle of Latakia showed "Latakia" twice.
 - **The mission's own city markers count too:** missions that load background data (the Yom Kippur War ones) draw every city themselves as a red dot with a name (`MissionManager.OnMapPoints`), and Borders wrote each of those cities a second time on top. Those markers are now treated like the land units: no Borders label on or within 12 km (same name) of one. Built for both game versions; not yet run in the game.

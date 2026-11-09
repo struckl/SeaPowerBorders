@@ -1,1 +1,2 @@
-1.1.0: Borders and cities now also show in the mission editor's map. Two buttons at the top left of the editor map (or F7 for cities, Shift+F7 for borders) switch them, and they follow the date set in the editor. Display only: the zones and rules you set in the mission are the ones that count.
+1.1.1: no more double labels. A place the mission itself marks (a port, an airfield, or the red city dots of the Yom Kippur War missions) no longer gets a second name from Borders on top.
+Run in the game on the 3D globe public beta (build 261107) in Red Sea Breakout; the Yom Kippur War missions are not run yet. 0.8.7 checked offline only.
