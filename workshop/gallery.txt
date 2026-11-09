@@ -1,0 +1,17 @@
+# The Workshop page's pictures, in page order (files in workshop/screenshots). The tool sends exactly these:
+# `python tools/modtool.py workshop borders gallery`. 03-06, 08-10 are older shots replaced by the ones below.
+12-borders-europe-1985.jpg
+13-borders-europe-1991.jpg
+14-borders-inner-german.jpg
+21-west-berlin-inner-german.jpg
+18-baltic-1985.jpg
+20-levant-1985.jpg
+19-korea-dmz.jpg
+01-europe-1985.jpg
+02-kola-northern-fleet.jpg
+11-germany-1991.jpg
+07-night-theme.jpg
+22-layers-menu.jpg
+15-coastal-line-lofoten.jpg
+17-coastal-line-aegean.jpg
+16-coastal-line-black-sea.jpg
