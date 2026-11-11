@@ -1,5 +1,7 @@
 # Sea Power: R.A.T.S. Cities and Borders
 
+> **Sea Power 0.9.0 (11 November 2026):** 1.1.2 declares the new game version in its `_info.ini` (0.8.7 up to every 0.9.x), so the game no longer lists it as "not declared to be compatible" and Steam passes its updates to 0.9.0 players. Checked offline against 0.9.0 (build 261111); not run in the game on 0.9.0 yet.
+
 > **On the Steam Workshop since 2026-10-28; 1.1.1 (no double labels) since 2026-11-09, 1.1.0 (borders and cities in the mission editor) since 2026-10-31:** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 > National borders, cities and naval bases of the mission's date and an optional coastal distance line, tested in the
 > game with a 1985 and a 1991 mission on 0.8.7; country names come next – see [docs/plan.md](docs/plan.md).

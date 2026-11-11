@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 – 2026-11-11 – declared for game 0.9.0
+
+- **Declared for game 0.9.0.** The mod's `_info.ini` now says it fits 0.8.7 up to every 0.9.x, so the game no longer lists it as "not declared to be compatible", and Steam hands this and later updates to 0.9.0 players (the game skips Workshop updates whose declaration does not fit its version). Checked offline against 0.9.0 (build 261111): every game type, member, Harmony target and by-name lookup the mod uses is there; not run in the game on 0.9.0 yet.
+
 ## 1.1.1 – 2026-11-09 – no double labels
 
 Run in the game on the globe beta (build 261107) on 2026-11-09 under R.A.T.S. Keel: the Red Sea Breakout mission shows the cities (Sanaa, Aden, Djibouti and others) once, next to the mission's own markers. Not run: the Yom Kippur War missions and the Battle of Latakia that the fix is for; 0.8.7.
