@@ -31,7 +31,9 @@ Asked for by a player: borders and cities in the mission editor, not only in mis
   and rules you set in the editor are the ones that count in the mission.
 - Starting a test run from the editor hands the map over to the mission; leaving the mission brings the editor's back.
 
-## Unreleased – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
+## 1.1.3 – 2026-11-12 – in-game name R.A.T.S. Cities and Borders – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
+
+Run in the game on 0.9.1 (build 261112) on 2026-11-12: the new name shows in Keel's list, the mod works in Red Sea Breakout.
 
 Sea Power exists in two versions with different map code, and a mod compiled against one fails on the other. The
 package now carries **two builds of the same sources**: `SeaPowerBorders.dll` for the 3D-globe game and
