@@ -50,6 +50,7 @@ game. Not re-run on the globe with that change. The coastal line was tested on 0
 
 The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
+- **Shows as just "R.A.T.S. Cities and Borders" in the game.** The game's mod list and the mod loader's list (Keel or Anchor Chain) now both say R.A.T.S. Cities and Borders, without "Sea Power" and the same name for both game versions (the flat-map build said "(flat map)").
 - **Layers menu and night colours** use the new map state: the entries go into `MapDisplayState.Tactical`, and the
   line and label colours follow each map's own palette (there is no global theme any more).
 - **Border lines and the coastal distance line on the globe** are projected point by point on every change of the view,
