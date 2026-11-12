@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 – 2026-11-12 – in-game name R.A.T.S. Cities and Borders
+
+Run in the game on 0.9.1 (build 261112) on 2026-11-12: the new name shows in Keel's list, the mod works in Red Sea Breakout.
+
+- **Shows as just "R.A.T.S. Cities and Borders" in the game.** The game's mod list and the mod loader's list (Keel or Anchor Chain) now both say R.A.T.S. Cities and Borders, without "Sea Power" and the same name for both game versions (the flat-map build said "(flat map)").
+
 ## 1.1.2 – 2026-11-11 – declared for game 0.9.0
 
 - **Declared for game 0.9.0.** The mod's `_info.ini` now says it fits 0.8.7 up to every 0.9.x, so the game no longer lists it as "not declared to be compatible", and Steam hands this and later updates to 0.9.0 players (the game skips Workshop updates whose declaration does not fit its version). Checked offline against 0.9.0 (build 261111): every game type, member, Harmony target and by-name lookup the mod uses is there; not run in the game on 0.9.0 yet.
@@ -31,9 +37,7 @@ Asked for by a player: borders and cities in the mission editor, not only in mis
   and rules you set in the editor are the ones that count in the mission.
 - Starting a test run from the editor hands the map over to the mission; leaving the mission brings the editor's back.
 
-## 1.1.3 – 2026-11-12 – in-game name R.A.T.S. Cities and Borders – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
-
-Run in the game on 0.9.1 (build 261112) on 2026-11-12: the new name shows in Keel's list, the mod works in Red Sea Breakout.
+## Unreleased – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
 
 Sea Power exists in two versions with different map code, and a mod compiled against one fails on the other. The
 package now carries **two builds of the same sources**: `SeaPowerBorders.dll` for the 3D-globe game and
@@ -52,7 +56,6 @@ game. Not re-run on the globe with that change. The coastal line was tested on 0
 
 The mission map of the new build is a globe (an orthographic projection), and the old drawing no longer fits it:
 
-- **Shows as just "R.A.T.S. Cities and Borders" in the game.** The game's mod list and the mod loader's list (Keel or Anchor Chain) now both say R.A.T.S. Cities and Borders, without "Sea Power" and the same name for both game versions (the flat-map build said "(flat map)").
 - **Layers menu and night colours** use the new map state: the entries go into `MapDisplayState.Tactical`, and the
   line and label colours follow each map's own palette (there is no global theme any more).
 - **Border lines and the coastal distance line on the globe** are projected point by point on every change of the view,
