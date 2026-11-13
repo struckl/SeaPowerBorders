@@ -60,7 +60,7 @@ dotnet build tools\workshop-upload -c Release
 dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Cities and Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags "Overhaul,Realism,Scripting" --depends 3380210757
 ```
 
-It prints the new item id and link. Put the id into the README and `promotion.md`; later updates are
+It prints the new item id and link. Put the id into the README; later updates are
 `... -- upload <item id> dist\SeaPowerBorders workshop\changenote.txt workshop\description.bbcode`, and
 `... -- check <item id>` only reads and prints title, visibility, tags, size, description, preview, metadata and the
 required items. Before the item goes public: make the repository public (the description links to the source) and
@@ -104,8 +104,8 @@ cities and bases only. All were taken in the game at 4K, the FPS strip cut off, 
 
 ## Posts
 
-[workshop/promotion.md](../workshop/promotion.md) has the Reddit, Steam forum and Discord texts, with a caption for
-every Reddit picture. The pictures are ready in order: `workshop/reddit/` (gallery, 6) and `workshop/discord/` (3; the
+The Reddit, Steam forum and Discord texts, with a caption for every Reddit picture, are in the private workspace (post texts and pictures are not kept in this repo).
+The pictures are there too, in order: a Reddit gallery (6) and Discord pictures (3; the
 MicroProse post takes the first). Fill in the Workshop link once the item exists. Each text carries the short version
 of the points above; do not cut that paragraph. In every picture the game's Discord voice overlay (other people's names
 and avatars, top left of the map) is painted out – check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` does it for a 1920 x 1057 picture (the rectangle is x 8–200, y 340–482). Never put an unscrubbed picture into git: it stays in the history.

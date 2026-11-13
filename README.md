@@ -222,7 +222,7 @@ docs/testing.md       in-game test checklist and results
 docs/workshop.md      how to release on the Steam Workshop (and what every public text must say)
 tools/package.ps1     stage / install the release folder for the Workshop upload
 tools/workshop-upload create / update the Workshop item through the running Steam client, no game needed
-workshop/             description.bbcode, changenote.txt, preview.jpg, promotion.md (Reddit, forum, Discord texts)
+workshop/             description.bbcode, changenote.txt, preview.jpg
 workshop/screenshots/ in-game screenshots for the Workshop page
 ```
 
