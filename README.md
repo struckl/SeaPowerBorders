@@ -233,5 +233,5 @@ workshop/screenshots/ in-game screenshots for the Workshop page
 
 ## License
 
-MIT – see [LICENSE](LICENSE). Natural Earth data is public domain. The game's campaign lists are read from your
+[R.A.T.S. Source License](LICENSE): read it, fork it, send fixes; no re-uploads, no reuse in other projects. Natural Earth data is public domain. The game's campaign lists are read from your
 install, not shipped.
