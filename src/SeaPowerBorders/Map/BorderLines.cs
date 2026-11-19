@@ -181,8 +181,8 @@ internal sealed partial class BorderLines
         var line = new List<Point>();
         foreach (KeyValuePair<(int x, int y, bool dashed), List<BorderPiece>> tile in tiles)
         {
-            float west = tile.Key.x * BorderData.Tile - 180f, south = tile.Key.y * BorderData.Tile - 90f;
-            float north = south + BorderData.Tile;
+            float west = tile.Key.x * Tiles.Size - 180f, south = tile.Key.y * Tiles.Size - 90f;
+            float north = south + Tiles.Size;
             var geometry = new StreamGeometry();
             using (StreamGeometryContext context = geometry.Open())
             {
@@ -210,7 +210,7 @@ internal sealed partial class BorderLines
             };
             if (tile.Key.dashed)
                 path.StrokeDashArray = "6 3";
-            MapPanel.SetBoundingBox(path, new BoundingBox(south, west, north, west + BorderData.Tile));
+            MapPanel.SetBoundingBox(path, new BoundingBox(south, west, north, west + Tiles.Size));
             panel.Children.Add(path);
         }
         ModLog.Debug($"Borders: level {detail} ({data.Tolerances[detail]}°), {tiles.Count} tiles, {points} points");
@@ -239,9 +239,9 @@ internal sealed partial class BorderLines
             return;
         // The view and a quarter of it around, so a short pan finds its tiles drawn.
         double padX = (view.East - view.West) / 4, padY = (view.North - view.South) / 4;
-        int x0 = (int)Math.Floor((view.West - padX + 180.0) / BorderData.Tile), x1 = (int)Math.Floor((view.East + padX + 180.0) / BorderData.Tile);
-        int y0 = Math.Max(0, (int)Math.Floor((view.South - padY + 90.0) / BorderData.Tile));
-        int y1 = Math.Min(17, (int)Math.Floor((view.North + padY + 90.0) / BorderData.Tile));
+        int x0 = (int)Math.Floor((view.West - padX + 180.0) / Tiles.Size), x1 = (int)Math.Floor((view.East + padX + 180.0) / Tiles.Size);
+        int y0 = Math.Max(0, (int)Math.Floor((view.South - padY + 90.0) / Tiles.Size));
+        int y1 = Math.Min(17, (int)Math.Floor((view.North + padY + 90.0) / Tiles.Size));
         if (x1 - x0 > 35)
             x1 = x0 + 35;
         for (int tx = x0; tx <= x1; tx++)

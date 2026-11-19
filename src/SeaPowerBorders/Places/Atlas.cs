@@ -14,6 +14,10 @@ internal static class Atlas
 {
     private const double SameNameKm = 60, SamePlaceKm = 6;
 
+    // A degree of latitude is at least this long, so places further apart in latitude can't be SameNameKm apart.
+    private const double KmPerDegreeLatitude = 111.0;
+    private const double MaxLatitudeApart = SameNameKm / KmPerDegreeLatitude;
+
     public static List<Place> Build(List<Place> game, List<Place> world, List<BaseEntry> bases, List<EraRule> eras, DateTime date)
     {
         var places = new List<Place>();
@@ -49,7 +53,7 @@ internal static class Atlas
         Place match = null;
         foreach (Place q in places)
         {
-            if (Aerial(q.Kind) != Aerial(p.Kind) || Math.Abs(q.Lat - p.Lat) > 0.6)
+            if (Aerial(q.Kind) != Aerial(p.Kind) || Math.Abs(q.Lat - p.Lat) > MaxLatitudeApart)
                 continue;
             double km = Place.DistanceKm(q.Lat, q.Lon, p.Lat, p.Lon);
             // An extra place of the time (West Berlin) sits next to one that exists today on purpose.
@@ -84,6 +88,8 @@ internal static class Atlas
         }
     }
 
+    // Exact names (or the alternative one an earlier list gave), unlike GameMarkers: two lists of towns, where one
+    // name inside another is often a different town nearby.
     private static bool SameName(Place a, Place b) =>
         string.Equals(a.Name, b.Name, StringComparison.OrdinalIgnoreCase) ||
         (a.AltName != null && string.Equals(a.AltName, b.Name, StringComparison.OrdinalIgnoreCase));
@@ -92,9 +98,7 @@ internal static class Atlas
     {
         place = null;
         string[] v = r.Value.Split(',');
-        if (v.Length != 3 ||
-            !double.TryParse(v[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double lat) ||
-            !double.TryParse(v[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double lon) ||
+        if (v.Length != 3 || !DataFiles.TryNumber(v[0], out double lat) || !DataFiles.TryNumber(v[1], out double lon) ||
             !int.TryParse(v[2], out int population))
         {
             ModLog.Warn($"eras.csv: place '{r.Name}' needs lat,lon,population");

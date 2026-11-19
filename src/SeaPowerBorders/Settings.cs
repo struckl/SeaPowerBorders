@@ -1,8 +1,6 @@
 using System.IO;
 using BepInEx;
 using BepInEx.Configuration;
-using SeaPowerBorders.Borders;
-using SeaPowerBorders.Map;
 using UnityEngine;
 
 namespace SeaPowerBorders;
@@ -49,7 +47,7 @@ internal static class Settings
             "with the toggle key.");
         CitiesKey = file.Bind("2. Cities", "Toggle key", new KeyboardShortcut(KeyCode.F7),
             "Turns the Cities map layer on and off (same as its entry in the map's Layers menu).");
-        Density = file.Bind("2. Cities", "Density", Map.Density.Normal,
+        Density = file.Bind("2. Cities", "Density", SeaPowerBorders.Density.Normal,
             "How many places show at a given zoom: Fewer, Normal or More.");
         NavalBases = file.Bind("2. Cities", "Naval bases", true,
             "Mark naval bases with an anchor in the colour of their side (blue West, red East, grey others).");

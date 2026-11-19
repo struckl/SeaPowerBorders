@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SeaPowerBorders.Places;
 
 namespace SeaPowerBorders.Borders;
-
-/// <summary>Which borders to draw for a date.</summary>
-internal enum BorderEra { MissionDate, Today }
 
 /// <summary>
 /// The rules of <c>borders/eras.csv</c>: which of today's borders were not borders yet on a mission's date. A
@@ -36,11 +32,11 @@ internal sealed class BorderEras
     {
         var eras = new BorderEras();
         string file = Path.Combine(dir, "eras.csv");
-        foreach (string[] f in ModLists.Rows(file, 6, optional: 1))
+        foreach (string[] f in DataFiles.Rows(file, 6, optional: 1))
         {
             if (f[0] == "union")
             {
-                var m = new Member { Union = f[1], Country = f[2], Since = ModLists.Date(f[3]), Until = ModLists.Date(f[4]) };
+                var m = new Member { Union = f[1], Country = f[2], Since = DataFiles.Date(f[3]), Until = DataFiles.Date(f[4]) };
                 if (!eras.memberships.TryGetValue(m.Country, out List<Member> list))
                     eras.memberships[m.Country] = list = new List<Member>();
                 list.Add(m);
@@ -57,7 +53,7 @@ internal sealed class BorderEras
                     }
                     cls = parsed;
                 }
-                eras.lineRules.Add(new LineRule { A = f[1], B = f[2], Class = cls, Since = ModLists.Date(f[4]), Until = ModLists.Date(f[5]) });
+                eras.lineRules.Add(new LineRule { A = f[1], B = f[2], Class = cls, Since = DataFiles.Date(f[4]), Until = DataFiles.Date(f[5]) });
             }
             else
             {
@@ -70,13 +66,13 @@ internal sealed class BorderEras
     public bool Drawn(BorderLine line, DateTime date, BorderEra era)
     {
         if (line.Class == BorderClass.Added)
-            return era == BorderEra.MissionDate && In(date, line.Since, line.Until);
+            return era == BorderEra.MissionDate && DataFiles.InRange(date, line.Since, line.Until);
         if (era == BorderEra.Today)
             return true;
         foreach (LineRule rule in lineRules)
         {
             bool pair = (rule.A == line.Left && rule.B == line.Right) || (rule.A == line.Right && rule.B == line.Left);
-            if (pair && (rule.Class == null || rule.Class == line.Class) && !In(date, rule.Since, rule.Until))
+            if (pair && (rule.Class == null || rule.Class == line.Class) && !DataFiles.InRange(date, rule.Since, rule.Until))
                 return false;
         }
         // Two members of one union on that date: no border between them yet (or any more).
@@ -84,18 +80,15 @@ internal sealed class BorderEras
         {
             foreach (Member a in left)
             {
-                if (!In(date, a.Since, a.Until))
+                if (!DataFiles.InRange(date, a.Since, a.Until))
                     continue;
                 foreach (Member b in right)
                 {
-                    if (b.Union == a.Union && In(date, b.Since, b.Until))
+                    if (b.Union == a.Union && DataFiles.InRange(date, b.Since, b.Until))
                         return false;
                 }
             }
         }
         return true;
     }
-
-    private static bool In(DateTime date, DateTime? since, DateTime? until) =>
-        (since == null || date >= since.Value) && (until == null || date < until.Value);
 }

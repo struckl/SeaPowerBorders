@@ -35,6 +35,10 @@ internal sealed class SeaMask
     /// <summary>Seeds that were on land in this grid.</summary>
     public readonly List<string> LandSeeds = new List<string>();
 
+    /// <summary>Where the grid is in the game's StreamingAssets folder (also read by the offline checks).</summary>
+    public static string PathIn(string streamingAssets) =>
+        Path.Combine(streamingAssets, "original", "terrain", "data", "lowres.raw");
+
     public static SeaMask Load(string path)
     {
         var mask = new SeaMask();

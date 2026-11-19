@@ -6,7 +6,10 @@ using System.Text;
 
 namespace SeaPowerBorders.Borders;
 
-/// <summary>How Natural Earth classes a border line; <see cref="Added"/> for the Cold War lines the mod adds.</summary>
+/// <summary>
+/// How Natural Earth classes a border line; <see cref="Added"/> for the Cold War lines the mod adds. The order is the
+/// class byte of <c>borders.bin</c>: tools/borders-data/build.py reads the names from here (docs/borders-format.md).
+/// </summary>
 internal enum BorderClass : byte
 {
     International, Indefinite, Disputed, LineOfControl, Lease, Overlay, Indeterminant, Unrecognized, Added,
@@ -25,29 +28,22 @@ internal sealed class BorderLine
     public bool Dashed => Class != BorderClass.International && Class != BorderClass.Indefinite && Class != BorderClass.Added;
 }
 
-/// <summary>A border line's stretch inside one 10° tile, at one level of detail.</summary>
-internal sealed class BorderPiece
+/// <summary>A border line's stretch inside one tile, at one level of detail.</summary>
+internal sealed class BorderPiece : GeoPiece
 {
     public BorderLine Line;
     public int Level, TileX, TileY;
-
-    /// <summary>Longitude, latitude, longitude, latitude, ...</summary>
-    public float[] Points;
-
-    private float[] bounds;
-
-    /// <summary>West, south, east, north of the points (worked out once, for the globe's culling).</summary>
-    public float[] Bounds => bounds ??= Map.ProjectedLines.Bounds(Points);
 }
 
 /// <summary>
 /// The border lines of <c>borders/borders.bin</c> (made by <c>tools/borders-data/build.py</c> from Natural Earth):
-/// every line simplified at a few tolerances and cut into 10° tiles. Plain C#, so the offline check reads it too.
+/// every line simplified at a few tolerances and cut into <see cref="Tiles"/>. The file layout is written down in
+/// docs/borders-format.md; build.py takes the version, tile size and class codes from this file. Plain C#, so the
+/// offline checks read it too.
 /// </summary>
 internal sealed class BorderData
 {
-    public const float Tile = 10f;
-    private const int Version = 1;
+    public const int Version = 1;
 
     public float[] Tolerances;
     public readonly List<BorderLine> Lines = new List<BorderLine>();
@@ -88,16 +84,7 @@ internal sealed class BorderData
         return data;
     }
 
-    /// <summary>The coarsest level whose simplification stays within half a pixel at this zoom.</summary>
-    public int LevelFor(double pixelsPerDegree)
-    {
-        for (int level = Tolerances.Length - 1; level > 0; level--)
-        {
-            if (Tolerances[level] * pixelsPerDegree <= 0.5)
-                return level;
-        }
-        return 0;
-    }
+    public int LevelFor(double pixelsPerDegree) => Tiles.LevelFor(Tolerances, pixelsPerDegree);
 
     private static string Code(byte[] b) => Encoding.ASCII.GetString(b).Trim();
 

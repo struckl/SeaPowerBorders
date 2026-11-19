@@ -44,9 +44,10 @@ internal sealed class Place
     /// <summary>0 = seen from far out (capitals, main bases, the biggest cities) ... 3 = only close in.</summary>
     public int Rank;
 
-    public Place Clone() => (Place)MemberwiseClone();
+    /// <summary>Capitals and the places seen from far out are written in bold.</summary>
+    public bool Bold => Capital || Rank == 0;
 
-    public override string ToString() => $"{Name} ({Lat:0.00}, {Lon:0.00}) {Kind}";
+    public Place Clone() => (Place)MemberwiseClone();
 
     /// <summary>Great-circle distance in km.</summary>
     public static double DistanceKm(double lat1, double lon1, double lat2, double lon2)

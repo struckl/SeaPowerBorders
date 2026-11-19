@@ -147,8 +147,7 @@ internal sealed class AtlasHost : MonoBehaviour
             }
         }
         // Territorial waters come from the game's world grid, read on a worker thread when a map first asks.
-        seaLimits ??= new SeaLimitCache(Path.Combine(Application.streamingAssetsPath, "original", "terrain", "data", "lowres.raw"),
-                                         () => Settings.VerboseLog.Value);
+        seaLimits ??= new SeaLimitCache(SeaMask.PathIn(Application.streamingAssetsPath));
         seaLimits.DrainLog();
 #if FLATMAP
         // Sea Power 0.8.7: one theme for every map.
@@ -418,7 +417,7 @@ internal sealed class AtlasHost : MonoBehaviour
         {
             if (gamePlaces == null)
             {
-                gamePlaces = GameLists.Load(Path.Combine(Application.streamingAssetsPath, "original", "campaigns"));
+                gamePlaces = GameLists.Load(GameLists.DirIn(Application.streamingAssetsPath));
                 string dir = ModDir("places");
                 worldPlaces = ModLists.LoadWorld(dir);
                 bases = ModLists.LoadBases(dir);

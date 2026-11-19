@@ -4,9 +4,6 @@ using SeaPowerBorders.Places;
 
 namespace SeaPowerBorders.Map;
 
-/// <summary>How many places show at a given zoom.</summary>
-internal enum Density { Fewer, Normal, More }
-
 /// <summary>
 /// Which places get a label at a zoom: those whose rank fits the view, most important first, each only where its
 /// label doesn't overlap one already placed. Plain C# (no Noesis), so the offline check draws the same choice.

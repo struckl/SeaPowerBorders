@@ -354,11 +354,11 @@ internal sealed partial class BorderLines
         int x0 = 0, x1 = 35;
         if (!area.AllLongitudes)
         {
-            x0 = (int)Math.Floor((area.West + 180.0) / BorderData.Tile);
-            x1 = Math.Min((int)Math.Floor((area.East + 180.0) / BorderData.Tile), x0 + 35);
+            x0 = (int)Math.Floor((area.West + 180.0) / Tiles.Size);
+            x1 = Math.Min((int)Math.Floor((area.East + 180.0) / Tiles.Size), x0 + 35);
         }
-        int y0 = Math.Max(0, (int)Math.Floor((area.South + 90.0) / BorderData.Tile));
-        int y1 = Math.Min(17, (int)Math.Floor((area.North + 90.0) / BorderData.Tile));
+        int y0 = Math.Max(0, (int)Math.Floor((area.South + 90.0) / Tiles.Size));
+        int y1 = Math.Min(17, (int)Math.Floor((area.North + 90.0) / Tiles.Size));
         for (int tx = x0; tx <= x1; tx++)
         {
             int x = ((tx % 36) + 36) % 36;

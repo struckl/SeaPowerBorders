@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 
 namespace SeaPowerBorders.Places;
@@ -18,6 +17,9 @@ internal static class GameLists
         public string Name, Comment;
         public readonly Dictionary<string, string> Values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
+
+    /// <summary>Where the lists are in the game's StreamingAssets folder (also read by the offline check).</summary>
+    public static string DirIn(string streamingAssets) => Path.Combine(streamingAssets, "original", "campaigns");
 
     public static List<Place> Load(string campaignsDir)
     {
@@ -64,16 +66,17 @@ internal static class GameLists
                 continue;
             string name = s.Name.StartsWith("Port ", StringComparison.OrdinalIgnoreCase) ? s.Name.Substring(5).Trim() : s.Name;
             var place = new Place { Name = name, Lat = lat, Lon = lon, FromGame = true };
-            if (!s.Values.TryGetValue("Role", out string role))
+            bool hasRole = s.Values.TryGetValue("Role", out string role);
+            if (!hasRole)
             {
                 place.Kind = PlaceKind.City;             // a list of port cities (East Asia, the Soviet Pacific)
             }
-            else if (role.IndexOf("Military", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (Military(role, out int rank))
             {
                 place.Kind = PlaceKind.NavalBase;
                 place.Naval = true;
                 place.NavalSide = SideOf(s);
-                place.NavalRank = role.IndexOf("LargeMilitary", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 : 1;
+                place.NavalRank = rank;
             }
             else
             {
@@ -90,18 +93,25 @@ internal static class GameLists
             if (!TryLocation(s, out double lat, out double lon))
                 continue;
             s.Values.TryGetValue("Role", out string role);
-            bool military = role != null && role.IndexOf("Military", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool military = Military(role, out int rank);
             places.Add(new Place
             {
                 Name = string.IsNullOrWhiteSpace(s.Comment) ? s.Name : s.Comment,
                 Lat = lat,
                 Lon = lon,
                 Kind = military ? PlaceKind.AirBase : PlaceKind.Airport,
-                AirRank = role != null && role.IndexOf("LargeMilitary", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 : 1,
+                AirRank = rank,
                 AirSide = military ? SideOf(s) : Bloc.None,
                 FromGame = true,
             });
         }
+    }
+
+    // A role with "Military" is a base; "LargeMilitary" a main one (rank 0), else rank 1.
+    private static bool Military(string role, out int rank)
+    {
+        rank = role != null && role.IndexOf("LargeMilitary", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 : 1;
+        return role != null && role.IndexOf("Military", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     // The game's nation names, sorted into the two blocs of the time.
@@ -131,9 +141,7 @@ internal static class GameLists
         if (!s.Values.TryGetValue("Location", out string text))
             return false;
         string[] parts = text.Split(',');
-        return parts.Length >= 2 &&
-               double.TryParse(parts[0].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out lat) &&
-               double.TryParse(parts[1].Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out lon) &&
+        return parts.Length >= 2 && DataFiles.TryNumber(parts[0], out lat) && DataFiles.TryNumber(parts[1], out lon) &&
                lat >= -90 && lat <= 90;
     }
 
