@@ -57,9 +57,6 @@ internal sealed class CityLabels
         MapSlots.Insert(map, panel, MapSlots.Cities, background);
     }
 
-    /// <summary>False once the map has left the visual tree (window closed, mission over).</summary>
-    public bool Alive => VisualTreeHelper.GetParent(Map) != null;
-
     public void Detach()
     {
         try

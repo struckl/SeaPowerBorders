@@ -35,7 +35,7 @@ internal sealed class AtlasHost : MonoBehaviour
         public BorderLines Borders;
         public CityLabels Labels;
 
-        public bool Alive => (Borders?.Alive ?? true) && (Labels?.Alive ?? true);
+        public bool Alive => Noesis.VisualTreeHelper.GetParent(Map) != null;
 
         public void Detach()
         {
@@ -61,8 +61,8 @@ internal sealed class AtlasHost : MonoBehaviour
     private List<Place> places;
     private int placesVersion;
     private DateTime missionDate;
-    private HashSet<BorderLine> drawnBorders;
-    private int bordersVersion, bordersSettings = -1;
+    private BorderSelection drawnBorders;
+    private int bordersSettings = -1;
 
     // The mission editor's map (a flat map of its own, found the way Topo finds it).
     private MapDecor editorDecor;
@@ -160,7 +160,7 @@ internal sealed class AtlasHost : MonoBehaviour
             // The 3D-globe build: each map has its own palette (Auto follows the sun at the centre of its view).
             bool dark = GameApi.IsDark((map.Map.DataContext as MapViewModel)?.Palette);
 #endif
-            map.Borders?.Update(bordersOn, borderData, drawnBorders, bordersVersion, dark, seaLimits);
+            map.Borders?.Update(bordersOn, drawnBorders, BorderLook.Current(dark), seaLimits);
             if (map == editorDecor)
             {
                 // The editor draws the game's own cities and bases itself (its Map Labels checkbox): ours only for the rest.
@@ -452,10 +452,10 @@ internal sealed class AtlasHost : MonoBehaviour
                 borderEras = BorderEras.Load(dir);
             }
             BorderEra era = Settings.Era.Value;
-            drawnBorders = new HashSet<BorderLine>(borderData.Lines.Where(l => borderEras.Drawn(l, missionDate, era)));
-            bordersVersion++;
-            List<string> added = drawnBorders.Where(l => l.Class == BorderClass.Added).Select(l => l.Name).Distinct().ToList();
-            ModLog.Info($"{drawnBorders.Count} of {borderData.Lines.Count} border lines for " +
+            var drawn = new HashSet<BorderLine>(borderData.Lines.Where(l => borderEras.Drawn(l, missionDate, era)));
+            drawnBorders = new BorderSelection(borderData, drawn);
+            List<string> added = drawn.Where(l => l.Class == BorderClass.Added).Select(l => l.Name).Distinct().ToList();
+            ModLog.Info($"{drawn.Count} of {borderData.Lines.Count} border lines for " +
                         $"{(era == BorderEra.Today ? "today" : missionDate.ToString("yyyy-MM-dd"))}" +
                         $"{(added.Count > 0 ? " with " + string.Join(", ", added) : "")}.");
         }

@@ -2,6 +2,15 @@ using System;
 
 namespace SeaPowerBorders.Map;
 
+/// <summary>The game's map projections work on a sphere of the WGS84 equator's radius.</summary>
+internal static class Earth
+{
+    public const double RadiusMetres = 6378137.0;
+
+    /// <summary>Metres per degree of arc: the flat map's equirectangular scale.</summary>
+    public const double MetresPerDegree = RadiusMetres * Math.PI / 180.0;
+}
+
 /// <summary>Where a place on the map shows on screen, in pixels; false when it lies beyond the globe's horizon.</summary>
 internal delegate bool Projector(double lat, double lon, out float x, out float y);
 
@@ -10,6 +19,9 @@ internal interface ILineSink
 {
     void Begin(float x, float y);
     void LineTo(float x, float y);
+
+    /// <summary>Points taken so far (the globe's point budget counts these).</summary>
+    int Points { get; }
 }
 
 /// <summary>
@@ -25,20 +37,21 @@ internal static class ProjectedLines
 {
     private const int MaxSteps = 96;
     private const double ToRadians = Math.PI / 180.0;
+    private const double TolerancePixels = 0.35;
 
-    /// <summary>The step, in degrees of arc, at which a chord of the curve on a globe of this radius (in pixels) deviates by <paramref name="tolerancePixels"/>.</summary>
-    public static double StepDegrees(double globeRadiusPixels, double tolerancePixels = 0.35)
+    /// <summary>The step, in degrees of arc, at which a chord of the curve on a globe of this radius (in pixels) deviates by a third of a pixel.</summary>
+    public static double StepDegrees(double globeRadiusPixels)
     {
-        double radians = Math.Sqrt(8.0 * tolerancePixels / Math.Max(globeRadiusPixels, 1.0));
+        double radians = Math.Sqrt(8.0 * TolerancePixels / Math.Max(globeRadiusPixels, 1.0));
         return Math.Min(Math.Max(radians / ToRadians, 0.002), 4.0);
     }
 
-    /// <summary>Adds one polyline (longitude, latitude, longitude, latitude, ...); returns the points handed to the sink.</summary>
-    public static int Add(float[] points, Projector project, double stepDegrees, ILineSink sink)
+    /// <summary>Hands one polyline (longitude, latitude, longitude, latitude, ...) to the sink.</summary>
+    public static void Add(float[] points, Projector project, double stepDegrees, ILineSink sink)
     {
-        int count = points.Length / 2, emitted = 0;
+        int count = points.Length / 2;
         if (count < 2)
-            return 0;
+            return;
         double vertexLat = points[1], vertexLon = points[0];
         double curLat = vertexLat, curLon = vertexLon;
         bool curVisible = project(curLat, curLon, out float x, out float y);
@@ -47,7 +60,6 @@ internal static class ProjectedLines
         {
             sink.Begin(x, y);
             open = true;
-            emitted++;
         }
         for (int i = 1; i < count; i++)
         {
@@ -67,7 +79,6 @@ internal static class ProjectedLines
                         if (!curVisible && Horizon(project, la, lo, curLat, curLon, out float hx, out float hy))
                         {
                             sink.Begin(hx, hy);
-                            emitted++;
                         }
                         else
                         {
@@ -76,14 +87,12 @@ internal static class ProjectedLines
                         open = true;
                     }
                     sink.LineTo(nx, ny);
-                    emitted++;
                 }
                 else if (open)
                 {
                     if (Horizon(project, curLat, curLon, la, lo, out float hx, out float hy))
                     {
                         sink.LineTo(hx, hy);
-                        emitted++;
                     }
                     open = false;
                 }
@@ -94,7 +103,6 @@ internal static class ProjectedLines
             vertexLat = lat;
             vertexLon = lon;
         }
-        return emitted;
     }
 
     // The last visible point on the way from a visible point to a hidden one (bisection along the straight lon/lat stretch).
@@ -121,20 +129,6 @@ internal static class ProjectedLines
         return found;
     }
 
-    /// <summary>The bounding box of a polyline's points as west, south, east, north.</summary>
-    public static float[] Bounds(float[] points)
-    {
-        float west = float.MaxValue, south = float.MaxValue, east = float.MinValue, north = float.MinValue;
-        for (int i = 0; i + 1 < points.Length; i += 2)
-        {
-            west = Math.Min(west, points[i]);
-            east = Math.Max(east, points[i]);
-            south = Math.Min(south, points[i + 1]);
-            north = Math.Max(north, points[i + 1]);
-        }
-        return new[] { west, south, east, north };
-    }
-
 }
 
 /// <summary>
@@ -146,7 +140,7 @@ internal readonly struct GeoArea
     public readonly double West, South, East, North;
     public readonly bool AllLongitudes;
 
-    public GeoArea(double south, double north, double west, double east)
+    public GeoArea(double west, double south, double east, double north)
     {
         double padLat = Math.Max(0.5, (north - south) * 0.1);
         South = Math.Max(-90.0, south - padLat);
