@@ -28,29 +28,50 @@ internal static class ModLog
 /// </summary>
 internal static class Program
 {
-    private static int Main(string[] args)
+    private sealed class Options
     {
-        DateTime date = new DateTime(1985, 6, 26);
-        string game = @"E:\Games\steamapps\common\Sea Power", find = null, view = null, output = "labels.tsv";
-        BorderEra era = BorderEra.MissionDate;
-        int width = 1920, height = 1080;
-        double waters = 0;
-        for (int i = 0; i + 1 < args.Length; i += 2)
+        public DateTime Date = new DateTime(1985, 6, 26);
+        public string Game = @"E:\Games\steamapps\common\Sea Power", Find, View, Output = "labels.tsv";
+        public BorderEra Era = BorderEra.MissionDate;
+        public int Width = 1920, Height = 1080;
+        public double Waters;
+
+        public static Options Parse(string[] args)
         {
-            if (args[i] == "--date") date = DateTime.ParseExact(args[i + 1], "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            else if (args[i] == "--game") game = args[i + 1];
-            else if (args[i] == "--find") find = args[i + 1];
-            else if (args[i] == "--view") view = args[i + 1];
-            else if (args[i] == "--out") output = args[i + 1];
-            else if (args[i] == "--era") era = (BorderEra)Enum.Parse(typeof(BorderEra), args[i + 1], true);
-            else if (args[i] == "--waters") waters = double.Parse(args[i + 1], CultureInfo.InvariantCulture);
-            else if (args[i] == "--size")
+            var o = new Options();
+            for (int i = 0; i + 1 < args.Length; i += 2)
+                o.Set(args[i], args[i + 1]);
+            return o;
+        }
+
+        private void Set(string name, string value)
+        {
+            switch (name)
             {
-                string[] s = args[i + 1].Split('x');
-                width = int.Parse(s[0]);
-                height = int.Parse(s[1]);
+                case "--date": Date = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture); break;
+                case "--game": Game = value; break;
+                case "--find": Find = value; break;
+                case "--view": View = value; break;
+                case "--out": Output = value; break;
+                case "--era": Era = (BorderEra)Enum.Parse(typeof(BorderEra), value, true); break;
+                case "--waters": Waters = double.Parse(value, CultureInfo.InvariantCulture); break;
+                case "--size":
+                    string[] s = value.Split('x');
+                    Width = int.Parse(s[0]);
+                    Height = int.Parse(s[1]);
+                    break;
             }
         }
+    }
+
+    private static int Main(string[] args)
+    {
+        Options o = Options.Parse(args);
+        DateTime date = o.Date;
+        string game = o.Game, find = o.Find, view = o.View, output = o.Output;
+        BorderEra era = o.Era;
+        int width = o.Width, height = o.Height;
+        double waters = o.Waters;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         string here = AppContext.BaseDirectory;
         string data = Path.GetFullPath(Path.Combine(here, "..", "..", "..", "..", "..", "src", "SeaPowerBorders", "mod", "places"));

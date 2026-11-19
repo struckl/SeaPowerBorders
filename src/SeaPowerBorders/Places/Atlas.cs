@@ -50,7 +50,16 @@ internal static class Atlas
 
     private static void Merge(List<Place> places, Place p)
     {
-        Place match = null;
+        Place match = Match(places, p);
+        if (match == null)
+            places.Add(p);
+        else
+            Absorb(match, p);
+    }
+
+    // The place of the list that is the same as p: the same kind of place (airfield or not), and near or of the same name.
+    private static Place Match(List<Place> places, Place p)
+    {
         foreach (Place q in places)
         {
             if (Aerial(q.Kind) != Aerial(p.Kind) || Math.Abs(q.Lat - p.Lat) > MaxLatitudeApart)
@@ -59,17 +68,14 @@ internal static class Atlas
             // An extra place of the time (West Berlin) sits next to one that exists today on purpose.
             bool near = km < SamePlaceKm && !q.Distinct && !p.Distinct;
             if (near || (km < SameNameKm && SameName(q, p)))
-            {
-                match = q;
-                break;
-            }
+                return q;
         }
-        if (match == null)
-        {
-            places.Add(p);
-            return;
-        }
+        return null;
+    }
 
+    // The first list's name stays; the later one adds what the first did not know.
+    private static void Absorb(Place match, Place p)
+    {
         if (!string.Equals(match.Name, p.Name, StringComparison.OrdinalIgnoreCase) && match.AltName == null)
             match.AltName = p.Name;           // Natural Earth's name, so the era rules find the place
         if (match.Country == null)

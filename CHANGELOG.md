@@ -3,6 +3,12 @@
 ## Unreleased
 
 - The mod folder carries this CHANGELOG.md, so R.A.T.S. Keel's What's new can show what changed when there are no Workshop notes (a local copy, the GitHub zip).
+- Log: when a game update breaks reading the mission's land units or city markers, the log now says so once (it was silent, and places came back labelled twice).
+- Changed (internal): flat and globe line drawing share one look (colours, widths, dashes) and one coastal-tile poll; each build keeps the look it had.
+- Changed (internal): the per-frame host split into places, borders, editor map and map classes; the mission date is passed in, label lists are handed over instead of a static marker list.
+- Changed (internal): one tile grid, level pick and list reader for all data; the coastal line's contour and grid split into steps (same output, checked tile by tile).
+- Changed (internal): borders.bin layout written down in docs/borders-format.md; build.py takes version, tile size and classes from the C#.
+- Changed (internal): tools/places-check builds again and picks labels with the mod's own filters; tools/globe-check runs the mod's own globe code; tools/workshop-upload and tools/make-preview.py removed (the workspace's modtool and brand-preview replace them).
 
 ## 1.1.3 - 2026-11-12 - in-game name R.A.T.S. Cities and Borders
 

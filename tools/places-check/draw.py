@@ -18,6 +18,7 @@ def main(labels, game, target):
     rows = [r for r in rows if r[0] != "#line"]
     _, west, north, dpp, width, height = rows[0]
     west, north, dpp, width, height = float(west), float(north), float(dpp), int(width), int(height)
+    # The game's world grid, where the mod reads it too (SeaMask.PathIn).
     grid = open(f"{game}/Sea Power_Data/StreamingAssets/original/terrain/data/lowres.raw", "rb").read()
     img = Image.new("RGB", (width, height))
     px = img.load()

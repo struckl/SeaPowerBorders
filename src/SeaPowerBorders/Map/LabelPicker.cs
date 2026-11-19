@@ -71,6 +71,8 @@ internal static class LabelPicker
     }
 
     /// <param name="ordered">Candidates in the order of <see cref="Order"/>.</param>
+    /// <param name="viewHeight">The view's height in degrees: which ranks show.</param>
+    /// <param name="look">Density, label size and anchors.</param>
     /// <param name="area">Only places in here (see <see cref="Around"/>).</param>
     /// <param name="project">A place's position in view units.</param>
     /// <returns>The places to label, each with whether its name goes left of the symbol (where the right side is

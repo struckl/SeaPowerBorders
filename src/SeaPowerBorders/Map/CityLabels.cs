@@ -151,7 +151,7 @@ internal sealed class CityLabels
             if (!visible.ContainsKey(kv.Key) && kv.Value.element.Visibility != Visibility.Collapsed)
                 kv.Value.element.Visibility = Visibility.Collapsed;
         }
-        ModLog.Debug($"Places: {visible.Count} shown at {height:0.0} deg view height, {elements.Count} made");
+        ModLog.Debug($"Places: {visible.Count} shown at {height:0.0}° view height, {elements.Count} made");
     }
 
     // The label of a place, its name on the given side; made again when the side changed.

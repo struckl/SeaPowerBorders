@@ -1,9 +1,10 @@
 using System;
 using MapControl;
 using SeaPower;
+#if FLATMAP
 using SeaPower.LiveMap;
+#endif
 using SeapowerUI;
-using SeapowerUI.ViewModels;
 using SeaPowerBorders.Borders;
 using SeaPowerBorders.Features;
 using UnityEngine;

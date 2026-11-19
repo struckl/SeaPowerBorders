@@ -75,20 +75,24 @@ internal sealed class BorderEras
             if (pair && (rule.Class == null || rule.Class == line.Class) && !DataFiles.InRange(date, rule.Since, rule.Until))
                 return false;
         }
-        // Two members of one union on that date: no border between them yet (or any more).
-        if (memberships.TryGetValue(line.Left, out List<Member> left) && memberships.TryGetValue(line.Right, out List<Member> right))
+        return !OneUnion(line.Left, line.Right, date);
+    }
+
+    // Two members of one union on that date: no border between them yet (or any more).
+    private bool OneUnion(string a, string b, DateTime date)
+    {
+        if (!memberships.TryGetValue(a, out List<Member> left) || !memberships.TryGetValue(b, out List<Member> right))
+            return false;
+        foreach (Member m in left)
         {
-            foreach (Member a in left)
+            if (!DataFiles.InRange(date, m.Since, m.Until))
+                continue;
+            foreach (Member n in right)
             {
-                if (!DataFiles.InRange(date, a.Since, a.Until))
-                    continue;
-                foreach (Member b in right)
-                {
-                    if (b.Union == a.Union && DataFiles.InRange(date, b.Since, b.Until))
-                        return false;
-                }
+                if (n.Union == m.Union && DataFiles.InRange(date, n.Since, n.Until))
+                    return true;
             }
         }
-        return true;
+        return false;
     }
 }

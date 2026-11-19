@@ -60,7 +60,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
             level = wanted;
             pieces.Select(lines.Data, lines.Drawn, level, look.Disputed);
             dirty = true;
-            ModLog.Debug($"Borders (globe): level {level} ({lines.Data.Tolerances[level]} deg), {pieces.Solid.Count + pieces.Dashed.Count} pieces");
+            ModLog.Debug($"Borders (globe): level {level} ({lines.Data.Tolerances[level]}°), {pieces.Solid.Count + pieces.Dashed.Count} pieces");
         }
         bool hasArea = TryArea(out GeoArea area);
         if (coast.Fetch(waters, look.CoastalNm, pixelsPerDegree, hasArea ? (area.West, area.South, area.East, area.North) : null,
@@ -89,7 +89,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
             GlobeLines.Fill(pieces.Solid, area, project, step, solid, LogBudget);
             GlobeLines.Fill(CoastalPieces(), area, project, step, water, LogBudget);
             if (diagnostics.Ready(4000))
-                ModLog.Debug($"Border lines (globe): {solid.Points + dashed.Points + water.Points} points, step {step:0.###} deg, view {area.South:0.#}..{area.North:0.#}N {area.West:0.#}..{area.East:0.#}E");
+                ModLog.Debug($"Border lines (globe): {solid.Points + dashed.Points + water.Points} points, step {step:0.###}°, view {area.South:0.#}..{area.North:0.#}N {area.West:0.#}..{area.East:0.#}E");
         }
         solid.Finish();
         dashed.Finish();

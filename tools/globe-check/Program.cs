@@ -104,12 +104,10 @@ internal static class Program
         var drawn = new HashSet<BorderLine>(data.Lines.Where(l => eras.Drawn(l, date, BorderEra.MissionDate)));
         Console.WriteLine($"borders.bin: {data.Lines.Count} lines ({drawn.Count} for {date:yyyy-MM-dd}), {data.Pieces.Count} pieces, levels {string.Join(", ", data.Tolerances)}");
         var lines = new Lines(data, drawn);
-        int failures = 0;
-        if (check)
-            failures += Check(lines);
+        int failed = check ? Check(lines) : 0;
         if (viewText != null)
             Draw(lines, viewText, width, height, output);
-        return failures == 0 ? 0 : 1;
+        return failed == 0 ? 0 : 1;
     }
 
     /// <summary>The border lines of the date, and the pieces GlobeLines picks for a level (dashed ones included).</summary>
@@ -183,16 +181,26 @@ internal static class Program
             w.WriteLine(string.Join("\t", line.ConvertAll(p => $"{p.x.ToString("0.##", CultureInfo.InvariantCulture)},{p.y.ToString("0.##", CultureInfo.InvariantCulture)}")));
     }
 
+    private static int failures;
+
+    private static void Report(bool ok, string text)
+    {
+        Console.WriteLine($"  [{(ok ? "ok" : "FAIL")}] {text}");
+        if (!ok)
+            failures++;
+    }
+
     private static int Check(Lines data)
     {
-        int failures = 0;
-        void Report(bool ok, string text)
-        {
-            Console.WriteLine($"  [{(ok ? "ok" : "FAIL")}] {text}");
-            if (!ok)
-                failures++;
-        }
+        CheckProjection();
+        CheckChords();
+        CheckHorizon();
+        CheckTiming(data);
+        return failures;
+    }
 
+    private static void CheckProjection()
+    {
         Console.WriteLine("Projection: the game's OrthographicProjection against the textbook formula");
         var rnd = new Random(7);
         double worst = 0;
@@ -217,7 +225,10 @@ internal static class Program
         }
         Report(mismatchedHorizon == 0, $"horizon test agrees with the formula ({mismatchedHorizon} of 5000 differ)");
         Report(worst < 0.05, $"screen positions within {worst:0.0000} px of the formula (heading 25°)");
+    }
 
+    private static void CheckChords()
+    {
         Console.WriteLine("Chords: a straight lon/lat stretch against the curve it follows on the globe");
         foreach (double ppd in new[] { 6.0, 40.0, 300.0, 3000.0 })
         {
@@ -241,6 +252,10 @@ internal static class Program
             Report(deviation < 0.6, $"49°N, {ppd} px/deg: {sink.Points} points, step {step:0.###}°, worst distance to the curve {deviation:0.00} px");
         }
 
+    }
+
+    private static void CheckHorizon()
+    {
         Console.WriteLine("Horizon: a line that runs over the limb");
         {
             var v = new View(0, 0, 6, 0, 1920, 1080);
@@ -264,6 +279,10 @@ internal static class Program
             Report(worstEdge < 0.7, $"cut ends within {worstEdge:0.00} px of the limb circle (radius {r:0.0} px)");
         }
 
+    }
+
+    private static void CheckTiming(Lines data)
+    {
         Console.WriteLine("Time: the plugin's rebuild (cull, subdivide, project) per view; the borders as drawn on every view change");
         foreach (var (name, la, lo, ppd) in new[]
                  {
@@ -278,7 +297,6 @@ internal static class Program
                 best = Math.Min(best, Rebuild(data, v).milliseconds);
             Report(best < 12, $"{name,-16} {ppd,6} px/deg: level {data.Data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {best:0.0} ms (4K view)");
         }
-        return failures;
     }
 
     private static double Distance(double px, double py, (float x, float y) a, (float x, float y) b)
