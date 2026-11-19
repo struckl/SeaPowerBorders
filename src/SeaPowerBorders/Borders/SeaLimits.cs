@@ -33,7 +33,7 @@ internal sealed class SeaLimitTile
 /// Territorial waters: the line a set distance (12 nm) off the coast the game's map draws, for one 10° tile at a
 /// time. The distance to the nearest land is taken on a grid four times finer than the world grid (land where the
 /// stock map draws it: a grid point is sea where its bilinear share of <see cref="SeaMask"/> sea is over half), with
-/// an exact Euclidean distance transform (Felzenszwalb–Huttenlocher; north–south and east–west spacing in nautical
+/// an exact Euclidean distance transform (Felzenszwalb - Huttenlocher; north - south and east - west spacing in nautical
 /// miles, the latter for each row's latitude); then marching squares at the distance. The tile looks past its edges
 /// as far as the distance, and the grid is the same everywhere, so the lines of neighbouring tiles meet.
 /// <para>Measured from the low-water coast as the game has it, not from the straight baselines states draw across
@@ -42,7 +42,7 @@ internal sealed class SeaLimitTile
 internal static class SeaLimits
 {
     private const int Sub = 4;
-    private const double Step = SeaMask.Cell / Sub;                      // 0.0125°: 0.75 nm north–south
+    private const double Step = SeaMask.Cell / Sub;                      // 0.0125°: 0.75 nm north - south
 
     /// <summary>
     /// The line is cut into cells this size, each drawn as its own small path: a path as big as a 10° tile (several
@@ -53,7 +53,7 @@ internal static class SeaLimits
     private const int PerTile = (int)(BorderData.Tile / Step + 0.5);    // 800
     private const double Far = 1e12;                                     // "no land" in nm²
 
-    /// <summary>Douglas–Peucker tolerances in degrees; the map shows the coarsest within half a pixel.</summary>
+    /// <summary>Douglas - Peucker tolerances in degrees; the map shows the coarsest within half a pixel.</summary>
     public static readonly float[] Tolerances = { 0.002f, 0.006f, 0.02f };
 
     public static int LevelFor(double pixelsPerDegree)
@@ -220,7 +220,7 @@ internal static class SeaLimits
 
     private static double Sea(SeaMask mask, int cx, int cy) => mask.IsSea(cx, cy) ? 1.0 : 0.0;
 
-    // Felzenszwalb–Huttenlocher 1D squared distance transform with spacing² s2 between samples.
+    // Felzenszwalb - Huttenlocher 1D squared distance transform with spacing² s2 between samples.
     private static void Edt(double[] f, int n, double s2, double[] d, int[] v, double[] z)
     {
         int k = 0;
@@ -354,7 +354,7 @@ internal static class SeaLimits
 
     private static long EdgeV(int x, int y, int w) => (((long)y * w + x) << 1) | 1;
 
-    // Douglas–Peucker, ends kept (lines of neighbouring tiles still meet).
+    // Douglas - Peucker, ends kept (lines of neighbouring tiles still meet).
     private static List<(double lon, double lat)> Simplify(List<(double lon, double lat)> points, double tolerance)
     {
         if (points.Count < 3)

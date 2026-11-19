@@ -8,7 +8,7 @@ namespace SeaPowerBorders;
 
 /// <summary>
 /// Entry point. Loaded by Anchor Chain (the Sea Power community chainloader on top of BepInEx 5), which scans
-/// every mod folder — Steam Workshop items and <c>StreamingAssets/&lt;folder&gt;</c> — for classes implementing
+/// every mod folder - Steam Workshop items and <c>StreamingAssets/&lt;folder&gt;</c> - for classes implementing
 /// <see cref="IAnchorChainMod"/>.
 /// <para>Sea Power exists in two versions with different map code (0.8.7's flat map, and the 3D globe build), and a
 /// mod compiled against one fails on the other. So the package carries two builds of the same sources:

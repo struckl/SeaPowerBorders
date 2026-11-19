@@ -41,7 +41,7 @@ internal sealed class Place
     // For the mission's date (see Atlas.Resolve):
     public string Label;
     public bool Capital;
-    /// <summary>0 = seen from far out (capitals, main bases, the biggest cities) … 3 = only close in.</summary>
+    /// <summary>0 = seen from far out (capitals, main bases, the biggest cities) ... 3 = only close in.</summary>
     public int Rank;
 
     public Place Clone() => (Place)MemberwiseClone();

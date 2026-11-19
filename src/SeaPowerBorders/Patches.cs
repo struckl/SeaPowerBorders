@@ -8,14 +8,12 @@ namespace SeaPowerBorders;
 
 /// <summary>
 /// Every game method the mod hooks, in two stages. All targets of a stage are resolved before anything is patched.
-/// <list type="bullet">
-/// <item><c>MainGameViewModel.OnStart</c> / <c>GameMain.OnDestroy</c> — mission ready / mission unloading. Without
-/// them the mod stays out of the way entirely.</item>
-/// <item><c>RenderedLayer.OnRender</c> — runs every frame for the map control that shows the live map; it hands
-/// over that map so the labels can be laid into it.</item>
-/// </list>
+/// - <c>MainGameViewModel.OnStart</c> / <c>GameMain.OnDestroy</c> - mission ready / mission unloading. Without
+/// them the mod stays out of the way entirely.
+/// - <c>RenderedLayer.OnRender</c> - runs every frame for the map control that shows the live map; it hands
+/// over that map so the labels can be laid into it.
 /// <para>The map hook must wait until NoesisGUI runs: patching a method JIT-compiles it, and <c>RenderedLayer</c>
-/// registers Noesis dependency properties in its static constructor – before Noesis is initialised that is a
+/// registers Noesis dependency properties in its static constructor - before Noesis is initialised that is a
 /// native crash on startup. <see cref="AtlasHost"/> applies it once the first game window host exists (the main
 /// menu has one).</para>
 /// </summary>

@@ -4,24 +4,24 @@
 
 - The mod folder carries this CHANGELOG.md, so R.A.T.S. Keel's What's new can show what changed when there are no Workshop notes (a local copy, the GitHub zip).
 
-## 1.1.3 – 2026-11-12 – in-game name R.A.T.S. Cities and Borders
+## 1.1.3 - 2026-11-12 - in-game name R.A.T.S. Cities and Borders
 
 Run in the game on 0.9.1 (build 261112) on 2026-11-12: the new name shows in Keel's list, the mod works in Red Sea Breakout.
 
 - **Shows as just "R.A.T.S. Cities and Borders" in the game.** The game's mod list and the mod loader's list (Keel or Anchor Chain) now both say R.A.T.S. Cities and Borders, without "Sea Power" and the same name for both game versions (the flat-map build said "(flat map)").
 
-## 1.1.2 – 2026-11-11 – declared for game 0.9.0
+## 1.1.2 - 2026-11-11 - declared for game 0.9.0
 
 - **Declared for game 0.9.0.** The mod's `_info.ini` now says it fits 0.8.7 up to every 0.9.x, so the game no longer lists it as "not declared to be compatible", and Steam hands this and later updates to 0.9.0 players (the game skips Workshop updates whose declaration does not fit its version). Checked offline against 0.9.0 (build 261111): every game type, member, Harmony target and by-name lookup the mod uses is there; not run in the game on 0.9.0 yet.
 
-## 1.1.1 – 2026-11-09 – no double labels
+## 1.1.1 - 2026-11-09 - no double labels
 
 Run in the game on the globe beta (build 261107) on 2026-11-09 under R.A.T.S. Keel: the Red Sea Breakout mission shows the cities (Sanaa, Aden, Djibouti and others) once, next to the mission's own markers. Not run: the Yom Kippur War missions and the Battle of Latakia that the fix is for; 0.8.7.
 
 - **No double labels on places the mission itself marks:** a mission's land units (a port, an airfield) get a marker and a name from the game; Borders now leaves its own label off a place that one of them marks (on it, or within 12 km with the same name). The Battle of Latakia showed "Latakia" twice.
 - **The mission's own city markers count too:** missions that load background data (the Yom Kippur War ones) draw every city themselves as a red dot with a name (`MissionManager.OnMapPoints`), and Borders wrote each of those cities a second time on top. Those markers are now treated like the land units: no Borders label on or within 12 km (same name) of one. Built for both game versions; not yet run in the game.
 
-## 1.1.0 – 2026-10-31 – the mission editor
+## 1.1.0 - 2026-10-31 - the mission editor
 
 Asked for by a player: borders and cities in the mission editor, not only in missions. Run in the game on 0.8.7 (2026-10-31): editor map, buttons, keys, the editor's date, no doubled names, and missions unchanged (Red Sea, Narvik). The globe build was checked offline only (`tools/compat-check`), not run with 1.1.0.
 
@@ -41,7 +41,7 @@ Asked for by a player: borders and cities in the mission editor, not only in mis
   and rules you set in the editor are the ones that count in the mission.
 - Starting a test run from the editor hands the map over to the mission; leaving the mission brings the editor's back.
 
-## Unreleased – both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
+## Unreleased - both game versions: 0.8.7 and the 3D globe map (game build 26223125, the 11 November release)
 
 Sea Power exists in two versions with different map code, and a mod compiled against one fails on the other. The
 package now carries **two builds of the same sources**: `SeaPowerBorders.dll` for the 3D-globe game and
@@ -65,7 +65,7 @@ The mission map of the new build is a globe (an orthographic projection), and th
 - **Border lines and the coastal distance line on the globe** are projected point by point on every change of the view,
   instead of being laid out as lon/lat rectangles (which the globe's converging meridians skew by up to ~9° at 70° N).
   Long straight stretches are cut into steps so they follow the curve (within 0.4 px), lines are cut where they cross the
-  horizon, and only the pieces that meet the visible area are projected (0.1–3 ms per view on a 4K screen).
+  horizon, and only the pieces that meet the visible area are projected (0.1-3 ms per view on a 4K screen).
 - **City labels** skip the far side of the globe, and their pick follows the point the globe is turned to.
 - Found in the game and fixed: the lines go to Noesis in paths of at most 600 points (one path with thousands of points is not
   drawn at all - the borders vanished at wide zoom), the line opacity is in the brush instead of the panel, and a delegate that
@@ -73,7 +73,7 @@ The mission map of the new build is a globe (an orthographic projection), and th
 - The editor's flat map keeps the old drawing (equirectangular projection).
 - New offline check `tools/globe-check` (accuracy against the game's projection, horizon cuts, timing, pictures).
 
-## 1.0.0 – first release
+## 1.0.0 - first release
 
 Borders, capitals, cities and naval bases of the mission's date on the tactical map, with an optional coastal
 distance line. Display only: it changes nothing in the game or in any mission, and its lines are a reference, not the
@@ -96,12 +96,12 @@ distance from the drawn coast 12.2 nm.
 
 - **Coastal distance line** (then called territorial waters) in the Borders layer: a dashed blue line 12 nm off the
   coast the game's map draws (3 or 6 nm or none in the config), around islands too, once zoomed in. Worked out in the
-  game from its 3′ world grid – sea flooded from the oceans, so the Caspian and the Dead Sea get none – with an exact
+  game from its 3′ world grid - sea flooded from the oceans, so the Caspian and the Dead Sea get none - with an exact
   distance transform per 10° tile on a worker thread. Tested in the game: a median 12.0 nm from the drawn coast.
 
 ## 0.2.0
 
-- **Borders** layer in the map's Layers menu (Shift+F7): land borders as they were on the mission's date – the Soviet
+- **Borders** layer in the map's Layers menu (Shift+F7): land borders as they were on the mission's date - the Soviet
   Union, the inner-German border and West Berlin, Yugoslavia, Czechoslovakia, North and South Yemen, the Vietnam DMZ,
   Eritrea, South Sudan, East Timor, Hong Kong, Macau, Cyprus. Natural Earth's 1:10m land borders with date rules
   (`mod/borders/eras.csv`), plus the Cold War lines it doesn't have. Disputed lines and lines of control dashed. The
@@ -114,7 +114,7 @@ distance from the drawn coast 12.2 nm.
 - **Cities and bases** layer in the map's Layers menu (F7): cities, capitals, naval bases and air bases of the
   mission's date. The game's own campaign lists, about 80 more Cold War naval bases with side and years, and Natural
   Earth for the rest of the world; names, capitals and bases by date (Leningrad, East Berlin, Bonn, Holy Loch until
-  1992, …). Labels by zoom without overlaps, below the units. Tested in the game with a 1985 and a 1991 mission.
+  1992, ...). Labels by zoom without overlaps, below the units. Tested in the game with a 1985 and a 1991 mission.
 - Small places keep their distance from each other (crowded regions such as the North China Plain no longer fill up
   with names) and show from a 14° view instead of 9° (East Germany gets Leipzig, Dresden, Karl-Marx-Stadt).
 - The game's "Mildenahll" airport is spelled RAF Mildenhall.

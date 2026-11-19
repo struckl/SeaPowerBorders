@@ -11,7 +11,7 @@ namespace SeaPowerBorders.Map;
 /// The place labels on one map control. They live in a <see cref="MapPanel"/> laid into the map itself, right above
 /// the graticule: the map places every child at its latitude and longitude on each pan and zoom, below the unit
 /// symbols and the map's own drag surface, so nothing gets in the way of clicks.
-/// <para>Which labels show is worked out when the zoom changes (not on a pan – the labels keep their distances
+/// <para>Which labels show is worked out when the zoom changes (not on a pan - the labels keep their distances
 /// then): those whose rank fits the zoom, most important first, each only where it doesn't overlap one already
 /// placed.</para>
 /// </summary>

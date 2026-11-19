@@ -32,7 +32,7 @@ internal static class LabelPicker
 
     /// <summary>
     /// Most important first: rank, then capitals, then the bigger cities, then naval bases (a base next to a big
-    /// city – Kronstadt by Leningrad – shows once there is room for both).
+    /// city - Kronstadt by Leningrad - shows once there is room for both).
     /// </summary>
     public static void Order(List<Place> places, bool naval)
     {
@@ -129,7 +129,7 @@ internal static class LabelPicker
             return false;
         if (a.east - a.west >= 360.0)
             return true;
-        // The map runs on past ±180°: try the place a turn east or west too.
+        // The map runs on past +/-180°: try the place a turn east or west too.
         for (double lon = p.Lon - 360.0; lon <= p.Lon + 360.0; lon += 360.0)
         {
             if (lon >= a.west && lon <= a.east)

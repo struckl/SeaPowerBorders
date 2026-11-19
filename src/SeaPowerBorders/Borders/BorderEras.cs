@@ -10,8 +10,8 @@ internal enum BorderEra { MissionDate, Today }
 
 /// <summary>
 /// The rules of <c>borders/eras.csv</c>: which of today's borders were not borders yet on a mission's date. A
-/// <b>union</b> lists countries that were one (the Soviet Union, Yugoslavia, ...): a border between two members is
-/// not drawn while both belong to it. A <b>line</b> rule limits one class of border between two countries to some
+/// union lists countries that were one (the Soviet Union, Yugoslavia, ...): a border between two members is
+/// not drawn while both belong to it. A line rule limits one class of border between two countries to some
 /// years. Added lines (inner-German border, West Berlin, ...) carry their own years.
 /// </summary>
 internal sealed class BorderEras

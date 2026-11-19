@@ -2,7 +2,7 @@
 
 The game's own campaign lists (cities, ports, airports) are read by the mod at runtime from the player's install;
 this file fills the rest of the world: every place of at least MIN_POPULATION people, and every capital. Names are
-today's – the mod renames them by mission date (mod/places/eras.csv).
+today's - the mod renames them by mission date (mod/places/eras.csv).
 
 Input: ne_10m_populated_places_simple.geojson from Natural Earth (public domain), release v5.1.2:
 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_populated_places_simple.geojson

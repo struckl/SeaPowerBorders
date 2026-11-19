@@ -1,6 +1,6 @@
 # Releasing on the Steam Workshop
 
-The game uploads Workshop items itself: **Main menu → Mods → Create Mod**, signed in with the Steam account that
+The game uploads Workshop items itself: **Main menu > Mods > Create Mod**, signed in with the Steam account that
 owns the item. No SteamCMD needed.
 
 ## What every public text must say
@@ -8,10 +8,10 @@ owns the item. No SteamCMD needed.
 The Workshop page, Reddit, the Steam forum and Discord posts all carry the same points (the Workshop description has
 them in full, the posts in short):
 
-1. **Display only** – the mod changes nothing in the game or in any mission.
+1. **Display only** - the mod changes nothing in the game or in any mission.
 2. **The lines are not the rules of a mission.** Missions set their own areas and rules (*Northern Vigil* announces
    "weapons free" from its own 10 nm circle; *Don't Mess With Texas* fails the mission for attacking an airbase).
-   In "don't escalate" missions follow the briefing and the mission's own areas (*Map Layers → On Map Areas*).
+   In "don't escalate" missions follow the briefing and the mission's own areas (*Map Layers > On Map Areas*).
 3. **Where the data comes from**: Natural Earth (public domain) for borders and cities, the game's own lists read
    from the install, the author's date rules and naval-base list, hand-drawn Berlin Wall and Vietnam DMZ, the coastal
    distance line computed in the game. Credit: "Made with Natural Earth".
@@ -21,13 +21,13 @@ them in full, the posts in short):
 
 ## Before a release
 
-1. Run the checklists in [testing.md](testing.md) on the current game version (done for 0.1.0–0.3.1 on 2026-10-24
+1. Run the checklists in [testing.md](testing.md) on the current game version (done for 0.1.0-0.3.1 on 2026-10-24
    and 25; 1.0.0 only changed the version number, the Mod Manager text and the docs).
 2. Version: `src/SeaPowerBorders/Plugin.cs` (`Version`) and `src/SeaPowerBorders/SeaPowerBorders.csproj`
    (`<Version>`) are 1.0.0; the CHANGELOG has its entry.
 3. Check `src/SeaPowerBorders/mod/_info.ini`: Mod Manager name and description, and `[Compatibility]`
    (`ApproximateVersion` = the game version tested against).
-4. Make the GitHub repository public (the description links to the source) – or take the link out.
+4. Make the GitHub repository public (the description links to the source) - or take the link out.
 5. Stage the release folder:
 
    ```powershell
@@ -40,17 +40,17 @@ them in full, the posts in short):
 
 ## Upload
 
-**Done 2026-10-25: the item exists** – [3827360064](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064), created hidden with the command below (title "Sea Power: Rats
+**Done 2026-10-25: the item exists** - [3827360064](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064), created hidden with the command below (title "Sea Power: Rats
 Cities and Borders", tags Overhaul, Realism, Scripting like the Topographic Map, the Anchor Chain requirement, preview,
 metadata `ApproximateVersion=0.8.7`; read back with `check`). **Made public on 2026-10-28** with
 `WorkshopUpload visibility 3827360064 public "<change note>"` after the new description (`upload … <note> workshop/description.bbcode`).
 Updates go through `upload` (further down).
 
-**Main picture (`workshop/preview.jpg`, 1000 × 1000):** the same look as the other mods' pictures – a dark band over the bottom fifth with the
+**Main picture (`workshop/preview.jpg`, 1000 × 1000):** the same look as the other mods' pictures - a dark band over the bottom fifth with the
 title (Segoe UI Semibold) and a lighter subtitle. `python tools/make-preview.py` draws it from `workshop/preview-source.jpg`; replace it on the item
 with `modtool workshop borders upload --preview` (the staged `dist/…/preview.jpg` is the same file). Done 2026-10-28.
 
-**Without starting the game** (preferred – like the other mods): `tools/workshop-upload` talks to the running,
+**Without starting the game** (preferred - like the other mods): `tools/workshop-upload` talks to the running,
 signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
 Create Mod screen does (title, description, tags, content, preview, the `[Compatibility]` line of `_info.ini` as
 metadata, visibility, then the dependency); it is **private (hidden) unless `--visibility` says otherwise**:
@@ -66,21 +66,21 @@ It prints the new item id and link. Put the id into the README; later updates ar
 required items. Before the item goes public: make the repository public (the description links to the source) and
 look at the item page once in the browser.
 
-**Or in the game** (needs the game started, and `package.ps1 -Install` first): Mods → Create Mod:
+**Or in the game** (needs the game started, and `package.ps1 -Install` first): Mods > Create Mod:
 
 | Field | Value |
 | --- | --- |
-| Folder | `StreamingAssets\SeaPowerBorders` (the folder `package.ps1 -Install` filled). **Double-click** `SeaPowerBorders` so the picker is *inside* it, then confirm; confirming in `StreamingAssets` itself gets "… is a forbidden path!" |
+| Folder | `StreamingAssets\SeaPowerBorders` (the folder `package.ps1 -Install` filled). **Double-click** `SeaPowerBorders` so the picker is *inside* it, then confirm; confirming in `StreamingAssets` itself gets "... is a forbidden path!" |
 | Name | Sea Power: Rats Cities and Borders |
 | Description | [workshop/description.bbcode](../workshop/description.bbcode) |
 | Preview image | `StreamingAssets\SeaPowerBorders\preview.jpg` (put there by `package.ps1`; Steam wants it under 1 MB) |
 | Tags | Overhaul, Realism, Scripting |
 | Dependencies | `3380210757` (Anchor Chain) |
 | Visibility | first upload **Hidden** (or Friends only); Public once the subscribed copy is tested |
-| Change log | [workshop/changenote.txt](../workshop/changenote.txt) – a few lines, plain ASCII (long text freezes the field) |
+| Change log | [workshop/changenote.txt](../workshop/changenote.txt) - a few lines, plain ASCII (long text freezes the field) |
 
-Then add the screenshots on the Workshop page itself: open the item while signed in as its owner → right column
-**Owner Controls** → **Add/edit images & videos** → choose the files, drag them into the order below.
+Then add the screenshots on the Workshop page itself: open the item while signed in as its owner -> right column
+**Owner Controls** > **Add/edit images & videos** -> choose the files, drag them into the order below.
 
 | Order | File | Shows |
 | --- | --- | --- |
@@ -96,9 +96,9 @@ Then add the screenshots on the Workshop page itself: open the item while signed
 | 9 | 11-germany-1991 | Germany in 1991: Berlin, Chemnitz instead of Karl-Marx-Stadt |
 | 10 | 07-night-theme | the night map |
 | 11 | 09-layers-menu | the Borders and Cities and bases entries in the map's Layers menu |
-| 12–14 | 15, 17, 16 (coastal line) | the optional coastal distance line off Lofoten, in the Aegean (a uniform 12 nm – Greece and Turkey claimed 6 there in 1985) and round the Black Sea. Say in the caption that it is a distance, not a territorial limit |
+| 12-14 | 15, 17, 16 (coastal line) | the optional coastal distance line off Lofoten, in the Aegean (a uniform 12 nm - Greece and Turkey claimed 6 there in 1985) and round the Black Sea. Say in the caption that it is a distance, not a territorial limit |
 
-The other files in `workshop/screenshots/` are spare; 01–11 were taken before the borders existed, so they show
+The other files in `workshop/screenshots/` are spare; 01-11 were taken before the borders existed, so they show
 cities and bases only. All were taken in the game at 4K, the FPS strip cut off, resized to 1920 × 1057 (JPG quality
 90), day theme, HUD visible, in the missions *Trollfjorden* (1985) and *Strawberries Can Kill* (1991).
 
@@ -108,7 +108,7 @@ The Reddit, Steam forum and Discord texts, with a caption for every Reddit pictu
 The pictures are there too, in order: a Reddit gallery (6) and Discord pictures (3; the
 MicroProse post takes the first). Fill in the Workshop link once the item exists. Each text carries the short version
 of the points above; do not cut that paragraph. In every picture the game's Discord voice overlay (other people's names
-and avatars, top left of the map) is painted out – check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` does it for a 1920 x 1057 picture (the rectangle is x 8–200, y 340–482). Never put an unscrubbed picture into git: it stays in the history.
+and avatars, top left of the map) is painted out - check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` does it for a 1920 x 1057 picture (the rectangle is x 8-200, y 340-482). Never put an unscrubbed picture into git: it stays in the history.
 
 ## Testing the Workshop copy
 
@@ -119,6 +119,6 @@ the item to Public.
 
 ## Still to do after the first release
 
-- Country names of the time on the map (USSR, GDR, FRG, Yugoslavia …).
+- Country names of the time on the map (USSR, GDR, FRG, Yugoslavia ...).
 - Populations of 1985 for the city ranking (the UN's World Urbanization Prospects have them).
-- A per-state coastal limit by date (needs a table of claims and the baselines) – or leave it a plain distance.
+- A per-state coastal limit by date (needs a table of claims and the baselines) - or leave it a plain distance.

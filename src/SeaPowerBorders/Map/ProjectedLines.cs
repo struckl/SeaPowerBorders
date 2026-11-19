@@ -139,7 +139,7 @@ internal static class ProjectedLines
 
 /// <summary>
 /// The part of the globe in view as a lon/lat box, padded so a line that is just off screen (or bulges past the box's
-/// corners, as the edges of a view on a globe do) is still found. Longitudes may run past ±180°.
+/// corners, as the edges of a view on a globe do) is still found. Longitudes may run past +/-180°.
 /// </summary>
 internal readonly struct GeoArea
 {
@@ -158,7 +158,7 @@ internal readonly struct GeoArea
         AllLongitudes = East - West >= 359.0;
     }
 
-    /// <summary>Whether a bounding box (west, south, east, north, longitudes within ±180°) meets the area.</summary>
+    /// <summary>Whether a bounding box (west, south, east, north, longitudes within +/-180°) meets the area.</summary>
     public bool Meets(float[] box)
     {
         if (box[3] < South || box[1] > North)

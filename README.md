@@ -6,7 +6,7 @@
 
 > **On the Steam Workshop since 2026-10-28; 1.1.1 (no double labels) since 2026-11-09, 1.1.0 (borders and cities in the mission editor) since 2026-10-31:** https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064
 > National borders, cities and naval bases of the mission's date and an optional coastal distance line, tested in the
-> game with a 1985 and a 1991 mission on 0.8.7; country names come next – see [docs/plan.md](docs/plan.md).
+> game with a 1985 and a 1991 mission on 0.8.7; country names come next - see [docs/plan.md](docs/plan.md).
 > Screenshots: [workshop/screenshots](workshop/screenshots).
 
 A mod for [Sea Power: Naval Combat in the Missile Age](https://store.steampowered.com/app/1286220/) that puts the
@@ -15,28 +15,28 @@ coastlines only.
 
 ## Read this first: what the lines are and what they are not
 
-**The mod only draws on the map. It changes nothing in the game or in any mission** – no rules of engagement, no
+**The mod only draws on the map. It changes nothing in the game or in any mission** - no rules of engagement, no
 triggers, no zones, no scoring, nothing about what units see or do. But what it draws is a **reference map**, and
 **it is not the rules of your mission**:
 
 - **Missions set their own areas and rules**, and they often differ from real geography. *Northern Vigil*, for
   example, announces "weapons free" when two Soviet vessels enter its own **10 nm circle** around a point (the
-  mission asks for it to be displayed; the game's *Map Layers → On Map Areas* is where such areas show), not when
+  mission asks for it to be displayed; the game's *Map Layers > On Map Areas* is where such areas show), not when
   they cross the coast or a border. *Don't Mess With Texas* fails the
   mission for attacking an airbase; *Operation Trident* has an exclusion zone off Karachi. In missions that say
   "don't escalate" or "hold fire", **follow the briefing and the mission's own map areas, never a line from this
-  mod** – a ship crossing a border or the coastal line drawn here is not a violation in the game unless the mission
+  mod** - a ship crossing a border or the coastal line drawn here is not a violation in the game unless the mission
   says so.
 - **Borders** are Natural Earth's present-day de-facto lines with date rules: approximate, simplified, drawn as
-  Natural Earth draws disputed ones. They are land borders only – **no sea borders, no airspace, no zones**. The
+  Natural Earth draws disputed ones. They are land borders only - **no sea borders, no airspace, no zones**. The
   Berlin Wall and the Vietnam DMZ are hand-drawn and only approximate.
 - **The coastal distance line** (off by default) is **one distance from the game's own coastline, the same for every
   country**. It is **not any state's territorial sea**: in 1985 Norway claimed 4 nm, the United States and the United
-  Kingdom 3, Greece and Turkey 6 in the Aegean, the Soviet Union 12, Libya claimed the whole Gulf of Sidra – and
+  Kingdom 3, Greece and Turkey 6 in the Aegean, the Soviet Union 12, Libya claimed the whole Gulf of Sidra - and
   states draw their limits from baselines across bays and fjords, not from the shore.
 - **Cities, capitals and bases** come from the game's own lists plus public data; names and capitals follow the
   mission's date. A base on the map doesn't mean the mission models it, and the labels are public Cold War
-  locations, **not intelligence about the mission's forces** – units and contacts are exactly as the game shows them.
+  locations, **not intelligence about the mission's forces** - units and contacts are exactly as the game shows them.
 
 Where the data comes from:
 
@@ -48,7 +48,7 @@ Where the data comes from:
 | Berlin Wall, Vietnam DMZ | drawn by hand in `tools/borders-data/extra.csv`, approximate |
 | Coastal distance line | computed in the game from its own 3′ world grid; nothing of the game's terrain is shipped |
 | Cities, ports, airfields | the game's own campaign lists, read from your install at mission start |
-| More cities, capitals | Natural Earth populated places, public domain – **today's populations**, so the ranking of cities of 1985 is not exact |
+| More cities, capitals | Natural Earth populated places, public domain - **today's populations**, so the ranking of cities of 1985 is not exact |
 | Naval bases with side and years | the author's list, `mod/places/naval_bases.csv`, approximate positions |
 
 Made with Natural Earth. Free vector and raster map data at naturalearthdata.com.
@@ -69,15 +69,15 @@ A **Borders** entry in the map's Layers menu (or **Shift+F7**):
 
 - **Land borders as they were on the mission's date:** the Soviet Union whole (the Baltic states apart from
   September 1991, the other republics from December 1991), the inner-German border and West Berlin until October
-  1990, Yugoslavia until 1991–92 (then Serbia and Montenegro until 2006, Kosovo from 2008), Czechoslovakia until
+  1990, Yugoslavia until 1991-92 (then Serbia and Montenegro until 2006, Kosovo from 2008), Czechoslovakia until
   1993, North and South Yemen until May 1990, the Vietnam DMZ until 1976; Eritrea, South Sudan, East Timor, Hong Kong
   and Macau by their years; the line across Cyprus from August 1974.
 - Borders solid; disputed borders, lines of control (Korea, Kashmir, the Golan, Cyprus) and lease limits
   (Guantánamo, Baikonur) dashed.
 - The same width on screen at every zoom, the detail following the zoom; light lines on the night theme.
-- **Coastal distance line** (optional, off by default – see above, it is *not* a territorial limit): a dashed blue
+- **Coastal distance line** (optional, off by default - see above, it is *not* a territorial limit): a dashed blue
   line 3, 6 or 12 nm off the coast as the game's map draws it, once zoomed in far enough that it stands clear of
-  the coast – around islands too, merging where coasts are less than twice the distance apart.
+  the coast - around islands too, merging where coasts are less than twice the distance apart.
 
 Where the lines come from:
 
@@ -85,7 +85,7 @@ Where the lines come from:
    sides and its class, simplified at four levels and cut into 10° tiles by `tools/borders-data/build.py` into
    `mod/borders/borders.bin` (1.1 MB).
 2. **Date rules** in `mod/borders/eras.csv`: *unions* of countries that were one (a border between two members isn't
-   drawn while both belong – the Soviet Union, Yugoslavia, Czechoslovakia, Ethiopia with Eritrea, ...), and *line*
+   drawn while both belong - the Soviet Union, Yugoslavia, Czechoslovakia, Ethiopia with Eritrea, ...), and *line*
    rules for one class of border (the disputed line around Crimea only from 2014).
 3. **Added Cold War lines**, with their own years: the inner-German border and the North/South Yemen line from
    Natural Earth's state lines (the old Länder against the new ones; today's Yemeni governorates on either side),
@@ -95,7 +95,7 @@ Where the lines come from:
    behind the zoomed-out map (`terrain/data/lowres.raw`) is read once on a worker thread and flooded from points in
    the oceans and their seas, so lakes and dry land below sea level (the Caspian, the Dead Sea) get no line. For each
    10° tile in view, the distance to the nearest land on a grid four times finer (land where the map draws it) by an
-   exact Euclidean distance transform with the east–west spacing of each row's latitude, then marching squares at
+   exact Euclidean distance transform with the east - west spacing of each row's latitude, then marching squares at
    the distance, the line cut into 2.5° cells (`Borders/SeaMask.cs`, `Borders/SeaLimits.cs`; about 60 ms a tile).
    Checked in the game against its scale bar: a median 12.0 nm from the drawn coast. Measured from the coast as the
    game has it, not from the straight baselines states draw across bays and fjords, and the same breadth for every
@@ -120,12 +120,12 @@ A **Cities and bases** entry in the map's Layers menu (or **F7**):
   symbols. Far out only capitals, the biggest cities and the main fleet bases; more come in as you zoom; names never
   overlap (where the right side is taken, a name goes to the left of its symbol).
 - **Naval bases** get an anchor in the colour of their side: blue for the US and its allies, red for the Soviet Union
-  and its allies, grey for others – Severomorsk, Polyarny, Gadzhiyevo, Baltiysk, Sevastopol, Vladivostok, Cam Ranh
-  Bay; Norfolk, Kings Bay, Holy Loch, Faslane, Brest, Toulon, Kiel, Keflavík, Subic Bay, Diego Garcia, …
+  and its allies, grey for others - Severomorsk, Polyarny, Gadzhiyevo, Baltiysk, Sevastopol, Vladivostok, Cam Ranh
+  Bay; Norfolk, Kings Bay, Holy Loch, Faslane, Brest, Toulon, Kiel, Keflavík, Subic Bay, Diego Garcia, ...
 - **The mission's date** decides: Leningrad, Gorky, Kuibyshev, Sverdlovsk, Voroshilovgrad, Karl-Marx-Stadt, Bombay,
   Rangoon, Peking (before 1979); East Berlin, West Berlin and Bonn as capital until October 1990; the Soviet
   republics' capitals are not national capitals before the Union ended; bases only in the years they were used
-  (Holy Loch until 1992, Cam Ranh Bay Soviet 1979–2002, Berbera Soviet 1972–77, Kings Bay from 1979, …).
+  (Holy Loch until 1992, Cam Ranh Bay Soviet 1979-2002, Berbera Soviet 1972-77, Kings Bay from 1979, ...).
 - Capitals: a ring with a dot. Cities: a dot sized by population. Air bases: an aircraft in their side's colour;
   civil airports optional.
 - Night theme of the map: light names on dark.
@@ -133,7 +133,7 @@ A **Cities and bases** entry in the map's Layers menu (or **F7**):
 Where the places come from:
 
 1. **The game's own campaign lists** (`StreamingAssets/original/campaigns`: `*cities*.ini`, `*ports*.ini`,
-   `airports.ini`), read from your install at mission start – about 300 cities with the developers' Cold War names,
+   `airports.ini`), read from your install at mission start - about 300 cities with the developers' Cold War names,
    ports whose role makes them naval bases, airports and air bases.
 2. **The mod's naval bases** (`mod/places/naval_bases.csv`): about 80 Cold War bases the game's lists don't mark, with
    their side and years. Positions are approximate (a few km).
@@ -143,7 +143,7 @@ Where the places come from:
 A place two lists have (the same name within 60 km, or anything within 6 km) is shown once, under the first list's
 name; Natural Earth adds the population, a base adds its anchor.
 
-How: the labels are children of a `MapControl.MapPanel` laid into the map control right above its graticule – the
+How: the labels are children of a `MapControl.MapPanel` laid into the map control right above its graticule - the
 map itself puts each at its latitude and longitude on every pan and zoom, below its drag surface and the units, so
 clicks go through. Which labels show is picked when the zoom changes or a pan has gone a quarter of the view
 (`Map/LabelPicker.cs`): within the view and half its size around it, by rank, capitals, population, then naval
@@ -228,7 +228,7 @@ workshop/screenshots/ in-game screenshots for the Workshop page
 
 ## Related
 
-- [Sea Power Topographic Map](https://github.com/struckl/SeaPowerTopo) – heights and depths on the same map.
+- [Sea Power Topographic Map](https://github.com/struckl/SeaPowerTopo) - heights and depths on the same map.
 - [Sea Power Radio](https://github.com/struckl/SeaPowerRadio), [Sea Power Pop-Out Windows](https://github.com/struckl/SeaPowerPopOut).
 
 ## License

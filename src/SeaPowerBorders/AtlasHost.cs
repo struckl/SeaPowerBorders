@@ -100,7 +100,7 @@ internal sealed class AtlasHost : MonoBehaviour
         {
             nextHookCheck = Time.unscaledTime + 1f;
             // A WindowHost registers itself with WindowHostManager when it is built, which only happens while
-            // NoesisGUI runs (the main menu view has one) – from then on Noesis types are safe to touch.
+            // NoesisGUI runs (the main menu view has one) - from then on Noesis types are safe to touch.
             if (Singleton<WindowHostManager>.InstanceExists())
                 ApplyMapHooks();
         }

@@ -150,7 +150,7 @@ internal static class Program
             if (piece.Level != level || !drawn.Contains(piece.Line))
                 continue;
             var xy = new List<string>();
-            // The map runs on past ±180°: like MapPanel, each tile goes within half a turn of the view's centre.
+            // The map runs on past +/-180°: like MapPanel, each tile goes within half a turn of the view's centre.
             double offset = piece.TileX * BorderData.Tile - 180 + BorderData.Tile / 2 - (west + dpp * width / 2);
             double shift = offset > 180 ? -360 * Math.Ceiling((offset - 180) / 360) : offset < -180 ? 360 * Math.Ceiling((-offset - 180) / 360) : 0;
             for (int k = 0; k < piece.Points.Length; k += 2)

@@ -1,4 +1,4 @@
-// Creates or updates the mod's Steam Workshop item through the running Steam client – the same calls the game's
+// Creates or updates the mod's Steam Workshop item through the running Steam client - the same calls the game's
 // Mods > Create Mod makes (CreateModMenuViewModel), without starting the game. Needs Steam running, signed in with
 // the account that owns the item (or will own it); no password.
 //
@@ -13,7 +13,7 @@
 // with a description file (BBCode, UTF-8) the description is replaced too.
 // create: makes a NEW item (private unless told otherwise, like the game's screen) and fills it like the game's
 // screen does: title, description, tags, content folder, preview, the [Compatibility] line of _info.ini as metadata,
-// visibility, then the dependencies. Prints the new item id – use `upload` with it for later updates.
+// visibility, then the dependencies. Prints the new item id - use `upload` with it for later updates.
 // visibility: changes only the visibility ("public" publishes a hidden item); everything else stays as it is.
 // gallery: adds the pictures to the item page's gallery, in the order given (they come after the main preview).
 // Run it once: pictures already on the page are not replaced, a second run adds them again.
@@ -334,7 +334,7 @@ static int AddGallery(PublishedFileId_t item, string[] args)
 }
 
 // What the item page will show: tags, size, description length, preview, the compatibility metadata and the required
-// items – to check a freshly created item without opening the web page.
+// items - to check a freshly created item without opening the web page.
 static void Verify(PublishedFileId_t item)
 {
     UGCQueryHandle_t query = SteamUGC.CreateQueryUGCDetailsRequest(new[] { item }, 1);

@@ -10,7 +10,7 @@ namespace SeaPowerBorders.Map;
 /// <summary>
 /// The border lines on one map control. They live in a <see cref="MapPanel"/> laid into the map below the place
 /// labels: one Noesis <see cref="Path"/> per 10° tile and line style, which the map places by the tile's bounding box
-/// on every pan and zoom (and wraps past ±180°). The geometry is in degrees from the tile's north-west corner, scaled
+/// on every pan and zoom (and wraps past +/-180°). The geometry is in degrees from the tile's north-west corner, scaled
 /// to the zoom by a transform on the geometry rather than on the path, so the stroke keeps its width on screen.
 /// <para>The scale follows the map's <c>ViewportChanged</c> event (before the map lays out its children, so lines
 /// never lag a frame behind); the level of detail follows the zoom.</para>

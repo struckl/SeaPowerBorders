@@ -7,7 +7,7 @@ namespace SeaPowerBorders.Places;
 /// Every place of a mission: the game's lists first, then the mod's naval bases and the extra places of the
 /// mission's date, then Natural Earth for the rest of the world. A place another list already has (the same name
 /// within <see cref="SameNameKm"/>, or anything within <see cref="SamePlaceKm"/>) is merged into it instead of
-/// drawn twice – the first list's name stays, the others add population, country and the naval base. Then the
+/// drawn twice - the first list's name stays, the others add population, country and the naval base. Then the
 /// mission's date decides names, capitals and how far out each place shows.
 /// </summary>
 internal static class Atlas
