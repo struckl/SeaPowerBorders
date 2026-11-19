@@ -38,7 +38,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
         // A panel opacity below 1 makes Noesis draw the whole panel into an offscreen picture first, which is wasteful
         // for a full-screen map: the opacity goes into the brush.
         panel.Opacity = 1f;
-        SolidColorBrush brush = look.LineBrush(withOpacity: true);
+        SolidColorBrush brush = look.LineBrush();
         solidSet = new PathSet(panel, brush, look.Width, null);
         dashedSet = new PathSet(panel, brush, look.Width, BorderLook.DashedPattern);
         waterSet = new PathSet(waterPanel, look.CoastalBrush(), look.CoastalWidth, BorderLook.CoastalPattern);

@@ -32,14 +32,12 @@ internal sealed class BorderLook : IEquatable<BorderLook>
     public float CoastalWidth => Width * CoastalWidthShare;
 
     /// <summary>
-    /// The border colour, fully opaque (the flat drawing fades its whole panel) or with the opacity in the brush (the
-    /// globe). Dashed lines take the same colour: a lighter tint got lost on the terrain (the Korean line by day).
+    /// The border colour with the opacity in the brush on every map (a panel opacity would have Noesis draw the whole
+    /// panel into an offscreen picture and fade the labels' neighbours too). Dashed lines take the same colour: a
+    /// lighter tint got lost on the terrain (the Korean line by day).
     /// </summary>
-    public SolidColorBrush LineBrush(bool withOpacity)
-    {
-        byte alpha = withOpacity ? Alpha : (byte)255;
-        return new SolidColorBrush(Dark ? Color.FromArgb(alpha, 205, 200, 215) : Color.FromArgb(alpha, 58, 50, 72));
-    }
+    public SolidColorBrush LineBrush() =>
+        new SolidColorBrush(Dark ? Color.FromArgb(Alpha, 205, 200, 215) : Color.FromArgb(Alpha, 58, 50, 72));
 
     /// <summary>
     /// The coastal line has its opacity in the brush on every map: a panel opacity would have Noesis draw all its

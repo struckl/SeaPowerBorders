@@ -34,9 +34,9 @@ internal sealed class FlatDrawing : IBorderDrawing
         this.waterPanel = waterPanel;
         this.look = look;
         this.lines = lines;
-        // Flat maps fade the whole border panel (the look since 1.0); the globe puts the opacity into its brush.
-        panel.Opacity = look.Opacity;
-        brush = look.LineBrush(withOpacity: false);
+        // The opacity is in the brush, as on the globe, so the panel stays fully opaque.
+        panel.Opacity = 1f;
+        brush = look.LineBrush();
         coastalBrush = look.CoastalBrush();
         coast = new CoastalTiles<List<ScaleTransform>>(() => waterPanel.Children.Clear());
     }

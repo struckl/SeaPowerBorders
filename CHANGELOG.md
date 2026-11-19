@@ -2,9 +2,11 @@
 
 ## Unreleased
 
+- Border opacity on the 0.8.7 map and in the editor now works like on the globe: the opacity is in the line colour, not a fade over the whole border panel (same look at the default; the lines no longer fade together with what crosses them).
+- Labels overlap less: the label picker now reserves the symbol widths and the text gap that are really drawn (air bases 11, airports 9, small dots 5 and 4, gap 3 px), so a few more labels fit.
 - The mod folder carries this CHANGELOG.md, so R.A.T.S. Keel's What's new can show what changed when there are no Workshop notes (a local copy, the GitHub zip).
 - Log: when a game update breaks reading the mission's land units or city markers, the log now says so once (it was silent, and places came back labelled twice).
-- Changed (internal): flat and globe line drawing share one look (colours, widths, dashes) and one coastal-tile poll; each build keeps the look it had.
+- Changed (internal): flat and globe line drawing share one look (colours, widths, dashes) and one coastal-tile poll.
 - Changed (internal): the per-frame host split into places, borders, editor map and map classes; the mission date is passed in, label lists are handed over instead of a static marker list.
 - Changed (internal): the entry point, log, hook registry, mission hooks, config file, Layers-menu entries, reflection helpers, project common part and package steps now come from the shared R.A.T.S. skeleton (`SeaPowerKeel\shared`); AtlasHost became Host, Patches became Hooks.
 - Changed: the mod now stays inactive when it is unticked in the game's Mod Manager (Anchor Chain loads unticked folders too); a failing mission start or end handler is logged and no longer stops the others; config changes are saved a moment after the last one instead of at once; the first five per-frame errors are logged (map errors share that count).

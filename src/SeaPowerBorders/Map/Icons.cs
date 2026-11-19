@@ -33,21 +33,33 @@ internal static class Icons
         public SolidColorBrush SideBrush(Bloc side) => side == Bloc.West ? West : side == Bloc.East ? East : Other;
     }
 
+    /// <summary>A symbol's width: what <see cref="For"/> draws and what the label picker reserves.</summary>
+    public static float Size(Place p, bool naval, float scale)
+    {
+        if (p.Kind == PlaceKind.AirBase)
+            return 11f * scale;
+        if (p.Kind == PlaceKind.Airport)
+            return 9f * scale;
+        if (naval)
+            return 12f * scale;
+        if (p.Capital)
+            return 9f * scale;
+        return (p.Rank <= 1 ? 6f : p.Rank == 2 ? 5f : 4f) * scale;
+    }
+
     /// <summary>The symbol for a place and its width (it is drawn centred on the place).</summary>
     public static FrameworkElement For(Place p, Palette c, bool naval, float scale, out float size)
     {
+        size = Size(p, naval, scale);
         switch (p.Kind)
         {
             case PlaceKind.AirBase:
-                size = 11f * scale;
                 return Shape(Plane, size, fill: c.SideBrush(p.AirSide), stroke: c.Halo, thickness: 0.8f);
             case PlaceKind.Airport:
-                size = 9f * scale;
                 return Shape(Plane, size, fill: c.Civil, stroke: c.Halo, thickness: 0.8f);
         }
         if (naval)
         {
-            size = 12f * scale;
             var grid = new Grid { Width = size, Height = size };
             // A light outline under the anchor, so it reads on any colour.
             grid.Children.Add(Shape(Anchor, size, fill: null, stroke: c.Halo, thickness: 3.2f));
@@ -56,13 +68,11 @@ internal static class Icons
         }
         if (p.Capital)
         {
-            size = 9f * scale;
             var grid = new Grid { Width = size, Height = size };
             grid.Children.Add(new Ellipse { Width = size, Height = size, Stroke = c.Text, StrokeThickness = 1.5f, Fill = c.Halo });
             grid.Children.Add(new Ellipse { Width = size * 0.42f, Height = size * 0.42f, Fill = c.Text });
             return grid;
         }
-        size = (p.Rank <= 1 ? 6f : p.Rank == 2 ? 5f : 4f) * scale;
         return new Ellipse { Width = size, Height = size, Fill = c.Text, Stroke = c.Halo, StrokeThickness = 1f };
     }
 

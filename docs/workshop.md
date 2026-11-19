@@ -96,7 +96,7 @@ The Reddit, Steam forum and Discord texts, with a caption for every Reddit pictu
 The pictures are there too, in order: a Reddit gallery (6) and Discord pictures (3; the
 MicroProse post takes the first). Fill in the Workshop link once the item exists. Each text carries the short version
 of the points above; do not cut that paragraph. In every picture the game's Discord voice overlay (other people's names
-and avatars, top left of the map) is painted out - check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` does it for a 1920 x 1057 picture (the rectangle is x 8-200, y 340-482). Never put an unscrubbed picture into git: it stays in the history.
+and avatars, top left of the map) is painted out - check that again if you take new ones: `python -I tools/scrub-overlay.py <original.jpg> <output.jpg>` (the workspace's tool, `E:\Project\Mods\Sea Power	ools\scrub-overlay.py`) does it for a 1920 x 1057 picture (the rectangle is x 8-200, y 340-482). Never put an unscrubbed picture into git: it stays in the history.
 
 ## Testing the Workshop copy
 

@@ -21,7 +21,8 @@ internal sealed class CityLabels
     private const double ZoomChange = 0.04;          // of the view height, as a log ratio: a new pick
     private const double GlobeTurnShare = 0.1;       // of the view height the globe's centre may move before a new pick
     private const float HaloWidth = 3f;
-    private const float TextGap = 3f;
+    /// <summary>The space between symbol and name; the label picker reserves the same.</summary>
+    internal const float TextGap = 3f;
 
     private readonly MapBase map;
     private readonly ObservableCollection<object> background;      // the editor's map: the panel goes in here, not in Children

@@ -93,10 +93,10 @@ internal static class LabelPicker
             (float x, float y) = project(p);
             if (float.IsNaN(x))                   // not on the map's visible side (the globe's far side)
                 continue;
-            float icon = (look.Anchor(p) ? 12f : p.Capital ? 9f : 6f) * scale;
+            float icon = Icons.Size(p, look.Anchor(p), scale);
             float font = FontSize(p, scale);
             float textWidth = p.Label.Length * font * (p.Bold ? 0.6f : 0.55f);
-            float width = icon + 4f + textWidth + 2f;
+            float width = icon + CityLabels.TextGap + textWidth + 2f;
             var right = (x: x - icon / 2f - 2f, y: y - font * 0.7f - 1f, w: width, h: font * 1.4f + 2f);
             var left = (x: x + icon / 2f + 2f - width, y: right.y, w: width, h: right.h);
             bool onLeft = false;
