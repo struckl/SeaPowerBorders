@@ -20,7 +20,7 @@ internal sealed class BorderLook : IEquatable<BorderLook>
     /// <summary>The coastal distance line in nm, 0 for none.</summary>
     public readonly int CoastalNm;
 
-    private BorderLook(bool dark, bool disputed, float width, float opacity, int coastalNm)
+    public BorderLook(bool dark, bool disputed, float width, float opacity, int coastalNm)
     {
         Dark = dark;
         Disputed = disputed;
@@ -28,9 +28,6 @@ internal sealed class BorderLook : IEquatable<BorderLook>
         Opacity = opacity;
         CoastalNm = coastalNm;
     }
-
-    public static BorderLook Current(bool dark) => new BorderLook(dark, Settings.DisputedLines.Value, Settings.LineWidth.Value,
-                                                                  Settings.LineOpacity.Value, Settings.CoastalLine.Value);
 
     public float CoastalWidth => Width * CoastalWidthShare;
 

@@ -12,9 +12,15 @@ internal static class LabelPicker
 {
     /// <summary>View height in degrees up to which a rank shows (rank 0 always).</summary>
     private static readonly double[] RankHeights = { double.MaxValue, 70, 25, 14 };
-    public static readonly float[] FontSizes = { 13f, 12f, 11f, 10f };
-    private const int MaxLabels = 450;
+    private static readonly float[] FontSizes = { 13f, 12f, 11f, 10f };
+    private const int MaxLabels = 450;          // a safety net on the number of labels in one pick
     private const float Cell = 64f;
+
+    // Places this share of the view beyond each edge are picked too ...
+    private const double AroundShare = 0.5;
+
+    /// <summary>... so a pan needs no new pick until it has gone half of that.</summary>
+    public const double RepickShare = AroundShare / 2;
 
     /// <summary>Room a label keeps free around it, in its font size across and down.</summary>
     private const float GapAcross = 0.6f, GapDown = 0.2f;
@@ -31,17 +37,19 @@ internal static class LabelPicker
     /// Most important first: rank, then capitals, then the bigger cities, then naval bases (a base next to a big
     /// city - Kronstadt by Leningrad - shows once there is room for both).
     /// </summary>
-    public static void Order(List<Place> places, bool naval)
+    public static void Order(List<Place> places, LabelLook look)
     {
         places.Sort((a, b) =>
         {
             int c = a.Rank.CompareTo(b.Rank);
             if (c == 0) c = b.Capital.CompareTo(a.Capital);
             if (c == 0) c = b.Population.CompareTo(a.Population);
-            if (c == 0) c = (b.Naval && naval).CompareTo(a.Naval && naval);
+            if (c == 0) c = look.Anchor(b).CompareTo(look.Anchor(a));
             return c;
         });
     }
+
+    public static float FontSize(Place p, float scale) => FontSizes[Math.Min(p.Rank, FontSizes.Length - 1)] * scale;
 
     public static int MaxRank(double viewHeight, Density density)
     {
@@ -55,11 +63,10 @@ internal static class LabelPicker
         return max;
     }
 
-    /// <summary>The view plus half its size on every side: places there are picked, so a pan needs no new pick
-    /// until it has gone a quarter of the view.</summary>
+    /// <summary>The view plus <see cref="AroundShare"/> of its size on every side: the places picked.</summary>
     public static (double west, double south, double east, double north) Around(double west, double south, double east, double north)
     {
-        double w = (east - west) * 0.5, h = (north - south) * 0.5;
+        double w = (east - west) * AroundShare, h = (north - south) * AroundShare;
         return (west - w, south - h, east + w, north + h);
     }
 
@@ -68,11 +75,12 @@ internal static class LabelPicker
     /// <param name="project">A place's position in view units.</param>
     /// <returns>The places to label, each with whether its name goes left of the symbol (where the right side is
     /// taken).</returns>
-    public static Dictionary<Place, bool> Pick(List<Place> ordered, double viewHeight, Density density, bool naval, float scale,
+    public static Dictionary<Place, bool> Pick(List<Place> ordered, double viewHeight, LabelLook look,
                                                (double west, double south, double east, double north) area,
                                                Func<Place, (float x, float y)> project)
     {
-        int maxRank = MaxRank(viewHeight, density);
+        int maxRank = MaxRank(viewHeight, look.Density);
+        float scale = look.Size;
         var occupied = new Dictionary<long, List<(float x, float y, float w, float h)>>();
         var small = new Dictionary<long, List<(float x, float y, float w, float h)>>();
         var picked = new Dictionary<Place, bool>();
@@ -83,11 +91,9 @@ internal static class LabelPicker
             (float x, float y) = project(p);
             if (float.IsNaN(x))                   // not on the map's visible side (the globe's far side)
                 continue;
-            bool anchor = p.Naval && naval;
-            float icon = (anchor ? 12f : p.Capital ? 9f : 6f) * scale;
-            float font = FontSizes[Math.Min(p.Rank, FontSizes.Length - 1)] * scale;
-            bool bold = p.Capital || p.Rank == 0;
-            float textWidth = p.Label.Length * font * (bold ? 0.6f : 0.55f);
+            float icon = (look.Anchor(p) ? 12f : p.Capital ? 9f : 6f) * scale;
+            float font = FontSize(p, scale);
+            float textWidth = p.Label.Length * font * (p.Bold ? 0.6f : 0.55f);
             float width = icon + 4f + textWidth + 2f;
             var right = (x: x - icon / 2f - 2f, y: y - font * 0.7f - 1f, w: width, h: font * 1.4f + 2f);
             var left = (x: x + icon / 2f + 2f - width, y: right.y, w: width, h: right.h);

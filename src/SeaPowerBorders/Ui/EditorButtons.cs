@@ -14,7 +14,7 @@ internal sealed class EditorButtons
     private readonly Grid root;
     private readonly ToggleButton borders, cities;
 
-    /// <summary>Puts the buttons over the map, or returns null if the map's parent is not a panel.</summary>
+    /// <summary>Null when the map's parent is no panel to lay the buttons over, or on an error (logged).</summary>
     public static EditorButtons TryAttach(MapControl.MapBase map, Action toggleBorders, Action toggleCities)
     {
         try

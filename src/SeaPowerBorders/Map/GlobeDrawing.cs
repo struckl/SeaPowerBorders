@@ -88,7 +88,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
             GlobeLines.Fill(pieces.Dashed, area, project, step, dashed, LogBudget);
             GlobeLines.Fill(pieces.Solid, area, project, step, solid, LogBudget);
             GlobeLines.Fill(CoastalPieces(), area, project, step, water, LogBudget);
-            if (Settings.VerboseLog.Value && diagnostics.Ready(4000))
+            if (diagnostics.Ready(4000))
                 ModLog.Debug($"Border lines (globe): {solid.Points + dashed.Points + water.Points} points, step {step:0.###} deg, view {area.South:0.#}..{area.North:0.#}N {area.West:0.#}..{area.East:0.#}E");
         }
         solid.Finish();

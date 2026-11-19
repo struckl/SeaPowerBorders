@@ -48,7 +48,6 @@ internal static class MapSlots
                 break;
             }
         }
-        // Past our panels that go below this one.
         while (index < map.Children.Count && map.Children[index] is FrameworkElement e && e.Tag is string other
                && Array.IndexOf(Order, other) is int r && r >= 0 && r < rank)
             index++;
