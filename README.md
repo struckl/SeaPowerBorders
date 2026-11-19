@@ -196,32 +196,39 @@ view would show (`--era Today` for today's borders, `--waters 12` for the coasta
 dotnet run --project tools/places-check -c Release -- --date 1985-06-26 --find Leningrad
 dotnet run --project tools/places-check -c Release -- --view 68.9,33,3 --size 1920x1080 --out kola.tsv
 python -I tools/places-check/draw.py kola.tsv "E:/Games/steamapps/common/Sea Power" kola.png
+dotnet run --project tools/globe-check -c Release -- --check
 ```
+
+The format of `borders.bin` is in [docs/borders-format.md](docs/borders-format.md); `build.py` takes the version, tile
+size and class codes from `BorderData.cs`.
 
 ```
 src/SeaPowerBorders/
   Plugin.cs           Anchor Chain entry point
-  AtlasHost.cs        per-frame driver: Layers entries, toggle keys, the mission's places and borders, every map's layers
+  AtlasHost.cs        per-frame driver: hook wait, Layers entries, toggle keys, the data date, every map's layers
+  Features/           the host's parts: places of a date (PlaceBook), border lines of a date (BorderBook), the editor's
+                      map (EditorMap), the maps decorated (MapDecor), the looks from the settings (Looks)
   LayerEntry.cs       an entry in the map's Layers menu ("Borders", "Cities and bases")
   Patches.cs          mission start/end hooks, the late map hook
-  Borders/            the border lines (BorderData), which ones a date has (BorderEras), the coastal distance line
-                      (SeaMask, SeaLimits, SeaLimitCache)
-  Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas)
-  Map/                lines in the map (BorderLines; on the globe projected point by point with ProjectedLines), labels
-                      (CityLabels), which ones show (LabelPicker), symbols (Icons), the order of our panels (MapSlots)
+  Borders/            the border lines (BorderData, file layout in docs/borders-format.md), which ones a date has
+                      (BorderEras), tiles and levels (GeoPiece), the coastal distance line (SeaMask, SeaLimits, SeaLimitCache)
+  Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas), places
+                      the mission marks itself (GameMarkers, MarkedPlaces)
+  Map/                lines in the map (BorderLines with FlatDrawing or GlobeDrawing, one look: BorderLook; the globe's
+                      pieces and projection in GlobeLines and ProjectedLines), labels (CityLabels, LabelLook), which ones
+                      show (LabelPicker), symbols (Icons), the order of our panels (MapSlots), projections (MapView)
   GameApi.cs          the few internal game members used (a map's night flag, a Layers-menu entry), by reflection
   mod/borders/        borders.bin (generated), eras.csv
   mod/places/         world.csv (generated), naval_bases.csv, eras.csv
-  Settings.cs, ModLog.cs, mod/_info.ini
+  Settings.cs, Choices.cs, DataFiles.cs, FailureLog.cs, ModLog.cs, mod/_info.ini
 tools/borders-data/   Natural Earth -> borders.bin, with the hand-drawn lines (extra.csv)
 tools/cities-data/    Natural Earth -> world.csv
-tools/places-check/   offline check, label and border picture
-tools/globe-check/    offline check of the globe drawing against the game's own projection (accuracy, horizon, timing, pictures)
+tools/places-check/   offline check, label and border picture (the mod's own code and default filters)
+tools/globe-check/    offline check of the globe drawing (the mod's GlobeLines) against the game's own projection
 docs/plan.md          build plan; country names still to build
 docs/testing.md       in-game test checklist and results
 docs/workshop.md      how to release on the Steam Workshop (and what every public text must say)
 tools/package.ps1     stage / install the release folder for the Workshop upload
-tools/workshop-upload create / update the Workshop item through the running Steam client, no game needed
 workshop/             description.bbcode, changenote.txt, preview.jpg
 workshop/screenshots/ in-game screenshots for the Workshop page
 ```

@@ -43,28 +43,16 @@ them in full, the posts in short):
 **Done 2026-10-25: the item exists** - [3827360064](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064), created hidden with the command below (title "Sea Power: Rats
 Cities and Borders", tags Overhaul, Realism, Scripting like the Topographic Map, the Anchor Chain requirement, preview,
 metadata `ApproximateVersion=0.8.7`; read back with `check`). **Made public on 2026-10-28** with
-`WorkshopUpload visibility 3827360064 public "<change note>"` after the new description (`upload … <note> workshop/description.bbcode`).
+the old per-repo upload tool after the new description.
 Updates go through `upload` (further down).
 
-**Main picture (`workshop/preview.jpg`, 1000 × 1000):** the same look as the other mods' pictures - a dark band over the bottom fifth with the
-title (Segoe UI Semibold) and a lighter subtitle. `python tools/make-preview.py` draws it from `workshop/preview-source.jpg`; replace it on the item
-with `modtool workshop borders upload --preview` (the staged `dist/…/preview.jpg` is the same file). Done 2026-10-28.
+**Main picture (`workshop/preview.jpg`, 1000 x 1000):** the R.A.T.S. look, made by the workspace's
+`tools/brand-preview.py` from `workshop/preview-source.jpg`; replace it on the item with
+`modtool workshop borders upload --preview` (the staged `dist/.../preview.jpg` is the same file).
 
-**Without starting the game** (preferred - like the other mods): `tools/workshop-upload` talks to the running,
-signed-in Steam client with the game's own Steamworks.NET. `create` makes a new item and fills it the way the game's
-Create Mod screen does (title, description, tags, content, preview, the `[Compatibility]` line of `_info.ini` as
-metadata, visibility, then the dependency); it is **private (hidden) unless `--visibility` says otherwise**:
-
-```powershell
-dotnet build tools\workshop-upload -c Release
-dotnet run --project tools\workshop-upload -c Release --no-build -- create dist\SeaPowerBorders "Sea Power: Rats Cities and Borders" workshop\description.bbcode workshop\preview.jpg workshop\changenote.txt --tags "Overhaul,Realism,Scripting" --depends 3380210757
-```
-
-It prints the new item id and link. Put the id into the README; later updates are
-`... -- upload <item id> dist\SeaPowerBorders workshop\changenote.txt workshop\description.bbcode`, and
-`... -- check <item id>` only reads and prints title, visibility, tags, size, description, preview, metadata and the
-required items. Before the item goes public: make the repository public (the description links to the source) and
-look at the item page once in the browser.
+**Without starting the game** (preferred, like every mod): the workspace's `python tools/modtool.py workshop borders
+check|upload|description|gallery|visibility|video` talks to the running, signed-in Steam client
+(`docs/modtool.md` in the workspace). The per-repo `tools/workshop-upload` it replaced is gone.
 
 **Or in the game** (needs the game started, and `package.ps1 -Install` first): Mods > Create Mod:
 

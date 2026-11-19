@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using Path = System.IO.Path;
 using MapControl;
 using Noesis;
@@ -11,22 +12,26 @@ using SeaPowerBorders.Map;
 
 namespace SeaPowerBorders;
 
+/// <summary>Stand-in for the mod's log.</summary>
+internal static class ModLog
+{
+    public static void Warn(string m) => Console.WriteLine("WARN " + m);
+}
+
 /// <summary>
 /// Offline check of the globe drawing, against the game's own <c>OrthographicProjection</c> (no game needed):
 /// <code>dotnet run --project tools/globe-check -c Release -- --check
-/// dotnet run --project tools/globe-check -c Release -- --view 70.3,20,60[,heading] [--size 1920x1080] --out globe.tsv
+/// dotnet run --project tools/globe-check -c Release -- --view 70.3,20,60[,heading] [--size 1920x1080] [--date 1985-06-26] --out globe.tsv
 /// python -I tools/globe-check/draw.py globe.tsv globe.png</code>
-/// --check runs the accuracy, horizon and timing checks; --view writes the segments one view draws, for draw.py.
+/// --check runs the accuracy, horizon and timing checks; --view writes the segments one view draws, for draw.py. The
+/// lines are those of the date (default 1985-06-26), picked and projected by the mod's own GlobeLines.
 /// </summary>
 internal static class Program
 {
-    private const double MetresPerDegree = 111319.49079327358;
-    private const double Radius = 6378137.0;
-
     private sealed class Polylines : ILineSink
     {
         public readonly List<List<(float x, float y)>> Lines = new List<List<(float x, float y)>>();
-        public int Points;
+        public int Points { get; private set; }
 
         public void Begin(float x, float y) => Lines.Add(new List<(float x, float y)> { (x, y) });
 
@@ -53,7 +58,7 @@ internal static class Program
             PixelsPerDegree = pixelsPerDegree;
             Projection = new OrthographicProjection { Center = new Location(lat, lon) };
             Point centre = Projection.LocationToMap(new Location(lat, lon));
-            Transform.SetTransform(centre, new Point(width / 2f, height / 2f), pixelsPerDegree / MetresPerDegree, heading);
+            Transform.SetTransform(centre, new Point(width / 2f, height / 2f), pixelsPerDegree / Earth.MetresPerDegree, heading);
             Project = (double la, double lo, out float x, out float y) =>
             {
                 bool visible = Projection.TryLocationToMap(la, lo, out Point map);
@@ -64,12 +69,12 @@ internal static class Program
             };
         }
 
-        public double GlobeRadiusPixels => Transform.Scale * Radius;
+        public double GlobeRadiusPixels => Transform.Scale * Earth.RadiusMetres;
 
         public GeoArea Area()
         {
             BoundingBox box = Projection.GetVisibleGeoBounds(Transform, new Size(Width, Height));
-            return box == null ? throw new InvalidOperationException("no visible bounds") : new GeoArea(box.South, box.North, box.West, box.East);
+            return box == null ? throw new InvalidOperationException("no visible bounds") : new GeoArea(box.West, box.South, box.East, box.North);
         }
     }
 
@@ -77,6 +82,7 @@ internal static class Program
     {
         string bordersDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "SeaPowerBorders", "mod", "borders"));
         string viewText = null, output = null;
+        DateTime date = new DateTime(1985, 6, 26);
         bool check = false;
         int width = 1920, height = 1080;
         for (int i = 0; i < args.Length; i++)
@@ -85,6 +91,7 @@ internal static class Program
             else if (args[i] == "--borders") bordersDir = args[++i];
             else if (args[i] == "--view") viewText = args[++i];
             else if (args[i] == "--out") output = args[++i];
+            else if (args[i] == "--date") date = DateTime.ParseExact(args[++i], "yyyy-MM-dd", CultureInfo.InvariantCulture);
             else if (args[i] == "--size")
             {
                 string[] s = args[++i].Split('x');
@@ -93,37 +100,59 @@ internal static class Program
             }
         }
         BorderData data = BorderData.Load(Path.Combine(bordersDir, "borders.bin"));
-        Console.WriteLine($"borders.bin: {data.Lines.Count} lines, {data.Pieces.Count} pieces, levels {string.Join(", ", data.Tolerances)}");
+        BorderEras eras = BorderEras.Load(bordersDir);
+        var drawn = new HashSet<BorderLine>(data.Lines.Where(l => eras.Drawn(l, date, BorderEra.MissionDate)));
+        Console.WriteLine($"borders.bin: {data.Lines.Count} lines ({drawn.Count} for {date:yyyy-MM-dd}), {data.Pieces.Count} pieces, levels {string.Join(", ", data.Tolerances)}");
+        var lines = new Lines(data, drawn);
         int failures = 0;
         if (check)
-            failures += Check(data);
+            failures += Check(lines);
         if (viewText != null)
-            Draw(data, viewText, width, height, output);
+            Draw(lines, viewText, width, height, output);
         return failures == 0 ? 0 : 1;
     }
 
-    // ---- one view drawn the way BorderLines does it -----------------------------------------------------------
-
-    private static (int points, int pieces, double milliseconds, Polylines lines) Rebuild(BorderData data, View view)
+    /// <summary>The border lines of the date, and the pieces GlobeLines picks for a level (dashed ones included).</summary>
+    private sealed class Lines
     {
-        int level = data.LevelFor(view.PixelsPerDegree);
-        GeoArea area = view.Area();
-        double step = ProjectedLines.StepDegrees(view.GlobeRadiusPixels);
-        var sink = new Polylines();
-        int pieces = 0;
-        var clock = Stopwatch.StartNew();
-        foreach (BorderPiece piece in data.Pieces)
+        public readonly BorderData Data;
+        private readonly HashSet<BorderLine> drawn;
+
+        public Lines(BorderData data, HashSet<BorderLine> drawn)
         {
-            if (piece.Level != level || !area.Meets(piece.Bounds))
-                continue;
-            pieces++;
-            ProjectedLines.Add(piece.Points, view.Project, step, sink);
+            Data = data;
+            this.drawn = drawn;
         }
-        clock.Stop();
-        return (sink.Points, pieces, clock.Elapsed.TotalMilliseconds, sink);
+
+        public GlobeLines For(int level)
+        {
+            var pieces = new GlobeLines();
+            pieces.Select(Data, drawn, level, disputed: true);
+            return pieces;
+        }
     }
 
-    private static void Draw(BorderData data, string viewText, int width, int height, string output)
+    // One view drawn the way GlobeDrawing does it: the pieces of the view's level, dashed then solid, each style
+    // under the point budget; the timing includes the pick. Both styles end up in one set of polylines here.
+    private static (int points, int pieces, double milliseconds, Polylines lines) Rebuild(Lines data, View view)
+    {
+        var clock = Stopwatch.StartNew();
+        GlobeLines pieces = data.For(data.Data.LevelFor(view.PixelsPerDegree));
+        GeoArea area = view.Area();
+        double step = ProjectedLines.StepDegrees(view.GlobeRadiusPixels);
+        var dashed = new Polylines();
+        var solid = new Polylines();
+        GlobeLines.Fill(pieces.Dashed, area, view.Project, step, dashed, OverBudget);
+        GlobeLines.Fill(pieces.Solid, area, view.Project, step, solid, OverBudget);
+        clock.Stop();
+        dashed.Lines.AddRange(solid.Lines);
+        int met = pieces.Dashed.Count(p => area.Meets(p.Bounds)) + pieces.Solid.Count(p => area.Meets(p.Bounds));
+        return (dashed.Points + solid.Points, met, clock.Elapsed.TotalMilliseconds, dashed);
+    }
+
+    private static void OverBudget() => Console.WriteLine($"  over the point budget ({GlobeLines.MaxPoints}): the rest is left out");
+
+    private static void Draw(Lines data, string viewText, int width, int height, string output)
     {
         string[] v = viewText.Split(',');
         double lat = double.Parse(v[0], CultureInfo.InvariantCulture), lon = double.Parse(v[1], CultureInfo.InvariantCulture);
@@ -131,7 +160,7 @@ internal static class Program
         double heading = v.Length > 3 ? double.Parse(v[3], CultureInfo.InvariantCulture) : 0;
         var view = new View(lat, lon, ppd, heading, width, height);
         var (points, pieces, ms, lines) = Rebuild(data, view);
-        Console.WriteLine($"view {lat},{lon} {ppd} px/deg: level {data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {ms:0.0} ms");
+        Console.WriteLine($"view {lat},{lon} {ppd} px/deg: level {data.Data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {ms:0.0} ms");
         // What the renderer is handed: a single NaN or absurd coordinate can make it drop the whole path.
         int bad = 0;
         float extreme = 0;
@@ -149,14 +178,12 @@ internal static class Program
         if (output == null)
             return;
         using var w = new StreamWriter(output);
-        w.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{width}\t{height}\t{view.Transform.Scale * Radius:0.###}"));
+        w.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{width}\t{height}\t{view.GlobeRadiusPixels:0.###}"));
         foreach (List<(float x, float y)> line in lines.Lines)
             w.WriteLine(string.Join("\t", line.ConvertAll(p => $"{p.x.ToString("0.##", CultureInfo.InvariantCulture)},{p.y.ToString("0.##", CultureInfo.InvariantCulture)}")));
     }
 
-    // ---- the checks -------------------------------------------------------------------------------------------
-
-    private static int Check(BorderData data)
+    private static int Check(Lines data)
     {
         int failures = 0;
         void Report(bool ok, string text)
@@ -249,7 +276,7 @@ internal static class Program
             double best = ms;
             for (int k = 0; k < 4; k++)
                 best = Math.Min(best, Rebuild(data, v).milliseconds);
-            Report(best < 12, $"{name,-16} {ppd,6} px/deg: level {data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {best:0.0} ms (4K view)");
+            Report(best < 12, $"{name,-16} {ppd,6} px/deg: level {data.Data.LevelFor(ppd)}, {pieces} pieces, {lines.Lines.Count} figures, {points} points, {best:0.0} ms (4K view)");
         }
         return failures;
     }

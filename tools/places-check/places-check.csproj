@@ -7,10 +7,13 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>SeaPowerBorders</RootNamespace>
   </PropertyGroup>
+  <!-- The mod's plain C# parts (no game types): GameMarkers reads the running mission, so it stays out. -->
   <ItemGroup>
-    <Compile Include="..\..\src\SeaPowerBorders\Places\*.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Places\*.cs" Exclude="..\..\src\SeaPowerBorders\Places\GameMarkers.cs" />
     <Compile Include="..\..\src\SeaPowerBorders\Map\LabelPicker.cs" />
-    <Compile Include="..\..\src\SeaPowerBorders\Map\ProjectedLines.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Map\LabelLook.cs" />
     <Compile Include="..\..\src\SeaPowerBorders\Borders\*.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\DataFiles.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Choices.cs" />
   </ItemGroup>
 </Project>

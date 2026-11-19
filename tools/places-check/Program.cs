@@ -14,6 +14,7 @@ internal static class ModLog
 {
     public static void Info(string m) => Console.WriteLine(m);
     public static void Warn(string m) => Console.WriteLine("WARN " + m);
+    public static void Debug(string m) => Console.WriteLine("dbg " + m);
 }
 
 /// <summary>
@@ -21,8 +22,9 @@ internal static class ModLog
 /// <code>dotnet run --project tools/places-check -- [--date 1985-06-26] [--game "E:\Games\steamapps\common\Sea Power"] [--find Leningrad]
 ///     [--view 62,5,20 --size 1920x1080 --out labels.tsv] [--era Today]</code>
 /// --view lat,lon,height draws a map view of that height in degrees: the labels and border lines the mod would show
-/// there go to --out (tab-separated, positions in pixels), for tools/places-check/draw.py. --era Today draws
-/// today's borders instead of the date's.
+/// there with its default settings (no civil airports) go to --out (tab-separated, positions in pixels), for
+/// tools/places-check/draw.py. --era Today draws today's borders instead of the date's. The places a running mission
+/// marks itself (its land units) are not known offline: their labels show here.
 /// </summary>
 internal static class Program
 {
@@ -52,7 +54,8 @@ internal static class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         string here = AppContext.BaseDirectory;
         string data = Path.GetFullPath(Path.Combine(here, "..", "..", "..", "..", "..", "src", "SeaPowerBorders", "mod", "places"));
-        var gameList = GameLists.Load(Path.Combine(game, "Sea Power_Data", "StreamingAssets", "original", "campaigns"));
+        string streamingAssets = Path.Combine(game, "Sea Power_Data", "StreamingAssets");
+        var gameList = GameLists.Load(GameLists.DirIn(streamingAssets));
         var places = Atlas.Build(gameList, ModLists.LoadWorld(data), ModLists.LoadBases(data), ModLists.LoadEras(data), date);
 
         Console.WriteLine($"{date:yyyy-MM-dd}: {gameList.Count} from the game -> {places.Count} places");
@@ -80,7 +83,7 @@ internal static class Program
         if (waters > 0)
         {
             var timer = System.Diagnostics.Stopwatch.StartNew();
-            sea = SeaMask.Load(Path.Combine(game, "Sea Power_Data", "StreamingAssets", "original", "terrain", "data", "lowres.raw"));
+            sea = SeaMask.Load(SeaMask.PathIn(streamingAssets));
             Console.WriteLine($"Sea mask: {timer.ElapsedMilliseconds} ms" + (sea.LandSeeds.Count > 0 ? "; seeds on land: " + string.Join(", ", sea.LandSeeds) : ""));
         }
         if (view != null)
@@ -89,88 +92,117 @@ internal static class Program
     }
 
     // The map is lon/lat, equirectangular: x by longitude, y by latitude, the same degrees per pixel both ways.
-    private static void Draw(List<Place> places, BorderData borders, HashSet<BorderLine> drawn, SeaMask sea, double waters,
-                             string view, int width, int height, string output)
+    private sealed class View
     {
-        string[] v = view.Split(',');
+        public double West, North, Dpp, Span;
+        public int Width, Height;
+
+        public double East => West + Dpp * Width;
+        public double South => North - Span;
+
+        public string Xy(double lon, double lat) =>
+            ((lon - West) / Dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((North - lat) / Dpp).ToString("0.0", CultureInfo.InvariantCulture);
+    }
+
+    private static void Draw(List<Place> places, BorderData borders, HashSet<BorderLine> drawn, SeaMask sea, double waters,
+                             string viewText, int width, int height, string output)
+    {
+        string[] v = viewText.Split(',');
         double lat = double.Parse(v[0], CultureInfo.InvariantCulture), lon = double.Parse(v[1], CultureInfo.InvariantCulture);
         double span = double.Parse(v[2], CultureInfo.InvariantCulture), dpp = span / height;
-        double west = lon - dpp * width / 2, north = lat + span / 2;
-        var ordered = places.ToList();
-        LabelPicker.Order(ordered, naval: true);
-        var area = LabelPicker.Around(west, north - span, west + dpp * width, north);
-        Dictionary<Place, bool> picked = LabelPicker.Pick(ordered, span, Density.Normal, naval: true, scale: 1f, area,
-            p => ((float)((p.Lon - west) / dpp), (float)((north - p.Lat) / dpp)));
+        var view = new View { West = lon - dpp * width / 2, North = lat + span / 2, Dpp = dpp, Span = span, Width = width, Height = height };
         using var w = new StreamWriter(output);
-        w.WriteLine($"#view	{west.ToString(CultureInfo.InvariantCulture)}	{north.ToString(CultureInfo.InvariantCulture)}	{dpp.ToString(CultureInfo.InvariantCulture)}	{width}	{height}");
+        w.WriteLine($"#view	{view.West.ToString(CultureInfo.InvariantCulture)}	{view.North.ToString(CultureInfo.InvariantCulture)}	{dpp.ToString(CultureInfo.InvariantCulture)}	{width}	{height}");
         // Territorial waters first, then border lines (all below the labels): one row per piece, "#line", the style,
         // then x,y pairs.
         if (sea != null)
+            WriteWaters(w, sea, waters, view);
+        int level = borders.LevelFor(1.0 / dpp);
+        int lineCount = WriteBorders(w, borders, drawn, level, view);
+        LabelLook look = LabelLook.Defaults;
+        int picked = WriteLabels(w, places, look, view);
+        Console.WriteLine($"{output}: {picked} labels picked for a {span} deg view, up to rank {LabelPicker.MaxRank(span, look.Density)}; " +
+                          $"{lineCount} border pieces at level {level}");
+    }
+
+    private static void WriteWaters(StreamWriter w, SeaMask sea, double waters, View view)
+    {
+        int wl = SeaLimits.LevelFor(1.0 / view.Dpp), pieces = 0, points = 0, outside = 0, tiles = 0;
+        var cells = new HashSet<(int, int)>();
+        var timer = System.Diagnostics.Stopwatch.StartNew();
+        foreach ((int tx, int ty) in Tiles.In(view.West, view.South, view.East, view.North))
         {
-            int wl = SeaLimits.LevelFor(1.0 / dpp), pieces = 0, points = 0, outside = 0, cellsTouched = 0;
-            var cellSet = new HashSet<(int, int)>();
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-            int tx0 = (int)Math.Floor((west + 180) / BorderData.Tile), tx1 = (int)Math.Floor((west + dpp * width + 180) / BorderData.Tile);
-            int ty0 = Math.Max(0, (int)Math.Floor((north - span + 90) / BorderData.Tile)), ty1 = Math.Min(17, (int)Math.Floor((north + 90) / BorderData.Tile));
-            int tiles = 0;
-            for (int tx = tx0; tx <= tx1; tx++)
+            int wrapped = Tiles.Wrap(tx);
+            SeaLimitTile tile = SeaLimits.Tile(sea, wrapped, ty, waters);
+            tiles++;
+            points += tile.Points;
+            double shift = (tx - wrapped) * Tiles.Size;
+            foreach (SeaLimitPiece piece in tile.Levels[wl])
             {
-                for (int ty = ty0; ty <= ty1; ty++)
-                {
-                    int wrapped = ((tx % 36) + 36) % 36;
-                    SeaLimitTile tile = SeaLimits.Tile(sea, wrapped, ty, waters);
-                    tiles++;
-                    points += tile.Points;
-                    double shift = (tx - wrapped) * BorderData.Tile;
-                    foreach (SeaLimitPiece piece in tile.Levels[wl])
-                    {
-                        float[] line = piece.Points;
-                        // Every point of a piece lies in its cell (up to a grid step: the ends can overshoot a hair).
-                        double cw = piece.Cx * SeaLimits.CellDegrees - 180.0, cs = piece.Cy * SeaLimits.CellDegrees - 90.0;
-                        for (int k = 0; k < line.Length; k += 2)
-                        {
-                            if (line[k] < cw - 0.02 || line[k] > cw + SeaLimits.CellDegrees + 0.02 || line[k + 1] < cs - 0.02 || line[k + 1] > cs + SeaLimits.CellDegrees + 0.02)
-                                outside++;
-                        }
-                        if (cellSet.Add((piece.Cx, piece.Cy)))
-                            cellsTouched++;
-                        var xy = new List<string>();
-                        for (int k = 0; k < line.Length; k += 2)
-                            xy.Add(((line[k] + shift - west) / dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((north - line[k + 1]) / dpp).ToString("0.0", CultureInfo.InvariantCulture));
-                        w.WriteLine("#line	waters	" + string.Join(" ", xy));
-                        pieces++;
-                    }
-                }
+                outside += OutsideCell(piece);
+                cells.Add((piece.Cx, piece.Cy));
+                var xy = new List<string>();
+                for (int k = 0; k < piece.Points.Length; k += 2)
+                    xy.Add(view.Xy(piece.Points[k] + shift, piece.Points[k + 1]));
+                w.WriteLine("#line	waters	" + string.Join(" ", xy));
+                pieces++;
             }
-            Console.WriteLine($"Waters {waters} nm: {tiles} tiles in {timer.ElapsedMilliseconds} ms, {points} points at full detail, {pieces} pieces in {cellsTouched} cells at level {wl}, points outside their cell: {outside}");
         }
-        int level = borders.LevelFor(1.0 / dpp), lineCount = 0;
+        Console.WriteLine($"Waters {waters} nm: {tiles} tiles in {timer.ElapsedMilliseconds} ms, {points} points at full detail, {pieces} pieces in {cells.Count} cells at level {wl}, points outside their cell: {outside}");
+    }
+
+    // Every point of a piece lies in its cell (up to a grid step: the ends can overshoot a hair).
+    private static int OutsideCell(SeaLimitPiece piece)
+    {
+        const double slack = 0.02;
+        double cw = piece.Cx * SeaLimits.CellDegrees - 180.0, cs = piece.Cy * SeaLimits.CellDegrees - 90.0;
+        int outside = 0;
+        for (int k = 0; k < piece.Points.Length; k += 2)
+        {
+            float x = piece.Points[k], y = piece.Points[k + 1];
+            if (x < cw - slack || x > cw + SeaLimits.CellDegrees + slack || y < cs - slack || y > cs + SeaLimits.CellDegrees + slack)
+                outside++;
+        }
+        return outside;
+    }
+
+    // The border pieces the flat drawing shows at this level (dashed ones with the mod's default "Disputed lines" on).
+    private static int WriteBorders(StreamWriter w, BorderData borders, HashSet<BorderLine> drawn, int level, View view)
+    {
+        int count = 0;
         foreach (BorderPiece piece in borders.Pieces)
         {
             if (piece.Level != level || !drawn.Contains(piece.Line))
                 continue;
             var xy = new List<string>();
-            // The map runs on past +/-180°: like MapPanel, each tile goes within half a turn of the view's centre.
-            double offset = piece.TileX * BorderData.Tile - 180 + BorderData.Tile / 2 - (west + dpp * width / 2);
+            // The map runs on past +/-180: like MapPanel, each tile goes within half a turn of the view's centre.
+            double offset = piece.TileX * Tiles.Size - 180 + Tiles.Size / 2 - (view.West + view.East) / 2;
             double shift = offset > 180 ? -360 * Math.Ceiling((offset - 180) / 360) : offset < -180 ? 360 * Math.Ceiling((-offset - 180) / 360) : 0;
             for (int k = 0; k < piece.Points.Length; k += 2)
-            {
-                double plon = piece.Points[k] + shift;
-                xy.Add(((plon - west) / dpp).ToString("0.0", CultureInfo.InvariantCulture) + "," + ((north - piece.Points[k + 1]) / dpp).ToString("0.0", CultureInfo.InvariantCulture));
-            }
+                xy.Add(view.Xy(piece.Points[k] + shift, piece.Points[k + 1]));
             w.WriteLine("#line	" + (piece.Line.Dashed ? "dashed" : "solid") + "	" + string.Join(" ", xy));
-            lineCount++;
+            count++;
         }
+        return count;
+    }
+
+    // The labels the mod picks with its default settings: the same kinds of place, order and overlap rules.
+    private static int WriteLabels(StreamWriter w, List<Place> places, LabelLook look, View view)
+    {
+        var ordered = places.Where(look.Shows).ToList();
+        LabelPicker.Order(ordered, look);
+        var area = LabelPicker.Around(view.West, view.South, view.East, view.North);
+        Dictionary<Place, bool> picked = LabelPicker.Pick(ordered, view.Span, look, area,
+            p => ((float)((p.Lon - view.West) / view.Dpp), (float)((view.North - p.Lat) / view.Dpp)));
         foreach (Place p in ordered.Where(picked.ContainsKey))
         {
-            float x = (float)((p.Lon - west) / dpp), y = (float)((north - p.Lat) / dpp);
-            if (x < -50 || y < -20 || x > width + 50 || y > height + 20)
+            float x = (float)((p.Lon - view.West) / view.Dpp), y = (float)((view.North - p.Lat) / view.Dpp);
+            if (x < -50 || y < -20 || x > view.Width + 50 || y > view.Height + 20)
                 continue;
             string kind = p.Kind == PlaceKind.AirBase ? "air" : p.Kind == PlaceKind.Airport ? "airport" : p.Naval ? "naval" : p.Capital ? "capital" : "city";
             w.WriteLine(string.Join("	", p.Label, x.ToString("0.0", CultureInfo.InvariantCulture), y.ToString("0.0", CultureInfo.InvariantCulture),
                                     kind, p.Naval ? p.NavalSide.ToString() : p.AirSide.ToString(), p.Rank, picked[p] ? "left" : "right"));
         }
-        Console.WriteLine($"{output}: {picked.Count} labels picked for a {span}° view, up to rank {LabelPicker.MaxRank(span, Density.Normal)}; " +
-                          $"{lineCount} border pieces at level {level}");
+        return picked.Count;
     }
 }

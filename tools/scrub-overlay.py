@@ -11,7 +11,7 @@ import sys
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
-X0, Y0, X1, Y1 = 8, 340, 200, 482      # in the 1920 x 1057 pictures; the widget is about x 22-150, y 355-460
+X0, Y0, X1, Y1 = 8, 340, 200, 482      # in the 1920 x 1057 pictures (the workspace screenshot size); the widget is about x 22-150, y 355-460
 RADIUS = 9
 MARGIN = 40
 NEEDED = 70                             # of 255: how much known map a pixel needs around it to be filled
@@ -25,7 +25,8 @@ def scrub(src, dst):
     known = Image.new("L", cur.size, 255)
     ImageDraw.Draw(known).rectangle((X0 - cx0, Y0 - cy0, X1 - cx0 - 1, Y1 - cy0 - 1), fill=0)
     # The picture's own dark 1-2 px frame at the left edge is no map: keep it out of the average.
-    ImageDraw.Draw(known).rectangle((0, 0, 3 - cx0, cur.height), fill=0) if cx0 < 4 else None
+    if cx0 < 4:
+        ImageDraw.Draw(known).rectangle((0, 0, 3 - cx0, cur.height), fill=0)
     box = [(x - cx0, y - cy0) for y in range(Y0, Y1) for x in range(X0, X1)]
     unknown = set(box)
     for _ in range(80):

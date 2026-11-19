@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Offline check of the globe drawing: the mod's ProjectedLines/GeoArea code against the game's own orthographic projection. -->
+  <!-- Offline check of the globe drawing: the mod's GlobeLines/ProjectedLines code against the game's own orthographic projection. -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,7 +12,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\SeaPowerBorders\Map\ProjectedLines.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Map\GlobeLines.cs" />
     <Compile Include="..\..\src\SeaPowerBorders\Borders\BorderData.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Borders\BorderEras.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Borders\GeoPiece.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\DataFiles.cs" />
+    <Compile Include="..\..\src\SeaPowerBorders\Choices.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Seapower-Scripts"><HintPath>$(ManagedDir)\Seapower-Scripts.dll</HintPath></Reference>

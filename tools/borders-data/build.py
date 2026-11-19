@@ -5,7 +5,7 @@ control ...); the mod leaves out by mission date the ones that weren't borders y
 their own years: the inner-German border and the North/South Yemen line (both from Natural Earth's state lines),
 West Berlin and the Vietnam DMZ (tools/borders-data/extra.csv).
 
-Every line is simplified at a few tolerances (the mod picks one by zoom) and cut into 10° tiles.
+Every line is simplified at a few tolerances (the mod picks one by zoom) and cut into tiles.
 
 Input from Natural Earth (public domain), release v5.1.2, into tools/borders-data/input/:
 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_boundary_lines_land.geojson
@@ -14,45 +14,67 @@ https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne
     python -I tools/borders-data/build.py tools/borders-data/input tools/borders-data/extra.csv \
         src/SeaPowerBorders/mod/borders/borders.bin
 
-borders.bin, little-endian:
-    "SPBD", int32 version
-    int32 level count, float32 tolerance (degrees) per level
-    int32 line count, per line: byte class, 3 bytes country left, 3 bytes country right, int32 since, int32 until
-        (yyyymmdd, 0 = open), byte name length, name (UTF-8)
-    int32 piece count, per piece: int32 line, byte level, byte tile x, byte tile y, int32 point count,
-        float32 lon/lat pairs
+The file layout is in docs/borders-format.md. The file version, the tile size and the class codes come from the
+mod's C# (BorderData.cs, GeoPiece.cs), so the two cannot drift apart.
 """
 
 import json
 import math
+import os
+import re
 import struct
 import sys
 
-VERSION = 1
-TILE = 10.0
+SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src", "SeaPowerBorders", "Borders")
+
+
+def from_csharp(file, pattern):
+    """The first group of a pattern in one of the mod's C# files."""
+    with open(os.path.join(SRC, file), encoding="utf-8") as f:
+        match = re.search(pattern, f.read(), re.S)
+    if not match:
+        raise SystemExit(f"{file}: {pattern} not found")
+    return match.group(1)
+
+
+VERSION = int(from_csharp("BorderData.cs", r"public const int Version = (\d+);"))
+TILE = float(from_csharp("GeoPiece.cs", r"public const float Size = ([\d.]+)f;"))
+# The class byte is the position of the name in BorderData.cs's enum BorderClass.
+CLASS_NAMES = [n.strip() for n in from_csharp("BorderData.cs", r"enum BorderClass : byte\s*\{(.*?)\}").split(",") if n.strip()]
 # Douglas-Peucker tolerances in degrees (the map is equirectangular: a degree is as wide as it is high). The mod
 # shows the coarsest level that stays within half a pixel.
 LEVELS = [0.0005, 0.003, 0.012, 0.05]
 
-CLASSES = {
-    "International boundary": 0,
-    "Indefinite": 1,
-    "Disputed": 2,
-    "Line of control": 3,
-    "Lease limit": 4,
-    "Overlay limit": 5,
-    "Indeterminant frontier": 6,
-    "Unrecognized": 7,
+# Natural Earth's FEATURECLA (by prefix) -> the enum's name.
+FEATURE_CLASSES = {
+    "International boundary": "International",
+    "Indefinite": "Indefinite",
+    "Disputed": "Disputed",
+    "Line of control": "LineOfControl",
+    "Lease limit": "Lease",
+    "Overlay limit": "Overlay",
+    "Indeterminant frontier": "Indeterminant",
+    "Unrecognized": "Unrecognized",
 }
-ADDED = 8
+missing = set(CLASS_NAMES) - set(FEATURE_CLASSES.values()) - {"Added"}
+if missing or set(FEATURE_CLASSES.values()) - set(CLASS_NAMES):
+    raise SystemExit(f"BorderClass and FEATURE_CLASSES differ: {sorted(missing)} / {sorted(set(FEATURE_CLASSES.values()) - set(CLASS_NAMES))}")
+CLASSES = {prefix: CLASS_NAMES.index(name) for prefix, name in FEATURE_CLASSES.items()}
+ADDED = CLASS_NAMES.index("Added")
 
-WEST_LAENDER = {"Schleswig-Holstein", "Niedersachsen", "Hessen", "Bayern"}
-EAST_LAENDER = {"Mecklenburg-Vorpommern", "Brandenburg", "Sachsen-Anhalt", "Thüringen", "Sachsen"}
-# Today's governorates on either side of the 1967-1990 line. Al Dali' was made in 1998 from both; most of it was
-# South Yemen, so the line runs a few km off around Qa'tabah and Damt.
-SOUTH_YEMEN = {"Lahij", "Abyan", "Shabwah", "Hadramawt", "Al Mahrah", "`Adan", "Al Dali'"}
-NORTH_YEMEN = {"Ta`izz", "Ibb", "Al Bayda'", "Ma'rib", "Al Jawf", "Sana'a", "Dhamar", "Al Hudaydah", "Sa`dah",
-               "Hajjah", "Amran", "Raymah", "Al Mahwit", "Amanat Al Asimah"}
+# Lines of the time made from Natural Earth's state lines: name, the countries on its two sides, its years, the
+# country the states are in today, and the states on either side.
+STATE_LINES = [
+    ("Inner-German border", "DDR", "BRD", "1949-05-23", "1990-10-03", "DEU",
+     {"Mecklenburg-Vorpommern", "Brandenburg", "Sachsen-Anhalt", "Thüringen", "Sachsen"},
+     {"Schleswig-Holstein", "Niedersachsen", "Hessen", "Bayern"}),
+    # Today's governorates on either side of the 1967-1990 line. Al Dali' was made in 1998 from both; most of it was
+    # South Yemen, so the line runs a few km off around Qa'tabah and Damt.
+    ("North/South Yemen", "YMD", "YAR", "1967-11-30", "1990-05-22", "YEM",
+     {"Lahij", "Abyan", "Shabwah", "Hadramawt", "Al Mahrah", "`Adan", "Al Dali'"},
+     {"Ta`izz", "Ibb", "Al Bayda'", "Ma'rib", "Al Jawf", "Sana'a", "Dhamar", "Al Hudaydah", "Sa`dah",
+      "Hajjah", "Amran", "Raymah", "Al Mahwit", "Amanat Al Asimah"}),
+]
 SNAP = 0.25
 
 
@@ -81,7 +103,8 @@ def class_of(featurecla):
 
 
 def simplify(points, tolerance):
-    """Douglas-Peucker, ends kept (so lines still meet where they did)."""
+    """Douglas-Peucker, ends kept (so lines still meet where they did). The mod has the same in C#
+    (SeaLimits.Simplify) for the coastal line it works out in the game."""
     if len(points) < 3:
         return list(points)
     keep = [False] * len(points)
@@ -180,14 +203,9 @@ def join(segments):
     return chains
 
 
-def main(input_dir, extra_path, target):
-    with open(f"{input_dir}/ne_10m_admin_0_boundary_lines_land.geojson", encoding="utf-8") as f:
-        land = json.load(f)["features"]
-    with open(f"{input_dir}/ne_10m_admin_1_states_provinces_lines.geojson", encoding="utf-8") as f:
-        states = json.load(f)["features"]
-
-    lines = []    # (class, left, right, since, until, name, [polylines])
-    skipped = 0
+def land_lines(land):
+    """Today's borders: (class, left, right, since, until, name, [polylines]); and how many zone edges were left out."""
+    lines, skipped = [], 0
     for feature in land:
         p = feature["properties"]
         left, right = p["ADM0_A3_L"], p["ADM0_A3_R"]
@@ -198,37 +216,41 @@ def main(input_dir, extra_path, target):
         # Natural Earth stores many lines as hundreds of short parts end to end: one polyline each again.
         polylines = join([[tuple(c[:2]) for c in part] for part in parts(feature["geometry"])])
         lines.append((class_of(p["FEATURECLA"]), left, right, 0, 0, f"{left}-{right}", polylines))
+    return lines, skipped
 
-    by_pair = {}
-    for cls, left, right, _, _, _, polylines in lines:
-        by_pair.setdefault(frozenset((left, right)), []).extend(polylines)
 
-    inner_german, yemen, berlin = [], [], []
+def state_lines(states):
+    """The STATE_LINES as lines, and the state line around Berlin (one closed ring) for West Berlin."""
+    found = {line[0]: [] for line in STATE_LINES}
+    berlin = []
     for feature in states:
         p = feature["properties"]
         a, b = p.get("NAME_L"), p.get("NAME_R")
         polylines = [[tuple(c[:2]) for c in part] for part in parts(feature["geometry"])]
-        if p.get("ADM0_A3") == "DEU":
-            if {a, b} == {"Berlin", "Brandenburg"}:
-                berlin.extend(polylines)
-            elif (a in WEST_LAENDER and b in EAST_LAENDER) or (a in EAST_LAENDER and b in WEST_LAENDER):
-                inner_german.extend(polylines)
-        elif p.get("ADM0_A3") == "YEM":
-            if (a in SOUTH_YEMEN and b in NORTH_YEMEN) or (a in NORTH_YEMEN and b in SOUTH_YEMEN):
-                yemen.extend(polylines)
-    if not inner_german or not yemen or not berlin:
-        raise SystemExit(f"state lines missing: inner-German {len(inner_german)}, Yemen {len(yemen)}, Berlin {len(berlin)}")
-    lines.append((ADDED, "DDR", "BRD", ymd("1949-05-23"), ymd("1990-10-03"), "Inner-German border", join(inner_german)))
-    lines.append((ADDED, "YMD", "YAR", ymd("1967-11-30"), ymd("1990-05-22"), "North/South Yemen", join(yemen)))
-
+        if p.get("ADM0_A3") == "DEU" and {a, b} == {"Berlin", "Brandenburg"}:
+            berlin.extend(polylines)
+        for name, _, _, _, _, country, side_a, side_b in STATE_LINES:
+            if p.get("ADM0_A3") == country and ((a in side_a and b in side_b) or (a in side_b and b in side_a)):
+                found[name].extend(polylines)
+    if not all(found.values()) or not berlin:
+        raise SystemExit(f"state lines missing: {', '.join(f'{n} {len(v)}' for n, v in found.items())}, Berlin {len(berlin)}")
+    lines = [(ADDED, left, right, ymd(since), ymd(until), name, join(found[name]))
+             for name, left, right, since, until, _, _, _ in STATE_LINES]
     chains = join(berlin)
     ring = chains[0]
     if len(chains) != 1 or ring[0] != ring[-1]:
         raise SystemExit(f"the state line around Berlin is not one closed ring ({len(chains)} pieces)")
+    return lines, ring
+
+
+def extra_lines(extra_path, by_pair, ring):
+    """The hand-drawn lines of extra.csv, their ends snapped onto the line they meet."""
     with open(extra_path, encoding="utf-8") as f:
         rows = [l.strip() for l in f if l.strip() and not l.startswith("#")]
+    lines = []
     for row in rows[1:]:
-        name, since, until, snap, points = row.split(";")
+        name, since, until, countries, snap, points = row.split(";")
+        left, right = countries.split("-")
         polyline = [tuple(reversed([float(v) for v in pair.split()])) for pair in points.split(",")]
         targets = ring if snap == "Berlin" else [pt for pl in by_pair.get(frozenset(snap.split("-")), []) for pt in pl]
         if not targets:
@@ -239,25 +261,29 @@ def main(input_dir, extra_path, target):
                 polyline[end] = point
         polylines = [polyline]
         if snap == "Berlin":
-            # West Berlin's outer boundary: the arc of the state line between the Wall's two ends on the west side.
-            i, j = ring.index(polyline[0]), ring.index(polyline[-1])
-            i, j = min(i, j), max(i, j)
-            arc_a = ring[i:j + 1]
-            arc_b = ring[j:] + ring[1:i + 1]
-            west = arc_a if sum(p[0] for p in arc_a) / len(arc_a) < sum(p[0] for p in arc_b) / len(arc_b) else arc_b
-            polylines.append(west)
-        lines.append((ADDED, "DDR", "WBE" if snap == "Berlin" else "VNM", ymd(since), ymd(until), name, polylines))
+            polylines.append(west_arc(ring, polyline))
+        lines.append((ADDED, left, right, ymd(since), ymd(until), name, polylines))
+    return lines
 
+
+def west_arc(ring, wall):
+    """West Berlin's outer boundary: the arc of the state line between the Wall's two ends on the west side."""
+    i, j = ring.index(wall[0]), ring.index(wall[-1])
+    i, j = min(i, j), max(i, j)
+    arc_a = ring[i:j + 1]
+    arc_b = ring[j:] + ring[1:i + 1]
+    return arc_a if sum(p[0] for p in arc_a) / len(arc_a) < sum(p[0] for p in arc_b) / len(arc_b) else arc_b
+
+
+def write(target, lines):
     pieces = []    # (line, level, tile, points)
     counts = [0] * len(LEVELS)
     for index, line in enumerate(lines):
         for polyline in line[6]:
             for level, tolerance in enumerate(LEVELS):
-                simple = simplify(polyline, tolerance)
-                for tile, piece in cut(simple):
+                for tile, piece in cut(simplify(polyline, tolerance)):
                     pieces.append((index, level, tile, piece))
                     counts[level] += len(piece)
-
     with open(target, "wb") as f:
         f.write(b"SPBD" + struct.pack("<i", VERSION))
         f.write(struct.pack("<i", len(LEVELS)) + struct.pack(f"<{len(LEVELS)}f", *LEVELS))
@@ -270,6 +296,23 @@ def main(input_dir, extra_path, target):
         for line, level, (tx, ty), piece in pieces:
             f.write(struct.pack("<iBBBi", line, level, tx, ty, len(piece)))
             f.write(struct.pack(f"<{2 * len(piece)}f", *[v for pt in piece for v in pt]))
+    return pieces, counts
+
+
+def main(input_dir, extra_path, target):
+    with open(f"{input_dir}/ne_10m_admin_0_boundary_lines_land.geojson", encoding="utf-8") as f:
+        land = json.load(f)["features"]
+    with open(f"{input_dir}/ne_10m_admin_1_states_provinces_lines.geojson", encoding="utf-8") as f:
+        states = json.load(f)["features"]
+
+    lines, skipped = land_lines(land)
+    by_pair = {}
+    for _, left, right, _, _, _, polylines in lines:
+        by_pair.setdefault(frozenset((left, right)), []).extend(polylines)
+    added, ring = state_lines(states)
+    lines += added
+    lines += extra_lines(extra_path, by_pair, ring)
+    pieces, counts = write(target, lines)
     print(f"{target}: {len(lines)} lines ({skipped} zone edges left out), {len(pieces)} pieces, points per level "
           + ", ".join(f"{t} deg: {n}" for t, n in zip(LEVELS, counts)))
 
