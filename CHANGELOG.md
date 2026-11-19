@@ -6,6 +6,8 @@
 - Log: when a game update breaks reading the mission's land units or city markers, the log now says so once (it was silent, and places came back labelled twice).
 - Changed (internal): flat and globe line drawing share one look (colours, widths, dashes) and one coastal-tile poll; each build keeps the look it had.
 - Changed (internal): the per-frame host split into places, borders, editor map and map classes; the mission date is passed in, label lists are handed over instead of a static marker list.
+- Changed (internal): the entry point, log, hook registry, mission hooks, config file, Layers-menu entries, reflection helpers, project common part and package steps now come from the shared R.A.T.S. skeleton (`SeaPowerKeel\shared`); AtlasHost became Host, Patches became Hooks.
+- Changed: the mod now stays inactive when it is unticked in the game's Mod Manager (Anchor Chain loads unticked folders too); a failing mission start or end handler is logged and no longer stops the others; config changes are saved a moment after the last one instead of at once; the first five per-frame errors are logged (map errors share that count).
 - Changed (internal): one tile grid, level pick and list reader for all data; the coastal line's contour and grid split into steps (same output, checked tile by tile).
 - Changed (internal): borders.bin layout written down in docs/borders-format.md; build.py takes version, tile size and classes from the C#.
 - Changed (internal): tools/places-check builds again and picks labels with the mod's own filters; tools/globe-check runs the mod's own globe code; tools/workshop-upload and tools/make-preview.py removed (the workspace's modtool and brand-preview replace them).

@@ -30,9 +30,9 @@ internal static class Looks
 
     private static void Refresh()
     {
-        if (settings == Settings.Version)
+        if (settings == Settings.Changes.Version)
             return;
-        settings = Settings.Version;
+        settings = Settings.Changes.Version;
         borders[0] = borders[1] = null;
         labels[0] = labels[1] = null;
     }

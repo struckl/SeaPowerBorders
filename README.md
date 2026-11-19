@@ -61,7 +61,7 @@ config. Borders and places follow **the date set in the editor**. As in missions
 what counts in the mission are the zones and rules you set in the editor, never a line or a name from this mod.
 Where the editor already labels the game's own cities and bases (its Map Labels checkbox), the mod leaves those names to it and adds the rest.
 Technically: the panels go into the editor map's background elements (`Map/MapSlots.cs`), found as in Topographic
-Map (`AtlasHost.TickEditor`); buttons in `Ui/EditorButtons.cs`.
+Map (`Host.FollowEditor`); buttons in `Ui/EditorButtons.cs`.
 
 ## Borders
 
@@ -204,12 +204,12 @@ size and class codes from `BorderData.cs`.
 
 ```
 src/SeaPowerBorders/
-  Plugin.cs           Anchor Chain entry point
-  AtlasHost.cs        per-frame driver: hook wait, Layers entries, toggle keys, the data date, every map's layers
+  Plugin.cs           mod loader entry point (Keel or Anchor Chain), on the shared skeleton's ModEntry
+  ModInfo.cs          what the shared skeleton reads: GUID, name, version, log source
+  Host.cs             per-frame driver (ModHost): Layers entries, toggle keys, the data date, every map's layers
   Features/           the host's parts: places of a date (PlaceBook), border lines of a date (BorderBook), the editor's
                       map (EditorMap), the maps decorated (MapDecor), the looks from the settings (Looks)
-  LayerEntry.cs       an entry in the map's Layers menu ("Borders", "Cities and bases")
-  Patches.cs          mission start/end hooks, the late map hook
+  Hooks.cs            the hooked game methods (HookRegistry): mission start/end, the late map hook
   Borders/            the border lines (BorderData, file layout in docs/borders-format.md), which ones a date has
                       (BorderEras), tiles and levels (GeoPiece), the coastal distance line (SeaMask, SeaLimits, SeaLimitCache)
   Places/             Place, the game's lists (GameLists), the mod's lists (ModLists), merging and dates (Atlas), places
@@ -217,10 +217,15 @@ src/SeaPowerBorders/
   Map/                lines in the map (BorderLines with FlatDrawing or GlobeDrawing, one look: BorderLook; the globe's
                       pieces and projection in GlobeLines and ProjectedLines), labels (CityLabels, LabelLook), which ones
                       show (LabelPicker), symbols (Icons), the order of our panels (MapSlots), projections (MapView)
-  GameApi.cs          the few internal game members used (a map's night flag, a Layers-menu entry), by reflection
   mod/borders/        borders.bin (generated), eras.csv
   mod/places/         world.csv (generated), naval_bases.csv, eras.csv
-  Settings.cs, Choices.cs, DataFiles.cs, FailureLog.cs, ModLog.cs, mod/_info.ini
+  Settings.cs, Choices.cs, DataFiles.cs, FailureLog.cs, mod/_info.ini
+```
+
+The entry point mechanics, log, hook registry, mission hooks, config file and General section, Layers-menu entries and the
+reflection helpers are the shared skeleton (`SeaPowerKeel\shared`, compiled into the DLL as linked source).
+
+```
 tools/borders-data/   Natural Earth -> borders.bin, with the hand-drawn lines (extra.csv)
 tools/cities-data/    Natural Earth -> world.csv
 tools/places-check/   offline check, label and border picture (the mod's own code and default filters)

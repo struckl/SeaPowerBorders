@@ -30,7 +30,7 @@ before starting (tested pieces below are from Sea Power 0.8.7).
   - `Render/OverlayRenderer.cs` (`MapSceneRef`): finding the scene and the view (`Viewport`, degrees per pixel).
   - `TopoLayer.cs`: the entry in the map's Layers menu (Topography is #600; Borders takes **#601**; Better Tac Map
     uses 500-509).
-  - `Patches.cs`: mission start / end hooks, and why Noesis classes may only be patched once NoesisGUI runs.
+  - `Hooks.cs`: mission start / end hooks, and why Noesis classes may only be patched once NoesisGUI runs.
 - **The coastline** is the game's DEM (30″ chunks via `TerrainLoader.TryGetCached`, the 3′ world grid behind the
   zoomed-out map) - see Topographic Map's `Terrain/HeightReader.cs`.
 

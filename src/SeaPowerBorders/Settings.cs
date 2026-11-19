@@ -1,19 +1,15 @@
-using System.IO;
-using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
 
 namespace SeaPowerBorders;
 
 /// <summary>
-/// BepInEx config at <c>BepInEx/config/dev.sewerlabs.seapowerborders.cfg</c>. Sections are numbered so they sort in
-/// the order a player would look for them. Changes made while the game runs apply straight away.
+/// BepInEx config at <c>BepInEx/config/dev.sewerlabs.seapowerborders.cfg</c> (the file and the General section: ModSettings
+/// in the shared skeleton). Sections are numbered so they sort in the order a player would look for them. Changes made while
+/// the game runs apply straight away.
 /// </summary>
 internal static class Settings
 {
-    public static ConfigEntry<bool> Enabled;
-    public static ConfigEntry<bool> VerboseLog;
-
     public static ConfigEntry<bool> CitiesVisible;
     public static ConfigEntry<KeyboardShortcut> CitiesKey;
     public static ConfigEntry<Density> Density;
@@ -30,18 +26,12 @@ internal static class Settings
     public static ConfigEntry<float> LineOpacity;
     public static ConfigEntry<int> CoastalLine;
 
-    /// <summary>Bumped on every config change, so the labels and lines are made again.</summary>
-    public static int Version { get; private set; }
+    /// <summary>Counts every config change but the layer switches, so the labels and lines are made again.</summary>
+    public static ChangeCounter Changes;
 
-    public static void Init()
+    /// <summary>From ModSettings.Open: binds the entries and sets up the change counter.</summary>
+    public static void Bind(ConfigFile file)
     {
-        var file = new ConfigFile(Path.Combine(Paths.ConfigPath, Plugin.Guid + ".cfg"), saveOnInit: true);
-
-        Enabled = file.Bind("1. General", "Enable mod", true,
-            "Master switch. Needs a restart.");
-        VerboseLog = file.Bind("1. General", "Verbose log", false,
-            "Write debug detail to BepInEx/LogOutput.log.");
-
         CitiesVisible = file.Bind("2. Cities", "Visible", true,
             "Whether the Cities map layer is on. Written by the mod when you toggle it in the map's Layers menu or " +
             "with the toggle key.");
@@ -81,10 +71,6 @@ internal static class Settings
                                   new AcceptableValueList<int>(0, 3, 6, 12)));
 
         // Turning a layer on and off is not a reason to make the labels and lines again.
-        file.SettingChanged += (_, e) =>
-        {
-            if (e.ChangedSetting != CitiesVisible && e.ChangedSetting != BordersVisible)
-                Version++;
-        };
+        Changes = ChangeCounter.AllBut(CitiesVisible, BordersVisible);
     }
 }
