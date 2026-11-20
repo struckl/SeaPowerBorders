@@ -1,1 +1,5 @@
-1.1.3: shows as "R.A.T.S. Cities and Borders" in the game's mod list and in the mod loader's list (Keel or Anchor Chain), the same name on every game version. Runs on Sea Power 0.9.1.
+1.2.0: steadier inside, same lines on the map.
+- The mod stays off when it is unticked in the game's Mod Manager
+- A failing mission start or end step is logged and no longer stops the others
+- Config changes are saved a moment after the last change, not on every slider step
+- Inside: Borders runs on the shared R.A.T.S. mod skeleton; lines, labels and settings look exactly as before
