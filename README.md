@@ -5,12 +5,13 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 
 | | |
 | --- | --- |
+| Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
 | Version | `1.2.0` (2026-11-20) |
 | Game | Sea Power 0.9.1 (globe build) and 0.8.7 (flat map) run in the game; declared for 0.8.7 up to every 0.9.x |
 | Needs | a mod loader: [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459) or [Anchor Chain](https://steamcommunity.com/sharedfiles/filedetails/?id=3380210757), either one |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
-| Feedback | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
+| Bug reports | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
 | Source | R.A.T.S. Source License, see `LICENSE` |
 
 ![Europe in 1985 with borders, cities and bases](workshop/screenshots/01-europe-1985.jpg)
