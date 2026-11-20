@@ -126,7 +126,7 @@ Visible (written by the Layers-menu entry), toggle key, era (`MissionDate` / `To
 4. Era rules from the mission date (log which rules applied).
 5. Territorial waters.
 6. Labels.
-7. README, CHANGELOG, `docs/testing.md`, Workshop page and packaging (copy `workshop/`, `tools/package.ps1` and
+7. README, CHANGELOG, Workshop page and packaging (copy `workshop/`, `tools/package.ps1` and
    `docs/workshop.md` from Topographic Map).
 
 ## Test checklist (draft)

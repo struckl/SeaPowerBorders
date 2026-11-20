@@ -58,6 +58,6 @@ tools/cities-data/        Natural Earth -> world.csv
 tools/places-check/       offline check, label and border picture
 tools/globe-check/        offline check of the globe drawing against the game's own projection
 tools/package.ps1         stage or install the release folder
-docs/                     plan.md (country names still to build), testing.md, workshop.md, borders-format.md
+docs/                     plan.md (country names still to build), workshop.md, borders-format.md
 workshop/                 description.bbcode, changenote.txt, preview.jpg, screenshots/
 ```

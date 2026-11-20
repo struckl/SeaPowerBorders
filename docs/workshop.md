@@ -21,7 +21,7 @@ them in full, the posts in short):
 
 ## Before a release
 
-1. Run the checklists in [testing.md](testing.md) on the current game version (done for 0.1.0-0.3.1 on 2026-10-24
+1. Run the in-game checklist (kept privately with the test plans) on the current game version (done for 0.1.0-0.3.1 on 2026-10-24
    and 25; 1.0.0 only changed the version number, the Mod Manager text and the docs).
 2. Version: `src/SeaPowerBorders/Plugin.cs` (`Version`) and `src/SeaPowerBorders/SeaPowerBorders.csproj`
    (`<Version>`) are 1.0.0; the CHANGELOG has its entry.
