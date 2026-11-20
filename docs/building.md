@@ -2,8 +2,8 @@
 
 Build notes, the data tools and the repo layout. Short form in the [README](../README.md).
 
-Needs the Keel repo next to this one: the shared project part, entry point, host, log, settings and hook registry are
-`SeaPowerKeel\shared`, compiled into the DLL as linked source. Without the workspace layout pass `-p:RatsWorkspace=<workspace>`.
+Needs the R.A.T.S. Shared repo next to this one (`SeaPowerShared`, github.com/struckl/SeaPowerShared): the shared project
+part, entry point, host, log, settings and hook registry, compiled into the DLL as linked source. Without the workspace layout pass `-p:RatsWorkspace=<workspace>`.
 
 ```bash
 dotnet build src/SeaPowerBorders/SeaPowerBorders.csproj -c Release
