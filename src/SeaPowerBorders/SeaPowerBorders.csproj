@@ -7,7 +7,7 @@
     <AssemblyName>SeaPowerBorders</AssemblyName>
     <RootNamespace>SeaPowerBorders</RootNamespace>
     <Product>National borders on Sea Power's tactical map.</Product>
-    <Version>1.1.3</Version>
+    <Version>1.2.0</Version>
     <RatsUseLayers>true</RatsUseLayers>
     <RatsWorkspace Condition="'$(RatsWorkspace)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), mods.json))</RatsWorkspace>
     <RatsShared Condition="'$(RatsShared)' == ''">$([MSBuild]::EnsureTrailingSlash('$(RatsWorkspace)'))SeaPowerKeel\shared\</RatsShared>

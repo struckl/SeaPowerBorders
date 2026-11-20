@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 - 2026-11-20 - shared skeleton, unticked stays off
 
 - Border opacity on the 0.8.7 map and in the editor now works like on the globe: the opacity is in the line colour, not a fade over the whole border panel (same look at the default; the lines no longer fade together with what crosses them).
 - Labels overlap less: the label picker now reserves the symbol widths and the text gap that are really drawn (air bases 11, airports 9, small dots 5 and 4, gap 3 px), so a few more labels fit.
