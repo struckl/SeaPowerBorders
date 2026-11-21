@@ -14,8 +14,8 @@
     its own game, and on the other game its entry point nothing missing and every type loadable. -NoFlat leaves the flat build out.
     With -Install the staged folder also replaces <GameDir>\Sea Power_Data\StreamingAssets\SeaPowerBorders\, the folder to
     pick in the game's Create Mod screen. Sea Power must be closed for that. -Zip also writes dist\SeaPowerBorders-<version>.zip.
-    The steps are the shared ones of every R.A.T.S. mod (SeaPowerShared	ools\RatsPackage.psm1); the workspace is found
-    above this repo, -Workspace names it for a clone elsewhere, -RatsShared another copy of the shared repo.
+    The steps are the shared ones of every R.A.T.S. mod (SeaPowerKeel\shared	ools\RatsPackage.psm1); the workspace is found
+    above this repo, -Workspace names it for a clone elsewhere, -RatsShared another copy of the shared folder.
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File tools\package.ps1 -Install
@@ -39,7 +39,7 @@ if (-not $Workspace) {
     while ($Workspace -and -not (Test-Path (Join-Path $Workspace 'mods.json'))) { $Workspace = Split-Path -Parent $Workspace }
     if (-not $Workspace) { throw 'No workspace (a folder with mods.json) above this repo - pass -Workspace.' }
 }
-if (-not $RatsShared) { $RatsShared = Join-Path $Workspace 'SeaPowerShared' }
+if (-not $RatsShared) { $RatsShared = Join-Path $Workspace 'SeaPowerKeel\shared' }
 Import-Module (Join-Path $RatsShared 'tools\RatsPackage.psm1') -Force
 
 $name = 'SeaPowerBorders'
