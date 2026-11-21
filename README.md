@@ -7,7 +7,7 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 | --- | --- |
 | Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
 | Version | `1.3.0` (unreleased) |
-| Game | Sea Power 0.9.3 (build 261116), the current main version; checked offline |
+| Game | Sea Power 0.9.3 (build 261116), the current main version; run in the test VM |
 | Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and [R.A.T.S. Rigging](https://steamcommunity.com/sharedfiles/filedetails/?id=RIGGING_ID), the part the R.A.T.S. mods share |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
@@ -74,7 +74,7 @@ All settings: `BepInEx\config\dev.sewerlabs.seapowerborders.cfg`; the names are 
 
 - One build, for the game's current main version (0.9.x); the mod's metadata says 0.9.0 or newer.
 - Last run in the game: 1.1.3 on 0.9.1 (build 261112), 12 November 2026, under Keel (Red Sea Breakout).
-- 1.3.0 is checked offline against 0.9.3 (`tools/compat-check`), not run in the game yet.
+- 1.3.0 is checked offline against 0.9.3 (`tools/compat-check`) and ran in the test VM (Red Sea Breakout: border lines, city labels, the Layers menu).
 
 ## Building
 
