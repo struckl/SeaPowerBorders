@@ -8,7 +8,7 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 | Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
 | Version | `1.3.0` (unreleased) |
 | Game | Sea Power 0.9.3 (build 261116), the current main version; run in the test VM |
-| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and [R.A.T.S. Rigging](https://steamcommunity.com/sharedfiles/filedetails/?id=RIGGING_ID), the part the R.A.T.S. mods share |
+| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and [R.A.T.S. Rigging](https://steamcommunity.com/sharedfiles/filedetails/?id=3843688859), the part the R.A.T.S. mods share |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
 | Bug reports | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
