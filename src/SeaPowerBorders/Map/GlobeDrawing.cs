@@ -1,4 +1,3 @@
-#if !FLATMAP
 using System;
 using System.Collections.Generic;
 using MapControl;
@@ -8,7 +7,7 @@ using SeaPowerBorders.Borders;
 namespace SeaPowerBorders.Map;
 
 /// <summary>
-/// The lines on the globe (the 3D-globe build's mission map, an orthographic projection). A lon/lat rectangle is no
+/// The lines on the globe (the mission map, an orthographic projection). A lon/lat rectangle is no
 /// rectangle there, so the lines are projected point by point instead (<see cref="ProjectedLines"/>, the pieces
 /// chosen by <see cref="GlobeLines"/>): one set of paths per line style in screen pixels, rebuilt whenever the view
 /// changes.
@@ -44,7 +43,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
         waterSet = new PathSet(waterPanel, look.CoastalBrush(), look.CoastalWidth, BorderLook.CoastalPattern);
         coast = new CoastalTiles<SeaLimitTile>(() => dirty = true);
         project = (double lat, double lon, out float x, out float y) => MapView.ToView(map, lat, lon, out x, out y);
-        ModLog.Debug("Border lines: drawing for the globe.");
+        Rig.Log.Debug("Border lines: drawing for the globe.");
     }
 
     public void Update(SeaLimitCache waters)
@@ -60,7 +59,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
             level = wanted;
             pieces.Select(lines.Data, lines.Drawn, level, look.Disputed);
             dirty = true;
-            ModLog.Debug($"Borders (globe): level {level} ({lines.Data.Tolerances[level]}°), {pieces.Solid.Count + pieces.Dashed.Count} pieces");
+            Rig.Log.Debug($"Borders (globe): level {level} ({lines.Data.Tolerances[level]}°), {pieces.Solid.Count + pieces.Dashed.Count} pieces");
         }
         bool hasArea = TryArea(out GeoArea area);
         if (coast.Fetch(waters, look.CoastalNm, pixelsPerDegree, hasArea ? (area.West, area.South, area.East, area.North) : null,
@@ -89,7 +88,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
             GlobeLines.Fill(pieces.Solid, area, project, step, solid, LogBudget);
             GlobeLines.Fill(CoastalPieces(), area, project, step, water, LogBudget);
             if (diagnostics.Ready(4000))
-                ModLog.Debug($"Border lines (globe): {solid.Points + dashed.Points + water.Points} points, step {step:0.###}°, view {area.South:0.#}..{area.North:0.#}N {area.West:0.#}..{area.East:0.#}E");
+                Rig.Log.Debug($"Border lines (globe): {solid.Points + dashed.Points + water.Points} points, step {step:0.###}°, view {area.South:0.#}..{area.North:0.#}N {area.West:0.#}..{area.East:0.#}E");
         }
         solid.Finish();
         dashed.Finish();
@@ -133,7 +132,7 @@ internal sealed class GlobeDrawing : IBorderDrawing
         if (loggedBudget)
             return;
         loggedBudget = true;
-        ModLog.Warn($"Border lines: more than {GlobeLines.MaxPoints} points in view, the rest is left out of this frame.");
+        Rig.Log.Warn($"Border lines: more than {GlobeLines.MaxPoints} points in view, the rest is left out of this frame.");
     }
 
     /// <summary>The view as far as it matters for the globe's paths: changes whenever a projected point moves.</summary>
@@ -273,4 +272,3 @@ internal sealed class GlobeDrawing : IBorderDrawing
         }
     }
 }
-#endif

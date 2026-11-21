@@ -4,8 +4,8 @@ using UnityEngine;
 namespace SeaPowerBorders;
 
 /// <summary>
-/// BepInEx config at <c>BepInEx/config/dev.sewerlabs.seapowerborders.cfg</c> (the file and the General section: ModSettings
-/// in the shared skeleton). Sections are numbered so they sort in the order a player would look for them. Changes made while
+/// BepInEx config at <c>BepInEx/config/dev.sewerlabs.seapowerborders.cfg</c> (the file and the General section: Rig.Settings
+/// in R.A.T.S. Rigging). Sections are numbered so they sort in the order a player would look for them. Changes made while
 /// the game runs apply straight away.
 /// </summary>
 internal static class Settings
@@ -29,7 +29,7 @@ internal static class Settings
     /// <summary>Counts every config change but the layer switches, so the labels and lines are made again.</summary>
     public static ChangeCounter Changes;
 
-    /// <summary>From ModSettings.Open: binds the entries and sets up the change counter.</summary>
+    /// <summary>From Rig.Settings.Open: binds the entries and sets up the change counter.</summary>
     public static void Bind(ConfigFile file)
     {
         CitiesVisible = file.Bind("2. Cities", "Visible", true,
@@ -71,6 +71,6 @@ internal static class Settings
                                   new AcceptableValueList<int>(0, 3, 6, 12)));
 
         // Turning a layer on and off is not a reason to make the labels and lines again.
-        Changes = ChangeCounter.AllBut(CitiesVisible, BordersVisible);
+        Changes = ChangeCounter.AllBut(file, CitiesVisible, BordersVisible);
     }
 }

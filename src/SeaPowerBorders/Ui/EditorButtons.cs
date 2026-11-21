@@ -23,7 +23,7 @@ internal sealed class EditorButtons
         }
         catch (Exception ex)
         {
-            ModLog.Warn($"Could not add the Borders and Cities buttons to the editor map: {ex.Message}");
+            Rig.Log.Warn($"Could not add the Borders and Cities buttons to the editor map: {ex.Message}");
             return null;
         }
     }
@@ -84,7 +84,7 @@ internal sealed class EditorButtons
         }
         catch (Exception ex)
         {
-            ModLog.Debug($"Editor buttons detach: {ex.Message}");
+            Rig.Log.Debug($"Editor buttons detach: {ex.Message}");
         }
     }
 }

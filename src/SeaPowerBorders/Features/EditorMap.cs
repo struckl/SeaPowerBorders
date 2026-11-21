@@ -53,7 +53,7 @@ internal sealed class EditorMap
         Decor = null;
         buttons?.Detach();
         buttons = null;
-        ModLog.Info("Mission editor map closed.");
+        Rig.Log.Info("Mission editor map closed.");
     }
 
     public void UpdateButtons(bool bordersOn, bool citiesOn) => buttons?.Update(bordersOn, citiesOn);
@@ -84,7 +84,7 @@ internal sealed class EditorMap
         Decor = decor;
         maps.Add(decor);
         buttons = EditorButtons.TryAttach(map, toggleBorders, toggleCities);
-        ModLog.Info("Mission editor map found: borders and cities drawn there too.");
+        Rig.Log.Info("Mission editor map found: borders and cities drawn there too.");
     }
 
     private MapBase Find()

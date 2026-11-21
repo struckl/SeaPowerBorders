@@ -47,7 +47,7 @@ internal sealed class CityLabels
         }
         catch (Exception ex)
         {
-            ModLog.Warn($"Could not add the place labels to the map: {ex.Message}");
+            Rig.Log.Warn($"Could not add the place labels to the map: {ex.Message}");
             return null;
         }
     }
@@ -70,7 +70,7 @@ internal sealed class CityLabels
         }
         catch (Exception ex)
         {
-            ModLog.Debug($"Label detach: {ex.Message}");
+            Rig.Log.Debug($"Label detach: {ex.Message}");
         }
     }
 
@@ -152,7 +152,7 @@ internal sealed class CityLabels
             if (!visible.ContainsKey(kv.Key) && kv.Value.element.Visibility != Visibility.Collapsed)
                 kv.Value.element.Visibility = Visibility.Collapsed;
         }
-        ModLog.Debug($"Places: {visible.Count} shown at {height:0.0}° view height, {elements.Count} made");
+        Rig.Log.Debug($"Places: {visible.Count} shown at {height:0.0}° view height, {elements.Count} made");
     }
 
     // The label of a place, its name on the given side; made again when the side changed.

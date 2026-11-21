@@ -48,9 +48,9 @@ internal sealed class SeaLimitCache
         while (log.TryDequeue(out (bool debug, string text) message))
         {
             if (message.debug)
-                ModLog.Debug(message.text);
+                Rig.Log.Debug(message.text);
             else
-                ModLog.Info(message.text);
+                Rig.Log.Info(message.text);
         }
     }
 

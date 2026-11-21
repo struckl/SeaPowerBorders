@@ -4,29 +4,20 @@ using AnchorChain;
 namespace SeaPowerBorders;
 
 /// <summary>
-/// Entry point, started by a mod loader (Keel or Anchor Chain) through TriggerEntryPoint.
-/// Sea Power exists in two versions with different map code (0.8.7's flat map, and the 3D globe build), and a mod compiled
-/// against one fails on the other. So the package carries two builds of the same sources: SeaPowerBorders.dll for the globe
-/// build and SeaPowerBordersFlat.dll (FLATMAP defined) for 0.8.7. Each looks at the game it runs on and stays off when it is
-/// not the one it was made for (ModEntry, in the shared skeleton).
+/// Entry point, run by R.A.T.S. Keel (it calls TriggerEntryPoint of an [ACPlugin] class). The start itself is R.A.T.S. Rigging's:
+/// the plugin names it as a dependency, so Keel starts it first and keeps this mod out when it is missing or too old.
 /// </summary>
-[ACPlugin(PluginGuid, Name, Version)]
+[ACPlugin(Guid, Name, Version)]
+[ACDependency("dev.sewerlabs.seapowerrigging", "1.0.0", null)]
 public class Plugin : IAnchorChainMod
 {
     public const string Guid = "dev.sewerlabs.seapowerborders";
-    public const string Version = "1.2.0";
+    public const string Version = "1.3.0";
     public const string Name = "R.A.T.S. Cities and Borders";
 
-#if FLATMAP
-    // Both loaders skip a plugin whose GUID they have already seen, so the two builds register under different ones.
-    public const string PluginGuid = Guid + ".flatmap";
-#else
-    public const string PluginGuid = Guid;
-#endif
+    public void TriggerEntryPoint() => Start();
 
-    public void TriggerEntryPoint() => ModEntry.Trigger(Start);
-
-    // Apart from the check in Trigger, so nothing in here is compiled on a game it isn't for.
+    // Apart from the entry point, so this class has no Rigging type in it and loads on its own.
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static void Start() => ModEntry.Start<Host>(Settings.Bind, Hooks.Declare);
+    private static void Start() => Rig.Start<Host>(Settings.Bind, Hooks.Declare);
 }

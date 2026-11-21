@@ -6,9 +6,9 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 | | |
 | --- | --- |
 | Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
-| Version | `1.2.0` (2026-11-20) |
-| Game | Sea Power 0.9.1 (globe build) and 0.8.7 (flat map) run in the game; declared for 0.8.7 up to every 0.9.x |
-| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader |
+| Version | `1.3.0` (unreleased) |
+| Game | Sea Power 0.9.3 (build 261116), the current main version; checked offline |
+| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and R.A.T.S. Rigging, the part the R.A.T.S. mods share (a copy comes with this mod for now) |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
 | Bug reports | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
@@ -70,14 +70,14 @@ All settings: `BepInEx\config\dev.sewerlabs.seapowerborders.cfg`; the names are 
 
 ## Compatibility
 
-- Two builds in one package: `SeaPowerBorders.dll` (3D-globe game) and `SeaPowerBordersFlat.dll` (0.8.7 flat map); each stays off on the other game.
+- One build, for the game's current main version (0.9.x); the mod's metadata says 0.9.0 or newer.
 - Last run in the game: 1.1.3 on 0.9.1 (build 261112), 12 November 2026, under Keel (Red Sea Breakout).
-- Editor support (1.1.0) was run on 0.8.7; the globe build was checked offline only.
+- 1.3.0 is checked offline against 0.9.3 (`tools/compat-check`), not run in the game yet.
 
 ## Building
 
-- Needs the .NET SDK, a Sea Power install and the [SeaPowerKeel](https://github.com/struckl/SeaPowerKeel) repo next to this one.
-- `-p:GameBuild=Flat` builds the 0.8.7 flat map DLL.
+- Needs the .NET SDK, a Sea Power install and the SeaPowerRigging repo (R.A.T.S. Rigging) next to this one.
+- One build for the game's current main version.
 
 ```bash
 dotnet build src/SeaPowerBorders/SeaPowerBorders.csproj -c Release

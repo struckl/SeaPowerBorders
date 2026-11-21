@@ -36,12 +36,12 @@ internal sealed class PlaceBook
             if (gamePlaces == null)
                 LoadLists();
             all = Atlas.Build(gamePlaces, worldPlaces, bases, eras, date);
-            ModLog.Info($"{all.Count} places for {date:yyyy-MM-dd} ({gamePlaces.Count} from the game's lists, " +
+            Rig.Log.Info($"{all.Count} places for {date:yyyy-MM-dd} ({gamePlaces.Count} from the game's lists, " +
                         $"{all.Count(p => p.Naval)} naval bases, {all.Count(p => p.Capital)} capitals).");
         }
         catch (Exception ex)
         {
-            ModLog.Error($"Could not put the places together: {ex}");
+            Rig.Log.Error($"Could not put the places together: {ex}");
             all = new List<Place>();
         }
         Hand();

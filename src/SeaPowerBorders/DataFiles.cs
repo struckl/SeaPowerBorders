@@ -18,7 +18,7 @@ internal static class DataFiles
     {
         if (!File.Exists(path))
         {
-            ModLog.Warn($"{Path.GetFileName(path)} missing next to the mod - reinstall it.");
+            Rig.Log.Warn($"{Path.GetFileName(path)} missing next to the mod - reinstall it.");
             yield break;
         }
         bool header = true;
@@ -37,7 +37,7 @@ internal static class DataFiles
                 Array.Resize(ref f, fields);
             if (f.Length != fields)
             {
-                ModLog.Warn($"{Path.GetFileName(path)}: skipped '{line}'");
+                Rig.Log.Warn($"{Path.GetFileName(path)}: skipped '{line}'");
                 continue;
             }
             for (int i = 0; i < f.Length; i++)

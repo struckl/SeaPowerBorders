@@ -71,6 +71,6 @@ internal static class GameMarkers
         if (warned)
             return;
         warned = true;
-        ModLog.Warn($"Could not read the mission's {what} (game updated?) - places they mark may be labelled twice: {ex.Message}");
+        Rig.Log.Warn($"Could not read the mission's {what} (game updated?) - places they mark may be labelled twice: {ex.Message}");
     }
 }

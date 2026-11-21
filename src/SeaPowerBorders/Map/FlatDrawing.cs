@@ -116,7 +116,7 @@ internal sealed class FlatDrawing : IBorderDrawing
             foreach (GeoPiece piece in tile.Value)
                 points += piece.Points.Length / 2;
         }
-        ModLog.Debug($"Borders: level {detail} ({lines.Data.Tolerances[detail]}°), {tiles.Count} tiles, {points} points");
+        Rig.Log.Debug($"Borders: level {detail} ({lines.Data.Tolerances[detail]}°), {tiles.Count} tiles, {points} points");
     }
 
     // The view and a quarter of it around, so a short pan finds its tiles drawn.

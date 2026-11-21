@@ -48,7 +48,7 @@ internal sealed class BorderEras
                 {
                     if (!Enum.TryParse(f[3], true, out BorderClass parsed))
                     {
-                        ModLog.Warn($"eras.csv: unknown border class '{f[3]}'");
+                        Rig.Log.Warn($"eras.csv: unknown border class '{f[3]}'");
                         continue;
                     }
                     cls = parsed;
@@ -57,7 +57,7 @@ internal sealed class BorderEras
             }
             else
             {
-                ModLog.Warn($"eras.csv: unknown rule '{f[0]}'");
+                Rig.Log.Warn($"eras.csv: unknown rule '{f[0]}'");
             }
         }
         return eras;

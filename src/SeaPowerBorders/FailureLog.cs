@@ -18,7 +18,7 @@ internal sealed class FailureLog
         if (logged)
             return;
         logged = true;
-        ModLog.Error($"{what} failed: {ex}");
+        Rig.Log.Error($"{what} failed: {ex}");
     }
 }
 

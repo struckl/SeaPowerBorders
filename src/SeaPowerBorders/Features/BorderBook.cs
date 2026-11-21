@@ -34,14 +34,14 @@ internal sealed class BorderBook
             var drawn = new HashSet<BorderLine>(data.Lines.Where(l => eras.Drawn(l, date, era)));
             Selected = new BorderSelection(data, drawn);
             List<string> added = drawn.Where(l => l.Class == BorderClass.Added).Select(l => l.Name).Distinct().ToList();
-            ModLog.Info($"{drawn.Count} of {data.Lines.Count} border lines for " +
+            Rig.Log.Info($"{drawn.Count} of {data.Lines.Count} border lines for " +
                         $"{(era == BorderEra.Today ? "today" : date.ToString("yyyy-MM-dd"))}" +
                         $"{(added.Count > 0 ? " with " + string.Join(", ", added) : "")}.");
         }
         catch (Exception ex)
         {
             missing = true;
-            ModLog.Error($"Could not load the border lines - no borders this session: {ex}");
+            Rig.Log.Error($"Could not load the border lines - no borders this session: {ex}");
         }
     }
 

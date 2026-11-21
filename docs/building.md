@@ -2,8 +2,10 @@
 
 Build notes, the data tools and the repo layout. Short form in the [README](../README.md).
 
-Needs the Keel repo next to this one: the shared project part, entry point, host, log, settings and hook registry are
-`SeaPowerKeel\shared`, compiled into the DLL as linked source. Without the workspace layout pass `-p:RatsWorkspace=<workspace>`.
+Needs the SeaPowerRigging repo (R.A.T.S. Rigging) next to this one: the shared project part (`build\Rats.Mod.props`) and the
+library with the start, host, log, settings and hook registry. Rigging is built on demand as a project reference and its `ref\`
+folder holds Anchor Chain's library. Without the workspace layout pass `-p:RatsWorkspace=<workspace>`, or `-p:RatsRigging=<folder>\`
+for another copy of the Rigging repo.
 
 ```bash
 dotnet build src/SeaPowerBorders/SeaPowerBorders.csproj -c Release
@@ -11,12 +13,11 @@ dotnet build src/SeaPowerBorders/SeaPowerBorders.csproj -c Release
 
 - Copies `SeaPowerBorders.dll` and `mod/` into `Sea Power_Data/StreamingAssets/SeaPowerBorders/` when the game is installed.
 - `-p:Deploy=false` skips that, `-p:GameDir=...` picks another install.
-- `-p:GameBuild=Flat` builds against 0.8.7's `Managed` folder (`-p:FlatManagedDir=...`; default
-  `..\_gamerefs\SeaPower-0.8.7-public\Managed`) into `SeaPowerBordersFlat.dll`, registered as
-  `dev.sewerlabs.seapowerborders.flatmap`.
-- `tools/package.ps1` builds and checks both and stages the release folder.
-- `python tools/modtool.py compat borders` from the workspace checks that every game reference of each DLL exists in the game
-  it is made for.
+- One build, for the game's current main version: `SeaPowerBorders.dll`, and the metadata says 0.9.0 or newer.
+- `-p:ManagedDir=...` points at a saved copy of the game's `Managed` folder instead of the install.
+- `tools/package.ps1` builds, checks the DLL against the game and against Rigging, and stages the release folder with the
+  built-in copy of `SeaPowerRigging.dll`.
+- `python tools/modtool.py compat borders` from the workspace checks that every game reference of the DLL exists in the game.
 
 The Natural Earth files are turned into the mod's data once. Download the files the scripts name into
 `tools/cities-data/input/` and `tools/borders-data/input/`, then:
@@ -42,10 +43,10 @@ The format of `borders.bin` is in [docs/borders-format.md](docs/borders-format.m
 
 ```
 src/SeaPowerBorders/
-  Plugin.cs, ModInfo.cs   entry point and what the shared skeleton reads (GUID, name, version, log source)
-  Host.cs                 per-frame driver: Layers entries, toggle keys, the data date, every map's layers
+  Plugin.cs, Rig.cs       entry point ([ACPlugin], started by Keel); the mod's R.A.T.S. Rigging object and its start
+  Host.cs                 per-frame driver (RigHost): Layers entries, toggle keys, the data date, every map's layers
   Features/               the host's parts: places and borders of a date, the editor's map, maps decorated, looks
-  Hooks.cs                the hooked game methods: mission start and end, the late map hook
+  Hooks.cs                the hooked game methods (Rig.Hooks): mission start and end, the late map hook
   Borders/                border data, which borders a date has, tiles and levels, the coastal line (SeaMask, SeaLimits)
   Places/                 the game's lists, the mod's lists, merging and dates (Atlas), places the mission marks itself
   Map/                    border lines (flat and globe drawing), labels, label picking, symbols, panel order, projections

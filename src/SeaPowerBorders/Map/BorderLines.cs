@@ -21,8 +21,8 @@ internal interface IBorderDrawing
 
 /// <summary>
 /// The border lines on one map control. They live in a <see cref="MapPanel"/> laid into the map below the place
-/// labels, the coastal distance line in a second panel below the borders. A flat map gets <see cref="FlatDrawing"/>,
-/// the 3D-globe build's globe <c>GlobeDrawing</c>; a new projection, look or set of lines starts a new drawing.
+/// labels, the coastal distance line in a second panel below the borders. A flat map (the mission editor's) gets <see cref="FlatDrawing"/>,
+/// the mission's globe <c>GlobeDrawing</c>; a new projection, look or set of lines starts a new drawing.
 /// </summary>
 internal sealed class BorderLines
 {
@@ -46,7 +46,7 @@ internal sealed class BorderLines
         }
         catch (Exception ex)
         {
-            ModLog.Warn($"Could not add the border lines to the map: {ex.Message}");
+            Rig.Log.Warn($"Could not add the border lines to the map: {ex.Message}");
             return null;
         }
     }
@@ -88,7 +88,7 @@ internal sealed class BorderLines
         }
         catch (Exception ex)
         {
-            ModLog.Debug($"Border detach: {ex.Message}");
+            Rig.Log.Debug($"Border detach: {ex.Message}");
         }
     }
 
@@ -124,10 +124,6 @@ internal sealed class BorderLines
         drawingGlobe = globe;
         look = lineLook;
         lines = selection;
-#if FLATMAP
-        drawing = new FlatDrawing(map, panel, waterPanel, look, lines);
-#else
         drawing = globe ? new GlobeDrawing(map, panel, waterPanel, look, lines) : new FlatDrawing(map, panel, waterPanel, look, lines);
-#endif
     }
 }

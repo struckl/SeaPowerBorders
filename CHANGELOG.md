@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 - unreleased - needs R.A.T.S. Rigging, one build for the current game
+
+- **New required item: R.A.T.S. Rigging**, the part the R.A.T.S. mods share (start, settings, hooks, mission events). A copy comes with this mod for now, so nothing has to be done; a notice on the main menu offers the Workshop item.
+- Changed: one build for the game's current main version (0.9.x). The 0.8.7 flat-map build, `SeaPowerBordersFlat.dll` and the `.flatmap` plugin id are gone; the Workshop metadata says 0.9.0 or newer.
+- Changed (internal): the shared skeleton is no longer compiled into the DLL; Borders uses R.A.T.S. Rigging's library. Config sections, keys and defaults, the toggle keys, the layer names, the log source, the Harmony id and every in-game text are unchanged.
+
 ## 1.2.0 - 2026-11-20 - shared skeleton, unticked stays off
 
 - Border opacity on the 0.8.7 map and in the editor now works like on the globe: the opacity is in the line colour, not a fade over the whole border panel (same look at the default; the lines no longer fade together with what crosses them).

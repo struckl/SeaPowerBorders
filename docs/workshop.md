@@ -34,8 +34,8 @@ them in full, the posts in short):
    powershell -ExecutionPolicy Bypass -File tools\package.ps1
    ```
 
-   This builds a release and fills `dist\SeaPowerBorders\` with exactly what players get: the DLL, `_info.ini`,
-   `LICENSE.txt`, `preview.jpg`, and the data folders `borders\` and `places\` (about 1.5 MB). With `-Install` (game
+   This builds a release and fills `dist\SeaPowerBorders\` with exactly what players get: the DLL, the built-in copy of
+   `SeaPowerRigging.dll`, `_info.ini`, `LICENSE.txt`, `preview.jpg`, and the data folders `borders\` and `places\` (about 1.5 MB). With `-Install` (game
    closed) it also copies that folder into `<Sea Power>\Sea Power_Data\StreamingAssets\SeaPowerBorders\`.
 
 ## Upload

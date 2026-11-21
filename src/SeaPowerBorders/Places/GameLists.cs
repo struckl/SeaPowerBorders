@@ -26,7 +26,7 @@ internal static class GameLists
         var places = new List<Place>();
         if (!Directory.Exists(campaignsDir))
         {
-            ModLog.Warn($"Game campaign lists not found ({campaignsDir}) - only the mod's own places.");
+            Rig.Log.Warn($"Game campaign lists not found ({campaignsDir}) - only the mod's own places.");
             return places;
         }
         foreach (string file in Directory.GetFiles(campaignsDir, "*.ini"))
@@ -43,7 +43,7 @@ internal static class GameLists
             }
             catch (Exception ex)
             {
-                ModLog.Warn($"Could not read {name}: {ex.Message}");
+                Rig.Log.Warn($"Could not read {name}: {ex.Message}");
             }
         }
         return places;

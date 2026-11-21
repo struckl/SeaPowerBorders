@@ -107,7 +107,7 @@ internal static class Atlas
         if (v.Length != 3 || !DataFiles.TryNumber(v[0], out double lat) || !DataFiles.TryNumber(v[1], out double lon) ||
             !int.TryParse(v[2], out int population))
         {
-            ModLog.Warn($"eras.csv: place '{r.Name}' needs lat,lon,population");
+            Rig.Log.Warn($"eras.csv: place '{r.Name}' needs lat,lon,population");
             return false;
         }
         place = new Place

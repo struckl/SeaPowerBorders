@@ -4,33 +4,13 @@ using Noesis;
 namespace SeaPowerBorders.Map;
 
 /// <summary>
-/// What the drawing needs to know of a map control's projection. The 3D-globe build's mission map is a globe (an
-/// orthographic projection); the editor's map and every map of Sea Power 0.8.7 (the flat-map build, <c>FLATMAP</c>
-/// defined, which has no globe types) are equirectangular.
+/// What the drawing needs to know of a map control's projection. The mission map is a globe (an
+/// orthographic projection); the mission editor's map is equirectangular.
 /// </summary>
 internal static class MapView
 {
     public static bool HasSize(MapBase map, double least) => map.ActualWidth >= least && map.ActualHeight >= least;
 
-#if FLATMAP
-    public static bool IsGlobe(MapBase map) => false;
-
-    public static BoundingBox VisibleBox(MapBase map) => FlatBox(map);
-
-    public static bool TryGlobeCentre(MapBase map, out double lon, out double lat)
-    {
-        lon = lat = 0;
-        return false;
-    }
-
-    public static bool ToView(MapBase map, double lat, double lon, out float x, out float y)
-    {
-        Point view = map.LocationToView(new Location(lat, lon));
-        x = view.X;
-        y = view.Y;
-        return true;
-    }
-#else
     public static bool IsGlobe(MapBase map) => map.MapProjection is OrthographicProjection;
 
     /// <summary>The lon/lat box of what is in view; null when the map has no size or shows nothing.</summary>
@@ -68,7 +48,6 @@ internal static class MapView
         y = view.Y;
         return visible;
     }
-#endif
 
     private static BoundingBox FlatBox(MapBase map) =>
         map.ViewRectToBoundingBox(new Rect(0, 0, map.ActualWidth, map.ActualHeight));

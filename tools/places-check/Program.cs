@@ -9,12 +9,17 @@ using SeaPowerBorders.Places;
 
 namespace SeaPowerBorders;
 
-/// <summary>Stand-in for the mod's log.</summary>
-internal static class ModLog
+/// <summary>Stand-in for the mod's Rig (src/SeaPowerBorders/Rig.cs): the shared sources only ask it for the log.</summary>
+internal static class Rig
 {
-    public static void Info(string m) => Console.WriteLine(m);
-    public static void Warn(string m) => Console.WriteLine("WARN " + m);
-    public static void Debug(string m) => Console.WriteLine("dbg " + m);
+    public static readonly StandInLog Log = new StandInLog();
+}
+
+internal sealed class StandInLog
+{
+    public void Info(string m) => Console.WriteLine(m);
+    public void Warn(string m) => Console.WriteLine("WARN " + m);
+    public void Debug(string m) => Console.WriteLine("dbg " + m);
 }
 
 /// <summary>
