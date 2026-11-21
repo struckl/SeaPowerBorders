@@ -8,7 +8,7 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 | Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
 | Version | `1.3.0` (unreleased) |
 | Game | Sea Power 0.9.3 (build 261116), the current main version; checked offline |
-| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and R.A.T.S. Rigging, the part the R.A.T.S. mods share (a copy comes with this mod for now) |
+| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader, and [R.A.T.S. Rigging](https://steamcommunity.com/sharedfiles/filedetails/?id=RIGGING_ID), the part the R.A.T.S. mods share |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
 | Bug reports | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
@@ -48,9 +48,11 @@ Made with Natural Earth. Free vector and raster map data at naturalearthdata.com
 ## Install
 
 1. Install R.A.T.S. Keel, the mod loader (link above).
-2. Subscribe to the mod on the Steam Workshop.
+2. Subscribe to the mod on the Steam Workshop; R.A.T.S. Rigging is a required item, Steam offers it with the mod (link above).
 3. Tick R.A.T.S. Cities and Borders in the game's Mod Manager.
 4. In a mission, turn the layers on in the map's Layers menu (Borders, Cities and bases), or press Shift+F7 and F7.
+
+The mod carries a built-in copy of Rigging for now: if you already have the mod, you do not have to do anything, and a notice on the main menu offers the Rigging item.
 
 ## Settings
 
