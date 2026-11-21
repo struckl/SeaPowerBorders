@@ -63,7 +63,7 @@ check|upload|description|gallery|visibility|video` talks to the running, signed-
 | Description | [workshop/description.bbcode](../workshop/description.bbcode) |
 | Preview image | `StreamingAssets\SeaPowerBorders\preview.jpg` (put there by `package.ps1`; Steam wants it under 1 MB) |
 | Tags | Overhaul, Realism, Scripting |
-| Dependencies | `3380210757` (Anchor Chain) |
+| Dependencies | `3835527459` (R.A.T.S. Keel) |
 | Visibility | first upload **Hidden** (or Friends only); Public once the subscribed copy is tested |
 | Change log | [workshop/changenote.txt](../workshop/changenote.txt) - a few lines, plain ASCII (long text freezes the field) |
 

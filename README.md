@@ -8,7 +8,7 @@ Draws national borders, cities, capitals and naval bases of the mission's date o
 | Questions | [R.A.T.S. Discord](https://discord.gg/CzuHd4f8Yf): help, ideas, talk; the first place to ask |
 | Version | `1.2.0` (2026-11-20) |
 | Game | Sea Power 0.9.1 (globe build) and 0.8.7 (flat map) run in the game; declared for 0.8.7 up to every 0.9.x |
-| Needs | a mod loader: [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459) or [Anchor Chain](https://steamcommunity.com/sharedfiles/filedetails/?id=3380210757), either one |
+| Needs | [R.A.T.S. Keel](https://steamcommunity.com/sharedfiles/filedetails/?id=3835527459), the mod loader |
 | Get it | [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3827360064) |
 | Settings | the map's Layers menu, or `BepInEx\config\dev.sewerlabs.seapowerborders.cfg` |
 | Bug reports | [R.A.T.S. feedback board](https://hub.sewerlabs.dev/s/borders) |
@@ -47,7 +47,7 @@ Made with Natural Earth. Free vector and raster map data at naturalearthdata.com
 
 ## Install
 
-1. Install a mod loader, either one: R.A.T.S. Keel or Anchor Chain (links above).
+1. Install R.A.T.S. Keel, the mod loader (link above).
 2. Subscribe to the mod on the Steam Workshop.
 3. Tick R.A.T.S. Cities and Borders in the game's Mod Manager.
 4. In a mission, turn the layers on in the map's Layers menu (Borders, Cities and bases), or press Shift+F7 and F7.
@@ -73,7 +73,6 @@ All settings: `BepInEx\config\dev.sewerlabs.seapowerborders.cfg`; the names are 
 - Two builds in one package: `SeaPowerBorders.dll` (3D-globe game) and `SeaPowerBordersFlat.dll` (0.8.7 flat map); each stays off on the other game.
 - Last run in the game: 1.1.3 on 0.9.1 (build 261112), 12 November 2026, under Keel (Red Sea Breakout).
 - Editor support (1.1.0) was run on 0.8.7; the globe build was checked offline only.
-- Runs under either loader. On the globe beta Anchor Chain did not start (Anchor Chain issue 19) when last checked.
 
 ## Building
 
