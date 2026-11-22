@@ -12,7 +12,7 @@ namespace SeaPowerBorders;
 public class Plugin : IAnchorChainMod
 {
     public const string Guid = "dev.sewerlabs.seapowerborders";
-    public const string Version = "1.3.0";
+    public const string Version = "1.3.1";
     public const string Name = "R.A.T.S. Cities and Borders";
 
     public void TriggerEntryPoint() => Start();
