@@ -92,5 +92,5 @@ Data tools, offline checks and the repo layout: [docs/building.md](docs/building
 
 - [R.A.T.S. Source License](LICENSE): read it, fork it, send fixes; no re-uploads, no reuse in other projects.
 - Natural Earth data is public domain. The game's campaign lists are read from your install, not shipped.
-- Related: [R.A.T.S. Topo](https://github.com/struckl/SeaPowerTopo), [R.A.T.S. Radio](https://github.com/struckl/SeaPowerRadio),
-  [R.A.T.S. Pop-Out](https://github.com/struckl/SeaPowerPopOut).
+- Related: [R.A.T.S. Topo](https://github.com/SEARATS/SeaPowerTopo), [R.A.T.S. Radio](https://github.com/SEARATS/SeaPowerRadio),
+  [R.A.T.S. Pop-Out](https://github.com/SEARATS/SeaPowerPopOut).
